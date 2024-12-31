@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/contact_repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
-class Groups extends StatelessWidget {
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/shared/widgets.dart';
+// import 'view_model.dart';
+
+class Groups extends ConsumerWidget {
   const Groups({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var theme = Theme.of(context).copyWith();
 
-    return  MaterialApp(
+    return MaterialApp(
       theme: theme,
-      home: const GroupView(),
+      home: const GroupConsumer(),
     );
     /*
     var pages = [
@@ -32,11 +39,31 @@ Navigator(
   }
 }
 
-class GroupView extends StatelessWidget {
-  const GroupView({super.key});
+class GroupConsumer extends ConsumerWidget {
+  const GroupConsumer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var viewModel = ref.watch(fetchGroupContactsProvider);
+
+    return switch(viewModel) {
+      AsyncData(:final value) => GroupView(groupContacts: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "GroupConsumer", error: error, stackTrace: stackTrace),
+      _ => const CircularProgressIndicator(),
+    };
+  } // GroupView(viewModel: viewModel)
+}
+
+class GroupView extends ConsumerWidget {
+  const GroupView({
+    super.key,
+    required this.groupContacts,
+  });
+
+  final List<GroupContacts> groupContacts;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Title(
@@ -46,18 +73,13 @@ class GroupView extends StatelessWidget {
         Flexible(
           child: ListView(
             padding: const EdgeInsets.all(8),
-            children: const <Widget>[
-              GroupCard(
-                title: 'Group 1',
-                subtitle: 'This is the first group.',
-                members: ['John Doe', 'Jane Doe'],
-              ),
-              GroupCard(
-                title: 'Group 2',
-                subtitle: 'This is the second group.',
-                members: ['Alice Smith', 'Bob Johnson'],
-              ),
-            ],
+            children: groupContacts
+                .map((group) => GroupCard(
+                      title: group.name,
+                      subtitle: group.description,
+                      members: group.members,
+                    ))
+                .toList(),
           ),
         ),
       ],
@@ -75,7 +97,7 @@ class GroupCard extends StatelessWidget {
 
   final String title;
   final String subtitle;
-  final List<String> members; // List of member names
+  final List<Contact> members; // List of member names
 
   @override
   Widget build(BuildContext context) {
@@ -86,18 +108,17 @@ class GroupCard extends StatelessWidget {
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.people),
         children: members
-            .map((member) => MemberCard(name: member))
+            .map((member) => MemberCard(user: member))
             .toList(), // Show member cards when expanded
       ),
     );
   }
-  
 }
 
 class MemberCard extends StatelessWidget {
-  const MemberCard({super.key, required this.name});
+  const MemberCard({super.key, required this.user});
 
-  final String name;
+  final Contact user;
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +127,10 @@ class MemberCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       color: theme.colorScheme.secondary,
       child: ListTile(
-        title: Text(name),
+        title: Text(user.name),
         textColor: theme.colorScheme.onSecondary,
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const PrayerRequests()),
+          MaterialPageRoute(builder: (context) => PrayerRequestConsumer(user: user)),
         ),
       ),
     );
