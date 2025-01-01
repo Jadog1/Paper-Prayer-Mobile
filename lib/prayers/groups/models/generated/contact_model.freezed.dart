@@ -22,7 +22,9 @@ Contact _$ContactFromJson(Map<String, dynamic> json) {
 mixin _$Contact {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: '')
+  String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
 
   /// Serializes this Contact to a JSON map.
@@ -39,7 +41,11 @@ abstract class $ContactCopyWith<$Res> {
   factory $ContactCopyWith(Contact value, $Res Function(Contact) then) =
       _$ContactCopyWithImpl<$Res, Contact>;
   @useResult
-  $Res call({int id, String name, String description, String createdAt});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(defaultValue: '') String? description,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -59,7 +65,7 @@ class _$ContactCopyWithImpl<$Res, $Val extends Contact>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? description = null,
+    Object? description = freezed,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -71,10 +77,10 @@ class _$ContactCopyWithImpl<$Res, $Val extends Contact>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -90,7 +96,11 @@ abstract class _$$ContactImplCopyWith<$Res> implements $ContactCopyWith<$Res> {
       __$$ContactImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String description, String createdAt});
+  $Res call(
+      {int id,
+      String name,
+      @JsonKey(defaultValue: '') String? description,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -108,7 +118,7 @@ class __$$ContactImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? description = null,
+    Object? description = freezed,
     Object? createdAt = null,
   }) {
     return _then(_$ContactImpl(
@@ -120,10 +130,10 @@ class __$$ContactImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -138,8 +148,8 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
   const _$ContactImpl(
       {required this.id,
       required this.name,
-      this.description = '',
-      this.createdAt = ''});
+      @JsonKey(defaultValue: '') this.description,
+      @JsonKey(name: 'created_at') required this.createdAt});
 
   factory _$ContactImpl.fromJson(Map<String, dynamic> json) =>
       _$$ContactImplFromJson(json);
@@ -149,10 +159,10 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
   @override
   final String name;
   @override
-  @JsonKey()
-  final String description;
+  @JsonKey(defaultValue: '')
+  final String? description;
   @override
-  @JsonKey()
+  @JsonKey(name: 'created_at')
   final String createdAt;
 
   @override
@@ -207,10 +217,11 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
 
 abstract class _Contact implements Contact {
   const factory _Contact(
-      {required final int id,
-      required final String name,
-      final String description,
-      final String createdAt}) = _$ContactImpl;
+          {required final int id,
+          required final String name,
+          @JsonKey(defaultValue: '') final String? description,
+          @JsonKey(name: 'created_at') required final String createdAt}) =
+      _$ContactImpl;
 
   factory _Contact.fromJson(Map<String, dynamic> json) = _$ContactImpl.fromJson;
 
@@ -219,8 +230,10 @@ abstract class _Contact implements Contact {
   @override
   String get name;
   @override
-  String get description;
+  @JsonKey(defaultValue: '')
+  String? get description;
   @override
+  @JsonKey(name: 'created_at')
   String get createdAt;
 
   /// Create a copy of Contact
@@ -237,8 +250,12 @@ ContactGroupPairs _$ContactGroupPairsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ContactGroupPairs {
+// The actual name of contactId is contact_id, but I want to use camelCase
+  @JsonKey(name: 'contact_id')
   int get contactId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'group_id')
   int get groupId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
 
   /// Serializes this ContactGroupPairs to a JSON map.
@@ -257,7 +274,10 @@ abstract class $ContactGroupPairsCopyWith<$Res> {
           ContactGroupPairs value, $Res Function(ContactGroupPairs) then) =
       _$ContactGroupPairsCopyWithImpl<$Res, ContactGroupPairs>;
   @useResult
-  $Res call({int contactId, int groupId, String createdAt});
+  $Res call(
+      {@JsonKey(name: 'contact_id') int contactId,
+      @JsonKey(name: 'group_id') int groupId,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -304,7 +324,10 @@ abstract class _$$ContactGroupPairsImplCopyWith<$Res>
       __$$ContactGroupPairsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int contactId, int groupId, String createdAt});
+  $Res call(
+      {@JsonKey(name: 'contact_id') int contactId,
+      @JsonKey(name: 'group_id') int groupId,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -347,18 +370,22 @@ class _$ContactGroupPairsImpl
     with DiagnosticableTreeMixin
     implements _ContactGroupPairs {
   const _$ContactGroupPairsImpl(
-      {required this.contactId,
-      required this.groupId,
-      required this.createdAt});
+      {@JsonKey(name: 'contact_id') required this.contactId,
+      @JsonKey(name: 'group_id') required this.groupId,
+      @JsonKey(name: 'created_at') required this.createdAt});
 
   factory _$ContactGroupPairsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ContactGroupPairsImplFromJson(json);
 
+// The actual name of contactId is contact_id, but I want to use camelCase
   @override
+  @JsonKey(name: 'contact_id')
   final int contactId;
   @override
+  @JsonKey(name: 'group_id')
   final int groupId;
   @override
+  @JsonKey(name: 'created_at')
   final String createdAt;
 
   @override
@@ -411,18 +438,23 @@ class _$ContactGroupPairsImpl
 
 abstract class _ContactGroupPairs implements ContactGroupPairs {
   const factory _ContactGroupPairs(
-      {required final int contactId,
-      required final int groupId,
-      required final String createdAt}) = _$ContactGroupPairsImpl;
+          {@JsonKey(name: 'contact_id') required final int contactId,
+          @JsonKey(name: 'group_id') required final int groupId,
+          @JsonKey(name: 'created_at') required final String createdAt}) =
+      _$ContactGroupPairsImpl;
 
   factory _ContactGroupPairs.fromJson(Map<String, dynamic> json) =
       _$ContactGroupPairsImpl.fromJson;
 
+// The actual name of contactId is contact_id, but I want to use camelCase
   @override
+  @JsonKey(name: 'contact_id')
   int get contactId;
   @override
+  @JsonKey(name: 'group_id')
   int get groupId;
   @override
+  @JsonKey(name: 'created_at')
   String get createdAt;
 
   /// Create a copy of ContactGroupPairs

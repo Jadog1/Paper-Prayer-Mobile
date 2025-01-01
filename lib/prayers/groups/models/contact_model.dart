@@ -9,19 +9,20 @@ class Contact with _$Contact {
   const factory Contact({
     required int id,
     required String name,
-    @Default('') String description,
-    @Default('') String createdAt,
+    @JsonKey(defaultValue: '') String? description,
+    @JsonKey(name: 'created_at') required String createdAt,
   }) = _Contact;
 
   factory Contact.fromJson(Map<String, dynamic> json) => _$ContactFromJson(json);
 }
 
-@freezed
+@freezed 
 class ContactGroupPairs with _$ContactGroupPairs {
   const factory ContactGroupPairs({
-    required int contactId,
-    required int groupId,
-    required String createdAt,
+    // The actual name of contactId is contact_id, but I want to use camelCase
+    @JsonKey(name: 'contact_id') required int contactId,
+    @JsonKey(name: 'group_id') required int groupId, 
+    @JsonKey(name: 'created_at') required String createdAt,
   }) = _ContactGroupPairs;
 
   factory ContactGroupPairs.fromJson(Map<String, dynamic> json) => _$ContactGroupPairsFromJson(json);

@@ -10,7 +10,7 @@ class PrayerRequest with _$PrayerRequest {
   const factory PrayerRequest({
     required int id,
     required String request,
-    required Contact user,
+    @JsonKey(name: 'contact') required Contact user,
   }) = _PrayerRequest;
 
   factory PrayerRequest.fromJson(Map<String, dynamic> json) => _$PrayerRequestFromJson(json);

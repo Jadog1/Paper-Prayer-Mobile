@@ -11,7 +11,7 @@ _$ContactImpl _$$ContactImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       description: json['description'] as String? ?? '',
-      createdAt: json['createdAt'] as String? ?? '',
+      createdAt: json['created_at'] as String,
     );
 
 Map<String, dynamic> _$$ContactImplToJson(_$ContactImpl instance) =>
@@ -19,21 +19,21 @@ Map<String, dynamic> _$$ContactImplToJson(_$ContactImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'createdAt': instance.createdAt,
+      'created_at': instance.createdAt,
     };
 
 _$ContactGroupPairsImpl _$$ContactGroupPairsImplFromJson(
         Map<String, dynamic> json) =>
     _$ContactGroupPairsImpl(
-      contactId: (json['contactId'] as num).toInt(),
-      groupId: (json['groupId'] as num).toInt(),
-      createdAt: json['createdAt'] as String,
+      contactId: (json['contact_id'] as num).toInt(),
+      groupId: (json['group_id'] as num).toInt(),
+      createdAt: json['created_at'] as String,
     );
 
 Map<String, dynamic> _$$ContactGroupPairsImplToJson(
         _$ContactGroupPairsImpl instance) =>
     <String, dynamic>{
-      'contactId': instance.contactId,
-      'groupId': instance.groupId,
-      'createdAt': instance.createdAt,
+      'contact_id': instance.contactId,
+      'group_id': instance.groupId,
+      'created_at': instance.createdAt,
     };

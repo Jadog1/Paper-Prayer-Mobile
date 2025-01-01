@@ -22,6 +22,7 @@ PrayerRequest _$PrayerRequestFromJson(Map<String, dynamic> json) {
 mixin _$PrayerRequest {
   int get id => throw _privateConstructorUsedError;
   String get request => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
 
   /// Serializes this PrayerRequest to a JSON map.
@@ -40,7 +41,7 @@ abstract class $PrayerRequestCopyWith<$Res> {
           PrayerRequest value, $Res Function(PrayerRequest) then) =
       _$PrayerRequestCopyWithImpl<$Res, PrayerRequest>;
   @useResult
-  $Res call({int id, String request, Contact user});
+  $Res call({int id, String request, @JsonKey(name: 'contact') Contact user});
 
   $ContactCopyWith<$Res> get user;
 }
@@ -99,7 +100,7 @@ abstract class _$$PrayerRequestImplCopyWith<$Res>
       __$$PrayerRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String request, Contact user});
+  $Res call({int id, String request, @JsonKey(name: 'contact') Contact user});
 
   @override
   $ContactCopyWith<$Res> get user;
@@ -145,7 +146,9 @@ class _$PrayerRequestImpl
     with DiagnosticableTreeMixin
     implements _PrayerRequest {
   const _$PrayerRequestImpl(
-      {required this.id, required this.request, required this.user});
+      {required this.id,
+      required this.request,
+      @JsonKey(name: 'contact') required this.user});
 
   factory _$PrayerRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrayerRequestImplFromJson(json);
@@ -155,6 +158,7 @@ class _$PrayerRequestImpl
   @override
   final String request;
   @override
+  @JsonKey(name: 'contact')
   final Contact user;
 
   @override
@@ -204,9 +208,10 @@ class _$PrayerRequestImpl
 
 abstract class _PrayerRequest implements PrayerRequest {
   const factory _PrayerRequest(
-      {required final int id,
-      required final String request,
-      required final Contact user}) = _$PrayerRequestImpl;
+          {required final int id,
+          required final String request,
+          @JsonKey(name: 'contact') required final Contact user}) =
+      _$PrayerRequestImpl;
 
   factory _PrayerRequest.fromJson(Map<String, dynamic> json) =
       _$PrayerRequestImpl.fromJson;
@@ -216,6 +221,7 @@ abstract class _PrayerRequest implements PrayerRequest {
   @override
   String get request;
   @override
+  @JsonKey(name: 'contact')
   Contact get user;
 
   /// Create a copy of PrayerRequest

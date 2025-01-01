@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/repos/contact_repo.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
@@ -64,12 +64,14 @@ class GroupView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var theme = Theme.of(context);
     return Column(
       children: [
         Title(
-          color: Theme.of(context).colorScheme.primary,
+          color: theme.colorScheme.primary,
           child: const Text("Groups"),
         ),
+        SearchBar(backgroundColor: WidgetStatePropertyAll(theme.colorScheme.secondary)),
         Flexible(
           child: ListView(
             padding: const EdgeInsets.all(8),
@@ -96,16 +98,17 @@ class GroupCard extends StatelessWidget {
   });
 
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final List<Contact> members; // List of member names
 
   @override
   Widget build(BuildContext context) {
+
     return Card(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: ExpansionTile(
         title: Text(title),
-        subtitle: Text(subtitle),
+        subtitle: Text(subtitle ?? ""),
         trailing: const Icon(Icons.people),
         children: members
             .map((member) => MemberCard(user: member))

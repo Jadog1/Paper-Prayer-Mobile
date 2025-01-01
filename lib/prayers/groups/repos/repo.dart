@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/shared/config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'generated/contact_repo.g.dart';
+part 'generated/repo.g.dart';
 
 @riverpod
 Future<List<GroupContacts>> fetchGroupContacts(Ref ref) async {
@@ -20,3 +21,8 @@ Future<List<GroupContacts>> fetchGroupContacts(Ref ref) async {
     return groupContacts;
 }
 
+@riverpod
+Future<List<PrayerRequest>> fetchPrayerRequests(Ref ref, int contactId) async {
+    var prayerApi = config.prayerRequestApiClient;
+    return prayerApi.fetchPrayerRequests(contactId);
+}

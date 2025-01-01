@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
-import 'package:prayer_ml/prayers/groups/view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
+import 'package:prayer_ml/shared/widgets.dart';
 
-class PrayerRequestConsumer extends StatelessWidget {
+class PrayerRequestConsumer extends ConsumerWidget {
   const PrayerRequestConsumer({super.key, required this.user});
 
   final Contact user;
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => PrayerRequestViewModel(),
-      child: Consumer<PrayerRequestViewModel>(
-        builder: (context, viewModel, child) {
-          return PrayerRequests(viewModel: viewModel);
-        },
-      ),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    var viewModel = ref.watch(fetchPrayerRequestsProvider(user.id));
+    return switch(viewModel) {
+      AsyncData(:final value) => PrayerRequests(viewModel: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
+      _ => const CircularProgressIndicator(),
+    };
   }
 }
 
 class PrayerRequests extends StatelessWidget {
   const PrayerRequests({super.key, required this.viewModel});
 
-  final PrayerRequestViewModel viewModel;
+  final List<PrayerRequest> viewModel;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(8),
-      children: viewModel.requests.map((request) {
+      children: viewModel.map((request) {
         return RequestCard(request: request);
       }).toList(),
     );
