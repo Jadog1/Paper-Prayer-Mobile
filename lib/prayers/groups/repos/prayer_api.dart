@@ -12,6 +12,58 @@ class ContactsApiClient {
 
   ContactsApiClient({required this.httpClient, required this.baseUrl});
 
+  Future<void> removeContactFromGroup(int groupId, int contactId) async {
+    final response = await httpClient.delete(config.uri("/contacts/groups"), 
+      body: jsonEncode({"group_id": groupId, "contact_id": contactId}), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error removing contact from group: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> removeContact(int contactId) async {
+    final response = await httpClient.delete(config.uri("/contacts/$contactId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error removing contact: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> removeGroup(int groupId) async {
+    final response = await httpClient.delete(config.uri("/contacts/groups/$groupId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error removing group: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> addContactToGroup(int groupId, int contactId) async {
+    final response = await httpClient.post(config.uri("/contacts/groups"), 
+      body: jsonEncode({"group_id": groupId, "contact_id": contactId}), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error adding contact to group: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> saveGroup(Group group) async {
+    final response = await httpClient.post(config.uri("/contacts/groups"), 
+      body: jsonEncode(group.toJson()), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error adding group: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> saveContact(Contact contact) async {
+    final response = await httpClient.post(config.uri("/contacts"), 
+      body: jsonEncode(contact.toJson()), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error adding contact: ${response.statusCode} - ${response.body}");
+    }
+  }
+
   Future<List<Contact>> fetchContacts() async {
     final response = await httpClient.get(config.uri("/contacts/"));
 

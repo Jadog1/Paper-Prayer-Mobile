@@ -124,8 +124,7 @@ class __$$GroupImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GroupImpl with DiagnosticableTreeMixin implements _Group {
-  const _$GroupImpl(
-      {this.id = 0, required this.name, required this.description});
+  const _$GroupImpl({this.id = 0, required this.name, this.description = ""});
 
   factory _$GroupImpl.fromJson(Map<String, dynamic> json) =>
       _$$GroupImplFromJson(json);
@@ -136,6 +135,7 @@ class _$GroupImpl with DiagnosticableTreeMixin implements _Group {
   @override
   final String name;
   @override
+  @JsonKey()
   final String? description;
 
   @override
@@ -188,7 +188,7 @@ abstract class _Group implements Group {
   const factory _Group(
       {final int id,
       required final String name,
-      required final String? description}) = _$GroupImpl;
+      final String? description}) = _$GroupImpl;
 
   factory _Group.fromJson(Map<String, dynamic> json) = _$GroupImpl.fromJson;
 

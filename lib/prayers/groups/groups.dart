@@ -53,12 +53,12 @@ class GroupConsumer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchGroupContactsProvider);
+    var viewModel = ref.watch(groupContactsRepoProvider);
 
     return switch(viewModel) {
       AsyncData(:final value) => GroupView(groupContacts: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "GroupConsumer", error: error, stackTrace: stackTrace),
-      _ => const CircularProgressIndicator(),
+      _ => const RefreshProgressIndicator(),
     };
   } // GroupView(viewModel: viewModel)
 }
@@ -84,13 +84,13 @@ class GroupView extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: searchState.groupContacts
-                .map((group) => GroupCard(group: group))
+                .map((group) => GroupCard(groupContacts: group))
                 .toList(),
           ),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const GroupSettings(group: GroupContacts(id: 0, name: "New Group", members: []))),
+            MaterialPageRoute(builder: (context) => const GroupSettings(groupContacts: GroupContacts(group: Group(name: "New group"), members: []))),
           ),
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
@@ -141,10 +141,10 @@ class FilterSearchBar extends ConsumerWidget {
 class GroupCard extends StatelessWidget {
   const GroupCard({
     super.key,
-    required this.group,
+    required this.groupContacts,
   });
 
-  final GroupContacts group;
+  final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +152,15 @@ class GroupCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: ExpansionTile(
-        title: Text(group.name),
-        subtitle: Text(group.description ?? ""),
+        title: Text(groupContacts.group.name),
+        subtitle: Text(groupContacts.group.description ?? ""),
         trailing: IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) =>  GroupSettings(group: group)),
+            MaterialPageRoute(builder: (context) =>  GroupSettings(groupContacts: groupContacts)),
           ),
         ),
-        children: group.members
+        children: groupContacts.members
             .map((member) => MemberCard(user: member))
             .toList(), // Show member cards when expanded
       ),
@@ -214,18 +214,16 @@ class SearchState extends ChangeNotifier {
     if (text.isEmpty) {
       _filteredGroupContacts = _groupContacts;
     } else if (isGroupFilter) {
-      _filteredGroupContacts = _groupContacts.where((group) {
-        return group.name.toLowerCase().contains(text.toLowerCase());
+      _filteredGroupContacts = _groupContacts.where((groupContact) {
+        return groupContact.group.name.toLowerCase().contains(text.toLowerCase());
       }).toList();
     } else {
       _filteredGroupContacts = _groupContacts.where((group) {
         return group.members.any((member) => member.name.toLowerCase().contains(text.toLowerCase()));
-      }).map((group) {
+      }).map((groupContact) {
         return GroupContacts(
-          id: group.id,
-          name: group.name,
-          description: group.description,
-          members: group.members.where((member) => member.name.toLowerCase().contains(text.toLowerCase())).toList(),
+          group: groupContact.group,
+          members: groupContact.members.where((member) => member.name.toLowerCase().contains(text.toLowerCase())).toList(),
         );
       }).toList();
     }

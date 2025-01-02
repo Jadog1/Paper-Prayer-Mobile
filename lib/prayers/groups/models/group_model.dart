@@ -10,7 +10,7 @@ class Group with _$Group {
   const factory Group({
     @Default(0) int id,
     required String name,
-    required String? description,
+    @Default("") String? description,
   }) = _Group;
 
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
@@ -18,14 +18,10 @@ class Group with _$Group {
 
 class GroupContacts {
   const GroupContacts({
-    required this.id,
-    required this.name,
-    this.description,
+    required this.group,
     required this.members,
   });
 
-  final int id;
-  final String name;
-  final String? description;
+  final Group group;
   final List<Contact> members;
 }

@@ -6,26 +6,6 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchGroupContactsHash() =>
-    r'a9f8050435d5bcb003a59f9933bb343ce9823a0c';
-
-/// See also [fetchGroupContacts].
-@ProviderFor(fetchGroupContacts)
-final fetchGroupContactsProvider =
-    AutoDisposeFutureProvider<List<GroupContacts>>.internal(
-  fetchGroupContacts,
-  name: r'fetchGroupContactsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$fetchGroupContactsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef FetchGroupContactsRef
-    = AutoDisposeFutureProviderRef<List<GroupContacts>>;
 String _$fetchPrayerRequestsHash() =>
     r'fa15c175479f53a9f14ecd5e767ad109354f5ba7';
 
@@ -182,5 +162,22 @@ class _FetchPrayerRequestsProviderElement
   @override
   int get contactId => (origin as FetchPrayerRequestsProvider).contactId;
 }
+
+String _$groupContactsRepoHash() => r'e0f98f33627d056be7d91fcd5e2f65a55ac989d2';
+
+/// See also [GroupContactsRepo].
+@ProviderFor(GroupContactsRepo)
+final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
+    GroupContactsRepo, List<GroupContacts>>.internal(
+  GroupContactsRepo.new,
+  name: r'groupContactsRepoProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$groupContactsRepoHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
