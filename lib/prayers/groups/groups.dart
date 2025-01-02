@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
@@ -13,12 +14,20 @@ class Groups extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var theme = Theme.of(context).copyWith();
+    // var theme = Theme.of(context).copyWith();
 
-    return MaterialApp(
+    return Navigator(
+      onGenerateRoute: (settings) => MaterialPageRoute(
+        builder: (context) => const GroupConsumer(),
+      ),
+    );
+
+    /*
+      MaterialApp(
       theme: theme,
       home: const GroupConsumer(),
     );
+    */
     /*
     var pages = [
       // Example new top level page
@@ -64,42 +73,78 @@ class GroupView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var searchState = ref.watch(searchStateProvider(groupContacts));
     var theme = Theme.of(context);
+
     return Column(
       children: [
-        Title(
-          color: theme.colorScheme.primary,
-          child: const Text("Groups"),
-        ),
-        SearchBar(backgroundColor: WidgetStatePropertyAll(theme.colorScheme.secondary)),
+        const Text("Groups", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+        FilterSearchBar(searchState: searchState),
         Flexible(
           child: ListView(
             padding: const EdgeInsets.all(8),
-            children: groupContacts
-                .map((group) => GroupCard(
-                      title: group.name,
-                      subtitle: group.description,
-                      members: group.members,
-                    ))
+            children: searchState.groupContacts
+                .map((group) => GroupCard(group: group))
                 .toList(),
           ),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const GroupSettings(group: GroupContacts(id: 0, name: "New Group", members: []))),
+          ),
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
+          ),
+          child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
         ),
       ],
     );
   }
 }
+class FilterSearchBar extends ConsumerWidget {
+  const FilterSearchBar({super.key, required this.searchState});
+  
+  final SearchState searchState;
 
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ThemeData theme = Theme.of(context);
+
+    return SearchBar(
+      // controller: TextEditingController(text: searchState.searchText),
+      onChanged: (text) => searchState.filter(text),
+      hintText: 'Search by ${searchState.isGroupFilter ? 'Groups' : 'People'}',
+      leading: searchState.searchText == "" ? 
+        Icon(Icons.search, color: theme.colorScheme.onPrimary) :
+        IconButton(
+          icon: const Icon(Icons.clear),
+          color: theme.colorScheme.onPrimary,
+          onPressed: () => searchState.filter(""),
+        ),
+      backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
+      hintStyle: WidgetStatePropertyAll(
+        TextStyle(color: theme.colorScheme.onPrimary.withAlpha(150)),
+      ),
+      textStyle: WidgetStatePropertyAll(
+        TextStyle(color: theme.colorScheme.onPrimary),
+      ),
+      trailing: [
+        ElevatedButton.icon(
+          onPressed: () => searchState.toggleSearchMode(),
+          icon:  searchState.isGroupFilter ? const Icon(Icons.people) : const Icon(Icons.person),
+          label: Text(searchState.isGroupFilter ? 'Group' : 'Person'),
+        ),
+      ],
+    );
+  }
+}
 class GroupCard extends StatelessWidget {
   const GroupCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.members,
+    required this.group,
   });
 
-  final String title;
-  final String? subtitle;
-  final List<Contact> members; // List of member names
+  final GroupContacts group;
 
   @override
   Widget build(BuildContext context) {
@@ -107,16 +152,23 @@ class GroupCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: ExpansionTile(
-        title: Text(title),
-        subtitle: Text(subtitle ?? ""),
-        trailing: const Icon(Icons.people),
-        children: members
+        title: Text(group.name),
+        subtitle: Text(group.description ?? ""),
+        trailing: IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) =>  GroupSettings(group: group)),
+          ),
+        ),
+        children: group.members
             .map((member) => MemberCard(user: member))
             .toList(), // Show member cards when expanded
       ),
     );
   }
 }
+
+
 
 class MemberCard extends StatelessWidget {
   const MemberCard({super.key, required this.user});
@@ -131,6 +183,7 @@ class MemberCard extends StatelessWidget {
       color: theme.colorScheme.secondary,
       child: ListTile(
         title: Text(user.name),
+        subtitle: Text(user.description ?? ""),
         textColor: theme.colorScheme.onSecondary,
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => PrayerRequestConsumer(user: user)),
@@ -139,3 +192,51 @@ class MemberCard extends StatelessWidget {
     );
   }
 }
+
+// Support local searching
+// In a future iteration, we will support searching from the server. KISS for now.
+// Search supports tracking the original list and the filtered list, and searching from both contacts and groups
+class SearchState extends ChangeNotifier {
+  SearchState({required List<GroupContacts> groupContacts}) {
+    _groupContacts = groupContacts;
+    _filteredGroupContacts = groupContacts;
+  }
+
+  List<GroupContacts> _groupContacts = [];
+  List<GroupContacts> _filteredGroupContacts = [];
+  bool isGroupFilter = true;
+  String searchText = "";
+
+  List<GroupContacts> get groupContacts => _filteredGroupContacts;
+
+  void filter(String text) {
+    searchText = text;
+    if (text.isEmpty) {
+      _filteredGroupContacts = _groupContacts;
+    } else if (isGroupFilter) {
+      _filteredGroupContacts = _groupContacts.where((group) {
+        return group.name.toLowerCase().contains(text.toLowerCase());
+      }).toList();
+    } else {
+      _filteredGroupContacts = _groupContacts.where((group) {
+        return group.members.any((member) => member.name.toLowerCase().contains(text.toLowerCase()));
+      }).map((group) {
+        return GroupContacts(
+          id: group.id,
+          name: group.name,
+          description: group.description,
+          members: group.members.where((member) => member.name.toLowerCase().contains(text.toLowerCase())).toList(),
+        );
+      }).toList();
+    }
+    notifyListeners();
+  }
+
+  void toggleSearchMode() {
+    isGroupFilter = !isGroupFilter;
+    filter(searchText);
+  }
+}
+final searchStateProvider = ChangeNotifierProvider.autoDispose.family<SearchState, List<GroupContacts>>((ref, groupContacts) {
+  return SearchState(groupContacts: groupContacts);
+});

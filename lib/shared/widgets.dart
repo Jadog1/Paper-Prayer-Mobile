@@ -19,3 +19,13 @@ class PrintError extends StatelessWidget {
     return Text('Oops, something unexpected happened, $error');
   }
 }
+
+const deleteButtonStyle = ButtonStyle(
+  backgroundColor: WidgetStatePropertyAll(Colors.red),
+  foregroundColor: WidgetStatePropertyAll(Colors.white),
+);
+
+const saveButtonStyle = ButtonStyle(
+  backgroundColor: WidgetStatePropertyAll(Colors.green),
+  foregroundColor: WidgetStatePropertyAll(Colors.white),
+);

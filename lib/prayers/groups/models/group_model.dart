@@ -20,7 +20,7 @@ class GroupContacts {
   const GroupContacts({
     required this.id,
     required this.name,
-    required this.description,
+    this.description,
     required this.members,
   });
 

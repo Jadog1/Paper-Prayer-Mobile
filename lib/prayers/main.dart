@@ -15,33 +15,36 @@ class _PrayersPageState extends State<PrayersPage> {
   Widget build(BuildContext context) {
 
 
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        destinations: const <Widget> [
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: 'Groups',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.summarize_outlined),
-            selectedIcon: Icon(Icons.summarize),
-            label: 'Summary',
-          ),
-        ],
-        selectedIndex: pageIndex,
-        onDestinationSelected: (value) => setState(() => pageIndex = value),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        bottomNavigationBar: NavigationBar(
+          destinations: const <Widget> [
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.people_outline),
+              selectedIcon: Icon(Icons.people),
+              label: 'Groups',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.summarize_outlined),
+              selectedIcon: Icon(Icons.summarize),
+              label: 'Summary',
+            ),
+          ],
+          selectedIndex: pageIndex,
+          onDestinationSelected: (value) => setState(() => pageIndex = value),
+        ),
+        body: const <Widget> [
+          Placeholder(),
+          Groups(),
+          Placeholder(),
+        ][pageIndex],
       ),
-      body: const <Widget> [
-        Placeholder(),
-        Groups(),
-        Placeholder(),
-      ][pageIndex],
     );
   }
 }
