@@ -6,8 +6,8 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchPrayerRequestsHash() =>
-    r'fa15c175479f53a9f14ecd5e767ad109354f5ba7';
+String _$fetchSimilarRequestsHash() =>
+    r'1d406136552bc099ea0cfef3d4abc75b914b626f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,31 +30,31 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchPrayerRequests].
-@ProviderFor(fetchPrayerRequests)
-const fetchPrayerRequestsProvider = FetchPrayerRequestsFamily();
+/// See also [fetchSimilarRequests].
+@ProviderFor(fetchSimilarRequests)
+const fetchSimilarRequestsProvider = FetchSimilarRequestsFamily();
 
-/// See also [fetchPrayerRequests].
-class FetchPrayerRequestsFamily
+/// See also [fetchSimilarRequests].
+class FetchSimilarRequestsFamily
     extends Family<AsyncValue<List<PrayerRequest>>> {
-  /// See also [fetchPrayerRequests].
-  const FetchPrayerRequestsFamily();
+  /// See also [fetchSimilarRequests].
+  const FetchSimilarRequestsFamily();
 
-  /// See also [fetchPrayerRequests].
-  FetchPrayerRequestsProvider call(
-    int contactId,
+  /// See also [fetchSimilarRequests].
+  FetchSimilarRequestsProvider call(
+    int requestId,
   ) {
-    return FetchPrayerRequestsProvider(
-      contactId,
+    return FetchSimilarRequestsProvider(
+      requestId,
     );
   }
 
   @override
-  FetchPrayerRequestsProvider getProviderOverride(
-    covariant FetchPrayerRequestsProvider provider,
+  FetchSimilarRequestsProvider getProviderOverride(
+    covariant FetchSimilarRequestsProvider provider,
   ) {
     return call(
-      provider.contactId,
+      provider.requestId,
     );
   }
 
@@ -70,77 +70,78 @@ class FetchPrayerRequestsFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchPrayerRequestsProvider';
+  String? get name => r'fetchSimilarRequestsProvider';
 }
 
-/// See also [fetchPrayerRequests].
-class FetchPrayerRequestsProvider
+/// See also [fetchSimilarRequests].
+class FetchSimilarRequestsProvider
     extends AutoDisposeFutureProvider<List<PrayerRequest>> {
-  /// See also [fetchPrayerRequests].
-  FetchPrayerRequestsProvider(
-    int contactId,
+  /// See also [fetchSimilarRequests].
+  FetchSimilarRequestsProvider(
+    int requestId,
   ) : this._internal(
-          (ref) => fetchPrayerRequests(
-            ref as FetchPrayerRequestsRef,
-            contactId,
+          (ref) => fetchSimilarRequests(
+            ref as FetchSimilarRequestsRef,
+            requestId,
           ),
-          from: fetchPrayerRequestsProvider,
-          name: r'fetchPrayerRequestsProvider',
+          from: fetchSimilarRequestsProvider,
+          name: r'fetchSimilarRequestsProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchPrayerRequestsHash,
-          dependencies: FetchPrayerRequestsFamily._dependencies,
+                  : _$fetchSimilarRequestsHash,
+          dependencies: FetchSimilarRequestsFamily._dependencies,
           allTransitiveDependencies:
-              FetchPrayerRequestsFamily._allTransitiveDependencies,
-          contactId: contactId,
+              FetchSimilarRequestsFamily._allTransitiveDependencies,
+          requestId: requestId,
         );
 
-  FetchPrayerRequestsProvider._internal(
+  FetchSimilarRequestsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.contactId,
+    required this.requestId,
   }) : super.internal();
 
-  final int contactId;
+  final int requestId;
 
   @override
   Override overrideWith(
-    FutureOr<List<PrayerRequest>> Function(FetchPrayerRequestsRef provider)
+    FutureOr<List<PrayerRequest>> Function(FetchSimilarRequestsRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchPrayerRequestsProvider._internal(
-        (ref) => create(ref as FetchPrayerRequestsRef),
+      override: FetchSimilarRequestsProvider._internal(
+        (ref) => create(ref as FetchSimilarRequestsRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        contactId: contactId,
+        requestId: requestId,
       ),
     );
   }
 
   @override
   AutoDisposeFutureProviderElement<List<PrayerRequest>> createElement() {
-    return _FetchPrayerRequestsProviderElement(this);
+    return _FetchSimilarRequestsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchPrayerRequestsProvider && other.contactId == contactId;
+    return other is FetchSimilarRequestsProvider &&
+        other.requestId == requestId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, requestId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -148,149 +149,19 @@ class FetchPrayerRequestsProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchPrayerRequestsRef
+mixin FetchSimilarRequestsRef
     on AutoDisposeFutureProviderRef<List<PrayerRequest>> {
-  /// The parameter `contactId` of this provider.
-  int get contactId;
+  /// The parameter `requestId` of this provider.
+  int get requestId;
 }
 
-class _FetchPrayerRequestsProviderElement
+class _FetchSimilarRequestsProviderElement
     extends AutoDisposeFutureProviderElement<List<PrayerRequest>>
-    with FetchPrayerRequestsRef {
-  _FetchPrayerRequestsProviderElement(super.provider);
+    with FetchSimilarRequestsRef {
+  _FetchSimilarRequestsProviderElement(super.provider);
 
   @override
-  int get contactId => (origin as FetchPrayerRequestsProvider).contactId;
-}
-
-String _$saveRequestHash() => r'19a8aa7d038e812d21e1efe6c85f1ec260ca22bb';
-
-/// See also [saveRequest].
-@ProviderFor(saveRequest)
-const saveRequestProvider = SaveRequestFamily();
-
-/// See also [saveRequest].
-class SaveRequestFamily extends Family<AsyncValue<void>> {
-  /// See also [saveRequest].
-  const SaveRequestFamily();
-
-  /// See also [saveRequest].
-  SaveRequestProvider call(
-    PrayerRequest request,
-  ) {
-    return SaveRequestProvider(
-      request,
-    );
-  }
-
-  @override
-  SaveRequestProvider getProviderOverride(
-    covariant SaveRequestProvider provider,
-  ) {
-    return call(
-      provider.request,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'saveRequestProvider';
-}
-
-/// See also [saveRequest].
-class SaveRequestProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [saveRequest].
-  SaveRequestProvider(
-    PrayerRequest request,
-  ) : this._internal(
-          (ref) => saveRequest(
-            ref as SaveRequestRef,
-            request,
-          ),
-          from: saveRequestProvider,
-          name: r'saveRequestProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$saveRequestHash,
-          dependencies: SaveRequestFamily._dependencies,
-          allTransitiveDependencies:
-              SaveRequestFamily._allTransitiveDependencies,
-          request: request,
-        );
-
-  SaveRequestProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.request,
-  }) : super.internal();
-
-  final PrayerRequest request;
-
-  @override
-  Override overrideWith(
-    FutureOr<void> Function(SaveRequestRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: SaveRequestProvider._internal(
-        (ref) => create(ref as SaveRequestRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        request: request,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _SaveRequestProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is SaveRequestProvider && other.request == request;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, request.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SaveRequestRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `request` of this provider.
-  PrayerRequest get request;
-}
-
-class _SaveRequestProviderElement extends AutoDisposeFutureProviderElement<void>
-    with SaveRequestRef {
-  _SaveRequestProviderElement(super.provider);
-
-  @override
-  PrayerRequest get request => (origin as SaveRequestProvider).request;
+  int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
 String _$groupContactsRepoHash() => r'e0f98f33627d056be7d91fcd5e2f65a55ac989d2';
@@ -309,15 +180,15 @@ final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
-String _$prayerRequestRepoHash() => r'a292e5200f0f306f96ec189d5713507460f37e44';
+String _$prayerRequestRepoHash() => r'4713972dcf60a10b8422b7adaeebaf969aa01101';
 
 abstract class _$PrayerRequestRepo
     extends BuildlessAutoDisposeAsyncNotifier<List<PrayerRequest>> {
-  late final int? contactId;
+  late final int contactId;
 
-  FutureOr<List<PrayerRequest>> build([
-    int? contactId,
-  ]);
+  FutureOr<List<PrayerRequest>> build(
+    int contactId,
+  );
 }
 
 /// See also [PrayerRequestRepo].
@@ -330,9 +201,9 @@ class PrayerRequestRepoFamily extends Family<AsyncValue<List<PrayerRequest>>> {
   const PrayerRequestRepoFamily();
 
   /// See also [PrayerRequestRepo].
-  PrayerRequestRepoProvider call([
-    int? contactId,
-  ]) {
+  PrayerRequestRepoProvider call(
+    int contactId,
+  ) {
     return PrayerRequestRepoProvider(
       contactId,
     );
@@ -366,9 +237,9 @@ class PrayerRequestRepoFamily extends Family<AsyncValue<List<PrayerRequest>>> {
 class PrayerRequestRepoProvider extends AutoDisposeAsyncNotifierProviderImpl<
     PrayerRequestRepo, List<PrayerRequest>> {
   /// See also [PrayerRequestRepo].
-  PrayerRequestRepoProvider([
-    int? contactId,
-  ]) : this._internal(
+  PrayerRequestRepoProvider(
+    int contactId,
+  ) : this._internal(
           () => PrayerRequestRepo()..contactId = contactId,
           from: prayerRequestRepoProvider,
           name: r'prayerRequestRepoProvider',
@@ -392,7 +263,7 @@ class PrayerRequestRepoProvider extends AutoDisposeAsyncNotifierProviderImpl<
     required this.contactId,
   }) : super.internal();
 
-  final int? contactId;
+  final int contactId;
 
   @override
   FutureOr<List<PrayerRequest>> runNotifierBuild(
@@ -444,7 +315,7 @@ class PrayerRequestRepoProvider extends AutoDisposeAsyncNotifierProviderImpl<
 mixin PrayerRequestRepoRef
     on AutoDisposeAsyncNotifierProviderRef<List<PrayerRequest>> {
   /// The parameter `contactId` of this provider.
-  int? get contactId;
+  int get contactId;
 }
 
 class _PrayerRequestRepoProviderElement
@@ -453,7 +324,7 @@ class _PrayerRequestRepoProviderElement
   _PrayerRequestRepoProviderElement(super.provider);
 
   @override
-  int? get contactId => (origin as PrayerRequestRepoProvider).contactId;
+  int get contactId => (origin as PrayerRequestRepoProvider).contactId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

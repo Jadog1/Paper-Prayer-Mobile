@@ -82,10 +82,7 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
   }
 
   @override
-  Future<List<PrayerRequest>> build([int? contactId]) async {
-    if (contactId == null) {
-      return [];
-    }
+  Future<List<PrayerRequest>> build(int contactId) async {
     var prayerApi = config.prayerRequestApiClient;
     return prayerApi.fetchPrayerRequests(contactId);
   }
@@ -100,22 +97,22 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
 
     ref.invalidateSelf();
   }
+
+  Future<void> removeRequest(PrayerRequest request) async {
+    var prayerApi = config.prayerRequestApiClient;
+    if (request.id == 0) {
+      throw Exception("Cannot remove request that has not been saved");
+    }
+
+    await prayerApi.removeRequest(request.id);
+
+    ref.invalidateSelf();
+  }
 } 
 
 @riverpod
-Future<List<PrayerRequest>> fetchPrayerRequests(Ref ref, int contactId) async {
-    var prayerApi = config.prayerRequestApiClient;
-    return prayerApi.fetchPrayerRequests(contactId);
-}
-
-@riverpod
-Future<void> saveRequest(Ref ref, PrayerRequest request) async {
+Future<List<PrayerRequest>> fetchSimilarRequests(Ref ref, int requestId) async {
+  var config = Config();
   var prayerApi = config.prayerRequestApiClient;
-  if (request.id == 0) {
-    await prayerApi.saveRequest(request);
-  } else {
-    await prayerApi.updateRequest(request);
-  }
-
-  ref.invalidateSelf();
+  return prayerApi.fetchSimilarRequests(requestId);
 }

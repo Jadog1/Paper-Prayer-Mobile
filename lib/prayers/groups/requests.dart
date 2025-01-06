@@ -13,7 +13,7 @@ class PrayerRequestConsumer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchPrayerRequestsProvider(user.id));
+    var viewModel = ref.watch(prayerRequestRepoProvider(user.id));
     return switch(viewModel) {
       AsyncData(:final value) => PrayerRequestView(viewModel: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
@@ -74,7 +74,7 @@ class PrayerRequests extends StatelessWidget {
   }
 }
 
-class RequestCard extends StatelessWidget {
+class RequestCard extends ConsumerWidget {
   const RequestCard({super.key, required this.request});
 
   final PrayerRequest request;
@@ -86,15 +86,49 @@ class RequestCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: ListTile(
+        leading: PopupMenuButton(
+          itemBuilder:(context) => <PopupMenuEntry>[
+            PopupMenuItem(
+              child: ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  editPrayerRequestBottomSheet(context, ref, request);
+                }
+              ),
+            ),
+            PopupMenuItem(
+              child: ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request);
+                } 
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem(
+              child: ListTile(
+                leading: const Icon(Icons.cancel),
+                title: const Text('Cancel'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                }
+              ),
+            ),
+          ],
+        ),
         title: Text(request.request),
         subtitle: Text(dateTimeToDate(request.createdAt)),
         trailing: sentimentIcon(request.sentiment),
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const RequestDashboard())
+          MaterialPageRoute(builder: (context) => RequestDashboard(request: request))
         ),
       ),
     );
@@ -130,13 +164,11 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
             onChanged: (value) => newRequest = value,
             maxLines: 5,
           ),
-          ElevatedButton(
-            onPressed: () => {
-              ref.read(prayerRequestRepoProvider().notifier).saveRequest(request.copyWith(request: newRequest)),
-              Navigator.of(context).pop(),
-            },
-            style: saveButtonStyle,
-            child: const Text('Save'),
+          InteractiveLoadButton(
+            customProvider: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).saveRequest(request.copyWith(request: newRequest)),
+            buttonText: 'Save',
+            buttonStyle: saveButtonStyle,
+            successCallback: () => Navigator.of(context).pop(),
           ),
         ],
       );
@@ -145,16 +177,39 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
 }
 
 class RequestDashboard extends StatelessWidget {
-  const RequestDashboard({super.key});
+  const RequestDashboard({super.key, required this.request});
+
+  final PrayerRequest request;
 
   @override
   Widget build(BuildContext context) {
     // Build a dashboard component that shows similar history, stats, and other information
-    return const Row(
+    return Column(
       children: <Widget> [
-        Text("History"),
-        Text("Stats"),
+        AppBar(title: const Text("Request Dashboard")),
+        const Text("Related Requests", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        SizedBox(
+          height: 200,
+          child: RelatedRequests(request: request),
+        ),
+        const Text("Stats"),
       ],
     );
+  }
+}
+
+class RelatedRequests extends ConsumerWidget {
+  const RelatedRequests({super.key, required this.request});
+
+  final PrayerRequest request;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var viewModel = ref.watch(fetchSimilarRequestsProvider(request.id));
+    return switch(viewModel) {
+      AsyncData(:final value) => PrayerRequests(viewModel: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "RelatedRequests", error: error, stackTrace: stackTrace),
+      _ => const CircularProgressIndicator(),
+    };
   }
 }

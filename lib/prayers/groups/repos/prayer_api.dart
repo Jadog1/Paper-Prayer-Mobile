@@ -115,7 +115,7 @@ class PrayerRequestApiClient {
     return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
 
-  Future<void> removePrayerRequest(int requestId) async {
+  Future<void> removeRequest(int requestId) async {
     final response = await httpClient.delete(config.uri("/prayer_requests/$requestId"));
 
     if (response.statusCode != 200) {
@@ -139,5 +139,17 @@ class PrayerRequestApiClient {
     if (response.statusCode != 200) {
       throw Exception("Error updating prayer request: ${response.statusCode} - ${response.body}");
     }
+  }
+
+  
+  Future<List<PrayerRequest>> fetchSimilarRequests(int requestId) async {
+    final response = await config.prayerRequestApiClient.httpClient.get(config.uri("/prayer_requests/similar/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting similar requests: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
 }
