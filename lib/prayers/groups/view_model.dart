@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+// import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 // import '../../shared/state_management.dart';
 
@@ -25,18 +25,7 @@ class GroupViewModel extends ChangeNotifier {
 }
 
 class PrayerRequestViewModel extends ChangeNotifier {
-  final List<PrayerRequest> _requests = [
-     const PrayerRequest(
-      id: 1,
-      request: 'Pray for my family',
-      user: Contact(id: 1, name: 'John Doe', createdAt: '2021-01-01'),
-    ),
-     const PrayerRequest(
-      id: 2,
-      request: 'Pray for my health',
-      user: Contact(id: 2, name: 'Jane Doe', createdAt: '2021-01-01'),
-    ),
-  ];
+  final List<PrayerRequest> _requests = [];
 
   List<PrayerRequest> get requests => _requests;
 

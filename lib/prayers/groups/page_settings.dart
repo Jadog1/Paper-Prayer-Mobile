@@ -68,7 +68,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
               ),
               InteractiveLoadButton(
                 customProvider: () => ref.read(groupContactsRepoProvider.notifier).saveGroup(newGroup),
-                buttonText: 'Save group',
+                buttonText: 'Save',
                 buttonStyle: saveButtonStyle,
                 successCallback: () {
                   Navigator.of(context).pop();
@@ -101,7 +101,7 @@ class DeleteGroupButton extends ConsumerWidget {
       onPressed: () => {
         showDialog(context: context, builder: (context) {
           return AlertDialog(
-            title: const Text('Delete Group'),
+            title: const Text('Delete'),
             content: const Text('Are you sure you want to delete this group?'),
             actions: [
               TextButton(
@@ -122,7 +122,7 @@ class DeleteGroupButton extends ConsumerWidget {
         }),
       },
       style: deleteButtonStyle,
-      child: const Text('Delete Group'),
+      child: const Text('Delete'),
     );
   }
 }

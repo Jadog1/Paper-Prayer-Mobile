@@ -250,7 +250,7 @@ ContactGroupPairs _$ContactGroupPairsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ContactGroupPairs {
-// The actual name of contactId is contact_id, but I want to use camelCase
+  int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_id')
   int get contactId => throw _privateConstructorUsedError;
   @JsonKey(name: 'group_id')
@@ -275,7 +275,8 @@ abstract class $ContactGroupPairsCopyWith<$Res> {
       _$ContactGroupPairsCopyWithImpl<$Res, ContactGroupPairs>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'contact_id') int contactId,
+      {int? id,
+      @JsonKey(name: 'contact_id') int contactId,
       @JsonKey(name: 'group_id') int groupId,
       @JsonKey(name: 'created_at') String createdAt});
 }
@@ -295,11 +296,16 @@ class _$ContactGroupPairsCopyWithImpl<$Res, $Val extends ContactGroupPairs>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? contactId = null,
     Object? groupId = null,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       contactId: null == contactId
           ? _value.contactId
           : contactId // ignore: cast_nullable_to_non_nullable
@@ -325,7 +331,8 @@ abstract class _$$ContactGroupPairsImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'contact_id') int contactId,
+      {int? id,
+      @JsonKey(name: 'contact_id') int contactId,
       @JsonKey(name: 'group_id') int groupId,
       @JsonKey(name: 'created_at') String createdAt});
 }
@@ -343,11 +350,16 @@ class __$$ContactGroupPairsImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? contactId = null,
     Object? groupId = null,
     Object? createdAt = null,
   }) {
     return _then(_$ContactGroupPairsImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       contactId: null == contactId
           ? _value.contactId
           : contactId // ignore: cast_nullable_to_non_nullable
@@ -370,14 +382,17 @@ class _$ContactGroupPairsImpl
     with DiagnosticableTreeMixin
     implements _ContactGroupPairs {
   const _$ContactGroupPairsImpl(
-      {@JsonKey(name: 'contact_id') required this.contactId,
+      {this.id = 0,
+      @JsonKey(name: 'contact_id') required this.contactId,
       @JsonKey(name: 'group_id') required this.groupId,
       @JsonKey(name: 'created_at') required this.createdAt});
 
   factory _$ContactGroupPairsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ContactGroupPairsImplFromJson(json);
 
-// The actual name of contactId is contact_id, but I want to use camelCase
+  @override
+  @JsonKey()
+  final int? id;
   @override
   @JsonKey(name: 'contact_id')
   final int contactId;
@@ -390,7 +405,7 @@ class _$ContactGroupPairsImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ContactGroupPairs(contactId: $contactId, groupId: $groupId, createdAt: $createdAt)';
+    return 'ContactGroupPairs(id: $id, contactId: $contactId, groupId: $groupId, createdAt: $createdAt)';
   }
 
   @override
@@ -398,6 +413,7 @@ class _$ContactGroupPairsImpl
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'ContactGroupPairs'))
+      ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('contactId', contactId))
       ..add(DiagnosticsProperty('groupId', groupId))
       ..add(DiagnosticsProperty('createdAt', createdAt));
@@ -408,6 +424,7 @@ class _$ContactGroupPairsImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ContactGroupPairsImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.contactId, contactId) ||
                 other.contactId == contactId) &&
             (identical(other.groupId, groupId) || other.groupId == groupId) &&
@@ -417,7 +434,8 @@ class _$ContactGroupPairsImpl
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, contactId, groupId, createdAt);
+  int get hashCode =>
+      Object.hash(runtimeType, id, contactId, groupId, createdAt);
 
   /// Create a copy of ContactGroupPairs
   /// with the given fields replaced by the non-null parameter values.
@@ -438,7 +456,8 @@ class _$ContactGroupPairsImpl
 
 abstract class _ContactGroupPairs implements ContactGroupPairs {
   const factory _ContactGroupPairs(
-          {@JsonKey(name: 'contact_id') required final int contactId,
+          {final int? id,
+          @JsonKey(name: 'contact_id') required final int contactId,
           @JsonKey(name: 'group_id') required final int groupId,
           @JsonKey(name: 'created_at') required final String createdAt}) =
       _$ContactGroupPairsImpl;
@@ -446,7 +465,8 @@ abstract class _ContactGroupPairs implements ContactGroupPairs {
   factory _ContactGroupPairs.fromJson(Map<String, dynamic> json) =
       _$ContactGroupPairsImpl.fromJson;
 
-// The actual name of contactId is contact_id, but I want to use camelCase
+  @override
+  int? get id;
   @override
   @JsonKey(name: 'contact_id')
   int get contactId;

@@ -14,37 +14,11 @@ class Groups extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // var theme = Theme.of(context).copyWith();
-
     return Navigator(
       onGenerateRoute: (settings) => MaterialPageRoute(
         builder: (context) => const GroupConsumer(),
       ),
     );
-
-    /*
-      MaterialApp(
-      theme: theme,
-      home: const GroupConsumer(),
-    );
-    */
-    /*
-    var pages = [
-      // Example new top level page
-      const MaterialPage(
-        key: ValueKey('Home'),
-        child: GroupView(),
-      ),
-    ];
-Navigator(
-      pages: pages,
-      onDidRemovePage: (page) => {
-        if (page.key == pages[0].key) {
-          Navigator.of(context).pop()
-        }
-      },
-    );
-    */
   }
 }
 

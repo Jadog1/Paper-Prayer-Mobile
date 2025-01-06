@@ -11,6 +11,9 @@ class PrayerRequest with _$PrayerRequest {
     required int id,
     required String request,
     @JsonKey(name: 'contact') required Contact user,
+    @JsonKey(name: 'contact_group') required ContactGroupPairs group,
+    @Default("") String? sentiment,
+    @Default("") @JsonKey(name: 'created_at') String createdAt,
   }) = _PrayerRequest;
 
   factory PrayerRequest.fromJson(Map<String, dynamic> json) => _$PrayerRequestFromJson(json);

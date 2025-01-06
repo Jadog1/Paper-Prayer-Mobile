@@ -25,6 +25,7 @@ Map<String, dynamic> _$$ContactImplToJson(_$ContactImpl instance) =>
 _$ContactGroupPairsImpl _$$ContactGroupPairsImplFromJson(
         Map<String, dynamic> json) =>
     _$ContactGroupPairsImpl(
+      id: (json['id'] as num?)?.toInt() ?? 0,
       contactId: (json['contact_id'] as num).toInt(),
       groupId: (json['group_id'] as num).toInt(),
       createdAt: json['created_at'] as String,
@@ -33,6 +34,7 @@ _$ContactGroupPairsImpl _$$ContactGroupPairsImplFromJson(
 Map<String, dynamic> _$$ContactGroupPairsImplToJson(
         _$ContactGroupPairsImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'contact_id': instance.contactId,
       'group_id': instance.groupId,
       'created_at': instance.createdAt,

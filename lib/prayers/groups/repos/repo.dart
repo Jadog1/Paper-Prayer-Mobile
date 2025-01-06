@@ -74,7 +74,48 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 }
 
 @riverpod
+class PrayerRequestRepo extends _$PrayerRequestRepo {
+  late Config config;
+
+  PrayerRequestRepo() {
+    config = Config();
+  }
+
+  @override
+  Future<List<PrayerRequest>> build([int? contactId]) async {
+    if (contactId == null) {
+      return [];
+    }
+    var prayerApi = config.prayerRequestApiClient;
+    return prayerApi.fetchPrayerRequests(contactId);
+  }
+
+  Future<void> saveRequest(PrayerRequest request) async {
+    var prayerApi = config.prayerRequestApiClient;
+    if (request.id == 0) {
+      await prayerApi.saveRequest(request);
+    } else {
+      await prayerApi.updateRequest(request);
+    }
+
+    ref.invalidateSelf();
+  }
+} 
+
+@riverpod
 Future<List<PrayerRequest>> fetchPrayerRequests(Ref ref, int contactId) async {
     var prayerApi = config.prayerRequestApiClient;
     return prayerApi.fetchPrayerRequests(contactId);
+}
+
+@riverpod
+Future<void> saveRequest(Ref ref, PrayerRequest request) async {
+  var prayerApi = config.prayerRequestApiClient;
+  if (request.id == 0) {
+    await prayerApi.saveRequest(request);
+  } else {
+    await prayerApi.updateRequest(request);
+  }
+
+  ref.invalidateSelf();
 }

@@ -114,4 +114,30 @@ class PrayerRequestApiClient {
     final json = jsonDecode(response.body) as List;
     return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
+
+  Future<void> removePrayerRequest(int requestId) async {
+    final response = await httpClient.delete(config.uri("/prayer_requests/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error removing prayer request: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> saveRequest(PrayerRequest request) async {
+    final response = await httpClient.post(config.uri("/prayer_requests/"), 
+      body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error saving prayer request: ${response.statusCode} - ${response.body}");
+    }
+  }
+
+  Future<void> updateRequest(PrayerRequest request) async {
+    final response = await httpClient.put(config.uri("/prayer_requests/"), 
+      body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error updating prayer request: ${response.statusCode} - ${response.body}");
+    }
+  }
 }

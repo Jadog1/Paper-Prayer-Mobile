@@ -19,7 +19,7 @@ class Contact with _$Contact {
 @freezed 
 class ContactGroupPairs with _$ContactGroupPairs {
   const factory ContactGroupPairs({
-    // The actual name of contactId is contact_id, but I want to use camelCase
+    @Default(0) int? id,
     @JsonKey(name: 'contact_id') required int contactId,
     @JsonKey(name: 'group_id') required int groupId, 
     @JsonKey(name: 'created_at') required String createdAt,
