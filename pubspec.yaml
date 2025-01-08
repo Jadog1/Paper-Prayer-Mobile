@@ -45,6 +45,7 @@ dependencies:
   flutter_hooks: ^0.20.5
   stack_trace: ^1.12.0
   intl: ^0.20.1
+  accordion: ^2.6.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,16 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 // import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 // import '../../shared/state_management.dart';
+
+String dateTimeToDate(String dateTime) {
+    var format = DateFormat('yMd');
+    var date = DateTime.parse(dateTime).toLocal();
+    return format.format(date);
+  }
 
 class GroupViewModel extends ChangeNotifier {
   final List<GroupContacts> _groups = [];

@@ -1,10 +1,12 @@
+import 'package:accordion/accordion.dart';
+import 'package:accordion/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
+import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/shared/widgets.dart';
-import 'package:intl/intl.dart';
 
 class PrayerRequestConsumer extends ConsumerWidget {
   const PrayerRequestConsumer({super.key, required this.user});
@@ -78,12 +80,6 @@ class RequestCard extends ConsumerWidget {
   const RequestCard({super.key, required this.request});
 
   final PrayerRequest request;
-
-  String dateTimeToDate(String dateTime) {
-    var format = DateFormat('yMd');
-    var date = DateTime.parse(dateTime).toLocal();
-    return format.format(date);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -183,16 +179,45 @@ class RequestDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Build a dashboard component that shows similar history, stats, and other information
+    var theme = Theme.of(context);
+    var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
     return Column(
       children: <Widget> [
         AppBar(title: const Text("Request Dashboard")),
-        const Text("Related Requests", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SizedBox(
-          height: 200,
-          child: RelatedRequests(request: request),
+        Expanded(
+          child: Accordion(
+            scaleWhenAnimating: false,
+            openAndCloseAnimation: true,
+            headerBackgroundColor: theme.colorScheme.primaryContainer,
+            scrollIntoViewOfItems: ScrollIntoViewOfItems.slow,
+            headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+            maxOpenSections: 1,
+            contentHorizontalPadding: 20,
+            rightIcon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimaryContainer),
+            flipRightIconIfOpen: true,
+            children: [
+              AccordionSection(
+                header: Text("Request Details", style: headerStyle),
+                content: Column(
+                  children: [
+                    Text("Request: ${request.request}"),
+                    Text("Sentiment: ${request.sentiment}"),
+                    Text("Created At: ${dateTimeToDate(request.createdAt)}"),
+                  ],
+                ),
+              ),
+              AccordionSection(
+                isOpen: true,
+                header: Text("Related Requests", style: headerStyle),
+                content: SizedBox(height: 400, child: RelatedRequests(request: request)),
+              ),
+              AccordionSection(
+                header: Text("Stats", style: headerStyle),
+                content: const Placeholder(),
+              ),
+            ],
+          ),
         ),
-        const Text("Stats"),
       ],
     );
   }
@@ -207,9 +232,30 @@ class RelatedRequests extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(fetchSimilarRequestsProvider(request.id));
     return switch(viewModel) {
-      AsyncData(:final value) => PrayerRequests(viewModel: value),
+      AsyncData(:final value) => SimplifiedPrayerRequests(requests: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "RelatedRequests", error: error, stackTrace: stackTrace),
       _ => const CircularProgressIndicator(),
     };
+  }
+}
+
+class SimplifiedPrayerRequests extends StatelessWidget {
+  const SimplifiedPrayerRequests({super.key, required this.requests});
+
+  final List<PrayerRequestScore> requests;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      itemCount: requests.length,
+      itemBuilder: (context, index) => Card(
+        child: ListTile(
+          title: Text(requests[index].request),
+          subtitle: Text(dateTimeToDate(requests[index].createdAt)),
+          trailing: Text("${(requests[index].score * 100).toStringAsFixed(2)}%"),
+        ),
+      ),
+    );
   }
 }

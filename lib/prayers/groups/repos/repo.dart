@@ -111,7 +111,7 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
 } 
 
 @riverpod
-Future<List<PrayerRequest>> fetchSimilarRequests(Ref ref, int requestId) async {
+Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   return prayerApi.fetchSimilarRequests(requestId);

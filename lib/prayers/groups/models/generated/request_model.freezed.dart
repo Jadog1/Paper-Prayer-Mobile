@@ -323,3 +323,335 @@ abstract class _PrayerRequest implements PrayerRequest {
   _$$PrayerRequestImplCopyWith<_$PrayerRequestImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+PrayerRequestScore _$PrayerRequestScoreFromJson(Map<String, dynamic> json) {
+  return _PrayerRequestScore.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PrayerRequestScore {
+  int get id => throw _privateConstructorUsedError;
+  String get request => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact')
+  Contact get user => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact_group')
+  ContactGroupPairs get group => throw _privateConstructorUsedError;
+  String? get sentiment => throw _privateConstructorUsedError;
+  double get score => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String get createdAt => throw _privateConstructorUsedError;
+
+  /// Serializes this PrayerRequestScore to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PrayerRequestScoreCopyWith<PrayerRequestScore> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PrayerRequestScoreCopyWith<$Res> {
+  factory $PrayerRequestScoreCopyWith(
+          PrayerRequestScore value, $Res Function(PrayerRequestScore) then) =
+      _$PrayerRequestScoreCopyWithImpl<$Res, PrayerRequestScore>;
+  @useResult
+  $Res call(
+      {int id,
+      String request,
+      @JsonKey(name: 'contact') Contact user,
+      @JsonKey(name: 'contact_group') ContactGroupPairs group,
+      String? sentiment,
+      double score,
+      @JsonKey(name: 'created_at') String createdAt});
+
+  $ContactCopyWith<$Res> get user;
+  $ContactGroupPairsCopyWith<$Res> get group;
+}
+
+/// @nodoc
+class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
+    implements $PrayerRequestScoreCopyWith<$Res> {
+  _$PrayerRequestScoreCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? request = null,
+    Object? user = null,
+    Object? group = null,
+    Object? sentiment = freezed,
+    Object? score = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      request: null == request
+          ? _value.request
+          : request // ignore: cast_nullable_to_non_nullable
+              as String,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Contact,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as ContactGroupPairs,
+      sentiment: freezed == sentiment
+          ? _value.sentiment
+          : sentiment // ignore: cast_nullable_to_non_nullable
+              as String?,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ContactCopyWith<$Res> get user {
+    return $ContactCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ContactGroupPairsCopyWith<$Res> get group {
+    return $ContactGroupPairsCopyWith<$Res>(_value.group, (value) {
+      return _then(_value.copyWith(group: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$PrayerRequestScoreImplCopyWith<$Res>
+    implements $PrayerRequestScoreCopyWith<$Res> {
+  factory _$$PrayerRequestScoreImplCopyWith(_$PrayerRequestScoreImpl value,
+          $Res Function(_$PrayerRequestScoreImpl) then) =
+      __$$PrayerRequestScoreImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      String request,
+      @JsonKey(name: 'contact') Contact user,
+      @JsonKey(name: 'contact_group') ContactGroupPairs group,
+      String? sentiment,
+      double score,
+      @JsonKey(name: 'created_at') String createdAt});
+
+  @override
+  $ContactCopyWith<$Res> get user;
+  @override
+  $ContactGroupPairsCopyWith<$Res> get group;
+}
+
+/// @nodoc
+class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
+    extends _$PrayerRequestScoreCopyWithImpl<$Res, _$PrayerRequestScoreImpl>
+    implements _$$PrayerRequestScoreImplCopyWith<$Res> {
+  __$$PrayerRequestScoreImplCopyWithImpl(_$PrayerRequestScoreImpl _value,
+      $Res Function(_$PrayerRequestScoreImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? request = null,
+    Object? user = null,
+    Object? group = null,
+    Object? sentiment = freezed,
+    Object? score = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$PrayerRequestScoreImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      request: null == request
+          ? _value.request
+          : request // ignore: cast_nullable_to_non_nullable
+              as String,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Contact,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as ContactGroupPairs,
+      sentiment: freezed == sentiment
+          ? _value.sentiment
+          : sentiment // ignore: cast_nullable_to_non_nullable
+              as String?,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PrayerRequestScoreImpl
+    with DiagnosticableTreeMixin
+    implements _PrayerRequestScore {
+  const _$PrayerRequestScoreImpl(
+      {required this.id,
+      required this.request,
+      @JsonKey(name: 'contact') required this.user,
+      @JsonKey(name: 'contact_group') required this.group,
+      this.sentiment = "",
+      required this.score,
+      @JsonKey(name: 'created_at') this.createdAt = ""});
+
+  factory _$PrayerRequestScoreImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PrayerRequestScoreImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  final String request;
+  @override
+  @JsonKey(name: 'contact')
+  final Contact user;
+  @override
+  @JsonKey(name: 'contact_group')
+  final ContactGroupPairs group;
+  @override
+  @JsonKey()
+  final String? sentiment;
+  @override
+  final double score;
+  @override
+  @JsonKey(name: 'created_at')
+  final String createdAt;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'PrayerRequestScore(id: $id, request: $request, user: $user, group: $group, sentiment: $sentiment, score: $score, createdAt: $createdAt)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'PrayerRequestScore'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('request', request))
+      ..add(DiagnosticsProperty('user', user))
+      ..add(DiagnosticsProperty('group', group))
+      ..add(DiagnosticsProperty('sentiment', sentiment))
+      ..add(DiagnosticsProperty('score', score))
+      ..add(DiagnosticsProperty('createdAt', createdAt));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PrayerRequestScoreImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.request, request) || other.request == request) &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.group, group) || other.group == group) &&
+            (identical(other.sentiment, sentiment) ||
+                other.sentiment == sentiment) &&
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, request, user, group, sentiment, score, createdAt);
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PrayerRequestScoreImplCopyWith<_$PrayerRequestScoreImpl> get copyWith =>
+      __$$PrayerRequestScoreImplCopyWithImpl<_$PrayerRequestScoreImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PrayerRequestScoreImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PrayerRequestScore implements PrayerRequestScore {
+  const factory _PrayerRequestScore(
+      {required final int id,
+      required final String request,
+      @JsonKey(name: 'contact') required final Contact user,
+      @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
+      final String? sentiment,
+      required final double score,
+      @JsonKey(name: 'created_at')
+      final String createdAt}) = _$PrayerRequestScoreImpl;
+
+  factory _PrayerRequestScore.fromJson(Map<String, dynamic> json) =
+      _$PrayerRequestScoreImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  String get request;
+  @override
+  @JsonKey(name: 'contact')
+  Contact get user;
+  @override
+  @JsonKey(name: 'contact_group')
+  ContactGroupPairs get group;
+  @override
+  String? get sentiment;
+  @override
+  double get score;
+  @override
+  @JsonKey(name: 'created_at')
+  String get createdAt;
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PrayerRequestScoreImplCopyWith<_$PrayerRequestScoreImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

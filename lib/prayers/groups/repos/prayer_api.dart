@@ -142,7 +142,7 @@ class PrayerRequestApiClient {
   }
 
   
-  Future<List<PrayerRequest>> fetchSimilarRequests(int requestId) async {
+  Future<List<PrayerRequestScore>> fetchSimilarRequests(int requestId) async {
     final response = await config.prayerRequestApiClient.httpClient.get(config.uri("/prayer_requests/similar/$requestId"));
 
     if (response.statusCode != 200) {
@@ -150,6 +150,6 @@ class PrayerRequestApiClient {
     }
 
     final json = jsonDecode(response.body) as List;
-    return json.map((request) => PrayerRequest.fromJson(request)).toList();
+    return json.map((request) => PrayerRequestScore.fromJson(request)).toList();
   }
 }

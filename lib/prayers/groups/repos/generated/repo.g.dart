@@ -7,7 +7,7 @@ part of '../repo.dart';
 // **************************************************************************
 
 String _$fetchSimilarRequestsHash() =>
-    r'1d406136552bc099ea0cfef3d4abc75b914b626f';
+    r'bceac8b5307af19b02075ed9f35e3882dc330b27';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -36,7 +36,7 @@ const fetchSimilarRequestsProvider = FetchSimilarRequestsFamily();
 
 /// See also [fetchSimilarRequests].
 class FetchSimilarRequestsFamily
-    extends Family<AsyncValue<List<PrayerRequest>>> {
+    extends Family<AsyncValue<List<PrayerRequestScore>>> {
   /// See also [fetchSimilarRequests].
   const FetchSimilarRequestsFamily();
 
@@ -75,7 +75,7 @@ class FetchSimilarRequestsFamily
 
 /// See also [fetchSimilarRequests].
 class FetchSimilarRequestsProvider
-    extends AutoDisposeFutureProvider<List<PrayerRequest>> {
+    extends AutoDisposeFutureProvider<List<PrayerRequestScore>> {
   /// See also [fetchSimilarRequests].
   FetchSimilarRequestsProvider(
     int requestId,
@@ -110,7 +110,8 @@ class FetchSimilarRequestsProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<PrayerRequest>> Function(FetchSimilarRequestsRef provider)
+    FutureOr<List<PrayerRequestScore>> Function(
+            FetchSimilarRequestsRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -128,7 +129,7 @@ class FetchSimilarRequestsProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<PrayerRequest>> createElement() {
+  AutoDisposeFutureProviderElement<List<PrayerRequestScore>> createElement() {
     return _FetchSimilarRequestsProviderElement(this);
   }
 
@@ -150,13 +151,13 @@ class FetchSimilarRequestsProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin FetchSimilarRequestsRef
-    on AutoDisposeFutureProviderRef<List<PrayerRequest>> {
+    on AutoDisposeFutureProviderRef<List<PrayerRequestScore>> {
   /// The parameter `requestId` of this provider.
   int get requestId;
 }
 
 class _FetchSimilarRequestsProviderElement
-    extends AutoDisposeFutureProviderElement<List<PrayerRequest>>
+    extends AutoDisposeFutureProviderElement<List<PrayerRequestScore>>
     with FetchSimilarRequestsRef {
   _FetchSimilarRequestsProviderElement(super.provider);
 
