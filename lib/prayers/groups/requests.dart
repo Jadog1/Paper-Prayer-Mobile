@@ -200,7 +200,7 @@ class RequestDashboard extends StatelessWidget {
                 header: Text("Request Details", style: headerStyle),
                 content: Column(
                   children: [
-                    Text("Request: ${request.request}"),
+                    Text(request.request),
                     Text("Sentiment: ${request.sentiment}"),
                     Text("Created At: ${dateTimeToDate(request.createdAt)}"),
                   ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/page_settings.dart';
+import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
@@ -156,11 +157,23 @@ class MemberCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       color: theme.colorScheme.secondary,
       child: ListTile(
+
         title: Text(user.name),
         subtitle: Text(user.description ?? ""),
         textColor: theme.colorScheme.onSecondary,
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => PrayerRequestConsumer(user: user)),
+        leading: IconButton( 
+          icon: const Icon(Icons.edit),
+          color: theme.colorScheme.onSecondaryContainer,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user)),
+          ),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.remove_red_eye),
+          color: theme.colorScheme.onSecondaryContainer,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => PrayerRequestConsumer(user: user)),
+          ),
         ),
       ),
     );
