@@ -12,6 +12,7 @@ class PrayerRequest with _$PrayerRequest {
   const factory PrayerRequest({
     required int id,
     required String request,
+    String? title,
     @JsonKey(name: 'contact') required Contact user,
     @JsonKey(name: 'contact_group') required ContactGroupPairs group,
     @Default("") String? sentiment,

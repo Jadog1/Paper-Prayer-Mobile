@@ -22,6 +22,7 @@ PrayerRequest _$PrayerRequestFromJson(Map<String, dynamic> json) {
 mixin _$PrayerRequest {
   int get id => throw _privateConstructorUsedError;
   String get request => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_group')
@@ -49,6 +50,7 @@ abstract class $PrayerRequestCopyWith<$Res> {
   $Res call(
       {int id,
       String request,
+      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
@@ -75,6 +77,7 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
   $Res call({
     Object? id = null,
     Object? request = null,
+    Object? title = freezed,
     Object? user = null,
     Object? group = null,
     Object? sentiment = freezed,
@@ -89,6 +92,10 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -140,6 +147,7 @@ abstract class _$$PrayerRequestImplCopyWith<$Res>
   $Res call(
       {int id,
       String request,
+      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
@@ -166,6 +174,7 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? request = null,
+    Object? title = freezed,
     Object? user = null,
     Object? group = null,
     Object? sentiment = freezed,
@@ -180,6 +189,10 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -208,6 +221,7 @@ class _$PrayerRequestImpl
   const _$PrayerRequestImpl(
       {required this.id,
       required this.request,
+      this.title,
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
       this.sentiment = "",
@@ -220,6 +234,8 @@ class _$PrayerRequestImpl
   final int id;
   @override
   final String request;
+  @override
+  final String? title;
   @override
   @JsonKey(name: 'contact')
   final Contact user;
@@ -235,7 +251,7 @@ class _$PrayerRequestImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PrayerRequest(id: $id, request: $request, user: $user, group: $group, sentiment: $sentiment, createdAt: $createdAt)';
+    return 'PrayerRequest(id: $id, request: $request, title: $title, user: $user, group: $group, sentiment: $sentiment, createdAt: $createdAt)';
   }
 
   @override
@@ -245,6 +261,7 @@ class _$PrayerRequestImpl
       ..add(DiagnosticsProperty('type', 'PrayerRequest'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('request', request))
+      ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
       ..add(DiagnosticsProperty('sentiment', sentiment))
@@ -258,6 +275,7 @@ class _$PrayerRequestImpl
             other is _$PrayerRequestImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.request, request) || other.request == request) &&
+            (identical(other.title, title) || other.title == title) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.sentiment, sentiment) ||
@@ -268,8 +286,8 @@ class _$PrayerRequestImpl
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, request, user, group, sentiment, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType, id, request, title, user, group, sentiment, createdAt);
 
   /// Create a copy of PrayerRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -291,6 +309,7 @@ abstract class _PrayerRequest implements PrayerRequest {
   const factory _PrayerRequest(
       {required final int id,
       required final String request,
+      final String? title,
       @JsonKey(name: 'contact') required final Contact user,
       @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
       final String? sentiment,
@@ -304,6 +323,8 @@ abstract class _PrayerRequest implements PrayerRequest {
   int get id;
   @override
   String get request;
+  @override
+  String? get title;
   @override
   @JsonKey(name: 'contact')
   Contact get user;
