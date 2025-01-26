@@ -96,6 +96,17 @@ class ContactsApiClient {
     final json = jsonDecode(response.body) as List;
     return json.map((group) => ContactGroupPairs.fromJson(group)).toList();
   }
+
+  Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
+    final response = await httpClient.get(config.uri("/contacts/related/$contactId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting related contacts: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((contact) => RelatedContact.fromJson(contact)).toList();
+  }
 }
 
 class PrayerRequestApiClient {

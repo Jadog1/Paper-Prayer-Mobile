@@ -39,3 +39,30 @@ Map<String, dynamic> _$$ContactGroupPairsImplToJson(
       'group_id': instance.groupId,
       'created_at': instance.createdAt,
     };
+
+_$RelatedContactImpl _$$RelatedContactImplFromJson(Map<String, dynamic> json) =>
+    _$RelatedContactImpl(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      contactId: (json['contact_id'] as num).toInt(),
+      relatedContactId: (json['related_contact_id'] as num).toInt(),
+      createdAt: json['created_at'] as String,
+      accountId: (json['accountId'] as num?)?.toInt() ?? 0,
+      highLevelRelationship: json['high_level_relationship'] as String?,
+      lowLevelRelationship: json['low_level_relationship'] as String?,
+      name: json['name'] as String,
+      label: json['label'] as String,
+    );
+
+Map<String, dynamic> _$$RelatedContactImplToJson(
+        _$RelatedContactImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'contact_id': instance.contactId,
+      'related_contact_id': instance.relatedContactId,
+      'created_at': instance.createdAt,
+      'accountId': instance.accountId,
+      'high_level_relationship': instance.highLevelRelationship,
+      'low_level_relationship': instance.lowLevelRelationship,
+      'name': instance.name,
+      'label': instance.label,
+    };

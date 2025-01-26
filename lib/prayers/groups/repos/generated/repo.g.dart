@@ -165,7 +165,7 @@ class _FetchSimilarRequestsProviderElement
   int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'e0f98f33627d056be7d91fcd5e2f65a55ac989d2';
+String _$groupContactsRepoHash() => r'987644ae9c094780a0521a84a92c1b2148602f38';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)

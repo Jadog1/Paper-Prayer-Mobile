@@ -49,7 +49,7 @@ class PrayerRequestView extends ConsumerWidget {
         children: [
           Expanded(child: PrayerRequests(viewModel: viewModel,)),
           ElevatedButton(
-          onPressed: () => editPrayerRequestBottomSheet(context, ref, PrayerRequest(id: 0, request: "", user: user, group: contactGroup)),
+          onPressed: () => editPrayerRequestBottomSheet(context, ref, PrayerRequest(id: 0, request: "", user: user, group: contactGroup, relatedContactIds: [],)),
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
           ),
@@ -89,17 +89,21 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
 
   @override
   Widget build(BuildContext context) {
-    final title = Text(widget.request.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold));
     final subtitle = Text(widget.request.request, overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis, maxLines: _editMode ? null : 3);
     return AnimatedSize(
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 300),
       child: SizedBox(
         height: _editMode ? null : 105,
         child: Card(
           margin: const EdgeInsets.only(bottom: 5, top: 5),
           child: ListTile(
             leading: _editMode ? const Icon(Icons.chevron_left) : const Icon(Icons.chevron_right),
-            title: title,
+            title: Text(
+              widget.request.title ?? "", 
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              maxLines: _editMode ? null : 1,
+              overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis,
+            ),
             subtitle: !_editMode ? subtitle : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -153,15 +157,11 @@ class CompactRequestButtonGroup extends ConsumerWidget {
             icon: const Icon(Icons.edit),
             onPressed: () => editPrayerRequestBottomSheet(context, ref, request),
           ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            style: const ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
-            ),
-            visualDensity: VisualDensity.compact,
-            icon: const Icon(Icons.delete),
-            onPressed: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request),
+          DeleteConfirmationButton(
+            onDelete: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request),
+            onCancel: () => {},
+            deleteContext: "prayer request",
+            child:  const Icon(Icons.delete),
           ),
         ],
       ),

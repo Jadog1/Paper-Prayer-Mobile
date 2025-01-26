@@ -82,3 +82,55 @@ class InteractiveLoadButton extends HookConsumerWidget {
     );
   }
 }
+
+class DeleteConfirmationButton extends HookConsumerWidget {
+  const DeleteConfirmationButton({super.key, 
+    required this.onDelete, required this.onCancel, required this.child,
+    required this.deleteContext});
+
+  final Future<void> Function() onDelete;
+  final void Function() onCancel;
+  final String deleteContext;
+  final Widget child;
+
+  
+  Future<void> Function() deleteAndGoBack(BuildContext context) {
+    return () async {
+      onDelete();
+      Navigator.of(context).pop();
+    };
+  }
+
+  Future<void> Function() cancelAndGoBack(BuildContext context) {
+    return () async {
+      onCancel();
+      Navigator.of(context).pop();
+    };
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return InkWell(
+      onTap: () {
+        showDialog(context: context, builder: (context) {
+          return AlertDialog(
+            title: const Text('Delete'),
+            content: Text('Are you sure you want to delete this $deleteContext?'),
+            actions: [
+              TextButton(
+                onPressed: cancelAndGoBack(context),
+                child: const Text('Cancel'),
+              ),
+              InteractiveLoadButton(
+                customProvider: deleteAndGoBack(context),
+                buttonStyle: deleteButtonStyle,
+                buttonText: 'Delete',
+               ),
+            ],
+          );
+        });
+      },
+      child: child,
+    );
+  }
+}

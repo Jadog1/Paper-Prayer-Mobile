@@ -71,6 +71,11 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 
     ref.invalidateSelf();
   }
+
+  Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
+    var contactApi = config.contactApiClient;
+    return contactApi.fetchRelatedContacts(contactId);
+  }
 }
 
 @riverpod

@@ -30,6 +30,8 @@ mixin _$PrayerRequest {
   String? get sentiment => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds => throw _privateConstructorUsedError;
 
   /// Serializes this PrayerRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,7 +56,8 @@ abstract class $PrayerRequestCopyWith<$Res> {
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   $ContactCopyWith<$Res> get user;
   $ContactGroupPairsCopyWith<$Res> get group;
@@ -82,6 +85,7 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
     Object? group = null,
     Object? sentiment = freezed,
     Object? createdAt = null,
+    Object? relatedContactIds = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -112,6 +116,10 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      relatedContactIds: null == relatedContactIds
+          ? _value.relatedContactIds
+          : relatedContactIds // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ) as $Val);
   }
 
@@ -151,7 +159,8 @@ abstract class _$$PrayerRequestImplCopyWith<$Res>
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   @override
   $ContactCopyWith<$Res> get user;
@@ -179,6 +188,7 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
     Object? group = null,
     Object? sentiment = freezed,
     Object? createdAt = null,
+    Object? relatedContactIds = null,
   }) {
     return _then(_$PrayerRequestImpl(
       id: null == id
@@ -209,6 +219,10 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      relatedContactIds: null == relatedContactIds
+          ? _value._relatedContactIds
+          : relatedContactIds // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ));
   }
 }
@@ -225,7 +239,10 @@ class _$PrayerRequestImpl
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
       this.sentiment = "",
-      @JsonKey(name: 'created_at') this.createdAt = ""});
+      @JsonKey(name: 'created_at') this.createdAt = "",
+      @JsonKey(name: 'related_contact_ids')
+      required final List<int> relatedContactIds})
+      : _relatedContactIds = relatedContactIds;
 
   factory _$PrayerRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrayerRequestImplFromJson(json);
@@ -248,10 +265,19 @@ class _$PrayerRequestImpl
   @override
   @JsonKey(name: 'created_at')
   final String createdAt;
+  final List<int> _relatedContactIds;
+  @override
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds {
+    if (_relatedContactIds is EqualUnmodifiableListView)
+      return _relatedContactIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_relatedContactIds);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PrayerRequest(id: $id, request: $request, title: $title, user: $user, group: $group, sentiment: $sentiment, createdAt: $createdAt)';
+    return 'PrayerRequest(id: $id, request: $request, title: $title, user: $user, group: $group, sentiment: $sentiment, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
   }
 
   @override
@@ -265,7 +291,8 @@ class _$PrayerRequestImpl
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
       ..add(DiagnosticsProperty('sentiment', sentiment))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds));
   }
 
   @override
@@ -281,13 +308,23 @@ class _$PrayerRequestImpl
             (identical(other.sentiment, sentiment) ||
                 other.sentiment == sentiment) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality()
+                .equals(other._relatedContactIds, _relatedContactIds));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, request, title, user, group, sentiment, createdAt);
+      runtimeType,
+      id,
+      request,
+      title,
+      user,
+      group,
+      sentiment,
+      createdAt,
+      const DeepCollectionEquality().hash(_relatedContactIds));
 
   /// Create a copy of PrayerRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -313,8 +350,9 @@ abstract class _PrayerRequest implements PrayerRequest {
       @JsonKey(name: 'contact') required final Contact user,
       @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
       final String? sentiment,
-      @JsonKey(name: 'created_at')
-      final String createdAt}) = _$PrayerRequestImpl;
+      @JsonKey(name: 'created_at') final String createdAt,
+      @JsonKey(name: 'related_contact_ids')
+      required final List<int> relatedContactIds}) = _$PrayerRequestImpl;
 
   factory _PrayerRequest.fromJson(Map<String, dynamic> json) =
       _$PrayerRequestImpl.fromJson;
@@ -336,6 +374,9 @@ abstract class _PrayerRequest implements PrayerRequest {
   @override
   @JsonKey(name: 'created_at')
   String get createdAt;
+  @override
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds;
 
   /// Create a copy of PrayerRequest
   /// with the given fields replaced by the non-null parameter values.
