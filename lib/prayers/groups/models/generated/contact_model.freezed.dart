@@ -495,7 +495,7 @@ mixin _$RelatedContact {
   @JsonKey(name: 'contact_id')
   int get contactId => throw _privateConstructorUsedError;
   @JsonKey(name: 'related_contact_id')
-  int get relatedContactId => throw _privateConstructorUsedError;
+  int? get relatedContactId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
   int get accountId => throw _privateConstructorUsedError;
@@ -525,7 +525,7 @@ abstract class $RelatedContactCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'contact_id') int contactId,
-      @JsonKey(name: 'related_contact_id') int relatedContactId,
+      @JsonKey(name: 'related_contact_id') int? relatedContactId,
       @JsonKey(name: 'created_at') String createdAt,
       int accountId,
       @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
@@ -551,7 +551,7 @@ class _$RelatedContactCopyWithImpl<$Res, $Val extends RelatedContact>
   $Res call({
     Object? id = null,
     Object? contactId = null,
-    Object? relatedContactId = null,
+    Object? relatedContactId = freezed,
     Object? createdAt = null,
     Object? accountId = null,
     Object? highLevelRelationship = freezed,
@@ -568,10 +568,10 @@ class _$RelatedContactCopyWithImpl<$Res, $Val extends RelatedContact>
           ? _value.contactId
           : contactId // ignore: cast_nullable_to_non_nullable
               as int,
-      relatedContactId: null == relatedContactId
+      relatedContactId: freezed == relatedContactId
           ? _value.relatedContactId
           : relatedContactId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -611,7 +611,7 @@ abstract class _$$RelatedContactImplCopyWith<$Res>
   $Res call(
       {int id,
       @JsonKey(name: 'contact_id') int contactId,
-      @JsonKey(name: 'related_contact_id') int relatedContactId,
+      @JsonKey(name: 'related_contact_id') int? relatedContactId,
       @JsonKey(name: 'created_at') String createdAt,
       int accountId,
       @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
@@ -635,7 +635,7 @@ class __$$RelatedContactImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? contactId = null,
-    Object? relatedContactId = null,
+    Object? relatedContactId = freezed,
     Object? createdAt = null,
     Object? accountId = null,
     Object? highLevelRelationship = freezed,
@@ -652,10 +652,10 @@ class __$$RelatedContactImplCopyWithImpl<$Res>
           ? _value.contactId
           : contactId // ignore: cast_nullable_to_non_nullable
               as int,
-      relatedContactId: null == relatedContactId
+      relatedContactId: freezed == relatedContactId
           ? _value.relatedContactId
           : relatedContactId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -692,7 +692,7 @@ class _$RelatedContactImpl
   const _$RelatedContactImpl(
       {this.id = 0,
       @JsonKey(name: 'contact_id') required this.contactId,
-      @JsonKey(name: 'related_contact_id') required this.relatedContactId,
+      @JsonKey(name: 'related_contact_id') this.relatedContactId,
       @JsonKey(name: 'created_at') required this.createdAt,
       this.accountId = 0,
       @JsonKey(name: 'high_level_relationship') this.highLevelRelationship,
@@ -711,7 +711,7 @@ class _$RelatedContactImpl
   final int contactId;
   @override
   @JsonKey(name: 'related_contact_id')
-  final int relatedContactId;
+  final int? relatedContactId;
   @override
   @JsonKey(name: 'created_at')
   final String createdAt;
@@ -807,7 +807,7 @@ abstract class _RelatedContact implements RelatedContact {
   const factory _RelatedContact(
       {final int id,
       @JsonKey(name: 'contact_id') required final int contactId,
-      @JsonKey(name: 'related_contact_id') required final int relatedContactId,
+      @JsonKey(name: 'related_contact_id') final int? relatedContactId,
       @JsonKey(name: 'created_at') required final String createdAt,
       final int accountId,
       @JsonKey(name: 'high_level_relationship')
@@ -827,7 +827,7 @@ abstract class _RelatedContact implements RelatedContact {
   int get contactId;
   @override
   @JsonKey(name: 'related_contact_id')
-  int get relatedContactId;
+  int? get relatedContactId;
   @override
   @JsonKey(name: 'created_at')
   String get createdAt;

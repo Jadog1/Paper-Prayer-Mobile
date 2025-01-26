@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 // import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
@@ -45,4 +46,16 @@ class PrayerRequestViewModel extends ChangeNotifier {
     _requests.remove(request);
     notifyListeners();
   }
+}
+
+List<RelatedContact> findRelatedContacts(List<RelatedContact> allRelated, PrayerRequest request) {
+  return allRelated.where((related) => request.relatedContactIds.contains(related.id)).toList();
+}
+
+String relatedContactsAsString(List<RelatedContact> relatedContacts) {
+  List<String> contacts = [];
+  for (var contact in relatedContacts) {
+    contacts.add("${contact.name} (${contact.highLevelRelationship})");
+  }
+  return contacts.join(", ");
 }

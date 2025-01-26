@@ -6,8 +6,8 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchSimilarRequestsHash() =>
-    r'bceac8b5307af19b02075ed9f35e3882dc330b27';
+String _$fetchPrayerRequestContactHash() =>
+    r'4181e41f13654f94018ffe11a6bb6c839b2483dd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,6 +29,144 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [fetchPrayerRequestContact].
+@ProviderFor(fetchPrayerRequestContact)
+const fetchPrayerRequestContactProvider = FetchPrayerRequestContactFamily();
+
+/// See also [fetchPrayerRequestContact].
+class FetchPrayerRequestContactFamily
+    extends Family<AsyncValue<PrayerRequestContact>> {
+  /// See also [fetchPrayerRequestContact].
+  const FetchPrayerRequestContactFamily();
+
+  /// See also [fetchPrayerRequestContact].
+  FetchPrayerRequestContactProvider call(
+    Contact contact,
+  ) {
+    return FetchPrayerRequestContactProvider(
+      contact,
+    );
+  }
+
+  @override
+  FetchPrayerRequestContactProvider getProviderOverride(
+    covariant FetchPrayerRequestContactProvider provider,
+  ) {
+    return call(
+      provider.contact,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchPrayerRequestContactProvider';
+}
+
+/// See also [fetchPrayerRequestContact].
+class FetchPrayerRequestContactProvider
+    extends AutoDisposeFutureProvider<PrayerRequestContact> {
+  /// See also [fetchPrayerRequestContact].
+  FetchPrayerRequestContactProvider(
+    Contact contact,
+  ) : this._internal(
+          (ref) => fetchPrayerRequestContact(
+            ref as FetchPrayerRequestContactRef,
+            contact,
+          ),
+          from: fetchPrayerRequestContactProvider,
+          name: r'fetchPrayerRequestContactProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchPrayerRequestContactHash,
+          dependencies: FetchPrayerRequestContactFamily._dependencies,
+          allTransitiveDependencies:
+              FetchPrayerRequestContactFamily._allTransitiveDependencies,
+          contact: contact,
+        );
+
+  FetchPrayerRequestContactProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.contact,
+  }) : super.internal();
+
+  final Contact contact;
+
+  @override
+  Override overrideWith(
+    FutureOr<PrayerRequestContact> Function(
+            FetchPrayerRequestContactRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchPrayerRequestContactProvider._internal(
+        (ref) => create(ref as FetchPrayerRequestContactRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        contact: contact,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<PrayerRequestContact> createElement() {
+    return _FetchPrayerRequestContactProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchPrayerRequestContactProvider &&
+        other.contact == contact;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, contact.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchPrayerRequestContactRef
+    on AutoDisposeFutureProviderRef<PrayerRequestContact> {
+  /// The parameter `contact` of this provider.
+  Contact get contact;
+}
+
+class _FetchPrayerRequestContactProviderElement
+    extends AutoDisposeFutureProviderElement<PrayerRequestContact>
+    with FetchPrayerRequestContactRef {
+  _FetchPrayerRequestContactProviderElement(super.provider);
+
+  @override
+  Contact get contact => (origin as FetchPrayerRequestContactProvider).contact;
+}
+
+String _$fetchSimilarRequestsHash() =>
+    r'bceac8b5307af19b02075ed9f35e3882dc330b27';
 
 /// See also [fetchSimilarRequests].
 @ProviderFor(fetchSimilarRequests)
@@ -165,7 +303,7 @@ class _FetchSimilarRequestsProviderElement
   int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'987644ae9c094780a0521a84a92c1b2148602f38';
+String _$groupContactsRepoHash() => r'e0f98f33627d056be7d91fcd5e2f65a55ac989d2';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)

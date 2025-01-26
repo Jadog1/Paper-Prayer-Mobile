@@ -13,11 +13,14 @@ class PrayerRequestConsumer extends ConsumerWidget {
 
   final Contact user;
 
+
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(prayerRequestRepoProvider(user.id));
+    var viewModel = ref.watch(fetchPrayerRequestContactProvider(user));
+
     return switch(viewModel) {
-      AsyncData(:final value) => PrayerRequestView(viewModel: value),
+      AsyncData(:final value) => PrayerRequestView(prayerRequestContact: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
       _ => const CircularProgressIndicator(),
     };
@@ -25,19 +28,18 @@ class PrayerRequestConsumer extends ConsumerWidget {
 }
 
 class PrayerRequestView extends ConsumerWidget {
-  const PrayerRequestView({super.key, required this.viewModel});
+  const PrayerRequestView({super.key, required this.prayerRequestContact});
 
-  final List<PrayerRequest> viewModel;
+  final PrayerRequestContact prayerRequestContact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var theme = Theme.of(context);
 
-    var user = const Contact(id: 0, name: "", createdAt: "");
+    var user = prayerRequestContact.user;
     var contactGroup = const ContactGroupPairs(id: 0, contactId: 0, groupId: 0, createdAt: "");
-    if (viewModel.map((request) => request.user).toSet().length == 1) {
-      user = viewModel[0].user;
-      contactGroup = viewModel[0].group;
+    if (prayerRequestContact.prayerRequests.isNotEmpty) {
+      contactGroup = prayerRequestContact.prayerRequests[0].group;
     }
 
 
@@ -47,7 +49,7 @@ class PrayerRequestView extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          Expanded(child: PrayerRequests(viewModel: viewModel,)),
+          Expanded(child: PrayerRequests(prayerRequestContact: prayerRequestContact,)),
           ElevatedButton(
           onPressed: () => editPrayerRequestBottomSheet(context, ref, PrayerRequest(id: 0, request: "", user: user, group: contactGroup, relatedContactIds: [],)),
           style: ButtonStyle(
@@ -62,24 +64,25 @@ class PrayerRequestView extends ConsumerWidget {
 }
 
 class PrayerRequests extends StatelessWidget {
-  const PrayerRequests({super.key, required this.viewModel});
+  const PrayerRequests({super.key, required this.prayerRequestContact});
 
-  final List<PrayerRequest> viewModel;
+  final PrayerRequestContact prayerRequestContact;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(8),
-      itemCount: viewModel.length,
-      itemBuilder: (context, index) => CompactRequestCard(request: viewModel[index]),
+      itemCount: prayerRequestContact.prayerRequests.length,
+      itemBuilder: (context, index) => CompactRequestCard(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
     );
   }
 }
 
 class CompactRequestCard extends ConsumerStatefulWidget {
-  const CompactRequestCard({super.key, required this.request});
+  const CompactRequestCard({super.key, required this.request, required this.allRelatedContacts});
 
   final PrayerRequest request;
+  final List<RelatedContact> allRelatedContacts;
 
   @override
   ConsumerState<CompactRequestCard> createState() => _CompactRequestCardState();
@@ -87,9 +90,29 @@ class CompactRequestCard extends ConsumerStatefulWidget {
 class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
   var _editMode = false;
 
+  Widget expandText(String text, int maxLines, {style = const TextStyle()}) {
+    return Text(
+      text, 
+      overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis, 
+      maxLines: _editMode ? null : maxLines,
+      style: style,
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final subtitle = Text(widget.request.request, overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis, maxLines: _editMode ? null : 3);
+    Widget subtitle = expandText(widget.request.request, 3);
+    var relatedContactText = relatedContactsAsString(findRelatedContacts(widget.allRelatedContacts, widget.request));
+    if (relatedContactText.isNotEmpty) {
+      subtitle = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          expandText(relatedContactText, 1, style: const TextStyle(fontStyle: FontStyle.italic)),
+          expandText(widget.request.request, 2),
+        ],
+      );
+    }
+    
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       child: SizedBox(
@@ -98,12 +121,7 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
           margin: const EdgeInsets.only(bottom: 5, top: 5),
           child: ListTile(
             leading: _editMode ? const Icon(Icons.chevron_left) : const Icon(Icons.chevron_right),
-            title: Text(
-              widget.request.title ?? "", 
-              style: const TextStyle(fontWeight: FontWeight.bold),
-              maxLines: _editMode ? null : 1,
-              overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis,
-            ),
+            title: expandText(widget.request.title ?? "", 1, style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: !_editMode ? subtitle : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,7 +159,7 @@ class CompactRequestButtonGroup extends ConsumerWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
             ),
             visualDensity: VisualDensity.compact,
-            icon: const Icon(Icons.scatter_plot),
+            icon: const Icon(Icons.dashboard_customize),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => RequestDashboard(request: request))
             ),

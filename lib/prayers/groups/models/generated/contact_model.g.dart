@@ -44,7 +44,7 @@ _$RelatedContactImpl _$$RelatedContactImplFromJson(Map<String, dynamic> json) =>
     _$RelatedContactImpl(
       id: (json['id'] as num?)?.toInt() ?? 0,
       contactId: (json['contact_id'] as num).toInt(),
-      relatedContactId: (json['related_contact_id'] as num).toInt(),
+      relatedContactId: (json['related_contact_id'] as num?)?.toInt(),
       createdAt: json['created_at'] as String,
       accountId: (json['accountId'] as num?)?.toInt() ?? 0,
       highLevelRelationship: json['high_level_relationship'] as String?,

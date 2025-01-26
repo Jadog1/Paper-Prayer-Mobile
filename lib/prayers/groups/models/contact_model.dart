@@ -33,7 +33,7 @@ class RelatedContact with _$RelatedContact {
   const factory RelatedContact({
     @Default(0) int id,
     @JsonKey(name: 'contact_id') required int contactId,
-    @JsonKey(name: 'related_contact_id') required int relatedContactId,
+    @JsonKey(name: 'related_contact_id') int? relatedContactId,
     @JsonKey(name: 'created_at') required String createdAt,
     @Default(0) int accountId,
     @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,

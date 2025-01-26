@@ -71,11 +71,24 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 
     ref.invalidateSelf();
   }
+}
 
-  Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
-    var contactApi = config.contactApiClient;
-    return contactApi.fetchRelatedContacts(contactId);
-  }
+class PrayerRequestContact {
+  final Contact user;
+  final List<RelatedContact> relatedContacts;
+  final List<PrayerRequest> prayerRequests;
+
+  PrayerRequestContact({required this.user, required this.relatedContacts, required this.prayerRequests});
+}
+
+@riverpod
+Future<PrayerRequestContact> fetchPrayerRequestContact(Ref ref, Contact contact) async {
+  var contactApi = config.contactApiClient;
+  var prayerRequests = await ref.watch(prayerRequestRepoProvider(contact.id).future);
+  var relatedContacts = await contactApi.fetchRelatedContacts(contact.id);
+  var user = contact;
+
+  return PrayerRequestContact(user: user, relatedContacts: relatedContacts, prayerRequests: prayerRequests);
 }
 
 @riverpod
