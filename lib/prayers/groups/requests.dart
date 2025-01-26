@@ -71,74 +71,113 @@ class PrayerRequests extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(8),
       itemCount: viewModel.length,
-      itemBuilder: (context, index) => RequestCard(request: viewModel[index]),
+      itemBuilder: (context, index) => CompactRequestCard(request: viewModel[index]),
     );
   }
 }
 
-class RequestCard extends ConsumerWidget {
-  const RequestCard({super.key, required this.request});
+class CompactRequestCard extends ConsumerStatefulWidget {
+  const CompactRequestCard({super.key, required this.request});
 
   final PrayerRequest request;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10, top: 10),
-      child: ListTile(
-        leading: PopupMenuButton(
-          itemBuilder:(context) => <PopupMenuEntry>[
-            PopupMenuItem(
-              child: ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('Edit'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  editPrayerRequestBottomSheet(context, ref, request);
-                }
-              ),
+  ConsumerState<CompactRequestCard> createState() => _CompactRequestCardState();
+}
+class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
+  var _editMode = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = Text(widget.request.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold));
+    final subtitle = Text(widget.request.request, overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis, maxLines: _editMode ? null : 3);
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 250),
+      child: SizedBox(
+        height: _editMode ? null : 105,
+        child: Card(
+          margin: const EdgeInsets.only(bottom: 5, top: 5),
+          child: ListTile(
+            leading: _editMode ? const Icon(Icons.chevron_left) : const Icon(Icons.chevron_right),
+            title: title,
+            subtitle: !_editMode ? subtitle : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                subtitle,
+                CompactRequestButtonGroup(request: widget.request),
+              ],
             ),
-            PopupMenuItem(
-              child: ListTile(
-                leading: const Icon(Icons.delete),
-                title: const Text('Delete'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request);
-                } 
-              ),
-            ),
-            const PopupMenuDivider(),
-            PopupMenuItem(
-              child: ListTile(
-                leading: const Icon(Icons.cancel),
-                title: const Text('Cancel'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                }
-              ),
-            ),
-          ],
-        ),
-        title: Text(request.request),
-        subtitle: Text(dateTimeToDate(request.createdAt)),
-        trailing: sentimentIcon(request.sentiment),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => RequestDashboard(request: request))
+            // trailing: sentimentIcon(request.sentiment),
+            visualDensity: VisualDensity.compact,
+            onTap: () => setState(() => _editMode = !_editMode),
+          ),
         ),
       ),
     );
   }
 }
 
+class CompactRequestButtonGroup extends ConsumerWidget {
+  const CompactRequestButtonGroup({super.key, required this.request});
+
+  final PrayerRequest request;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      height: 26,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 25,
+        children: [
+            IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            style: const ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+            ),
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.scatter_plot),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => RequestDashboard(request: request))
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            style: const ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+            ),
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.edit),
+            onPressed: () => editPrayerRequestBottomSheet(context, ref, request),
+          ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            style: const ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+            ),
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.delete),
+            onPressed: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 Icon sentimentIcon(String? sentiment) {
   switch (sentiment) {
     case 'positive':
-      return const Icon(Icons.sentiment_satisfied);
+      return const Icon(Icons.sentiment_very_satisfied_sharp);
     case 'negative':
-      return const Icon(Icons.sentiment_dissatisfied);
+      return const Icon(Icons.sentiment_very_dissatisfied);
     case 'neutral':
-      return const Icon(Icons.sentiment_neutral);
+      return const Icon(Icons.sentiment_neutral_rounded);
     default:
       return const Icon(Icons.question_mark);
   }
