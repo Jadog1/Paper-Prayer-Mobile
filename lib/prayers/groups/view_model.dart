@@ -59,3 +59,11 @@ String relatedContactsAsString(List<RelatedContact> relatedContacts) {
   }
   return contacts.join(", ");
 }
+
+String relatedContactsFullDescription(List<RelatedContact> relatedContacts) {
+  List<String> contacts = [];
+  for (var contact in relatedContacts) {
+    contacts.add("${contact.name} is ${contact.highLevelRelationship} and ${contact.lowLevelRelationship}. Additional info: ${contact.label}");
+  }
+  return contacts.join(", ");
+}

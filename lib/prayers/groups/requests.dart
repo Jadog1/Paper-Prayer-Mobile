@@ -8,12 +8,17 @@ import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
+class PrayerRequestWithAll {
+  final PrayerRequest request;
+  final List<RelatedContact> relatedContacts;
+
+  PrayerRequestWithAll({required this.request, required this.relatedContacts});
+}
+
 class PrayerRequestConsumer extends ConsumerWidget {
   const PrayerRequestConsumer({super.key, required this.user});
 
   final Contact user;
-
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,10 +84,11 @@ class PrayerRequests extends StatelessWidget {
 }
 
 class CompactRequestCard extends ConsumerStatefulWidget {
-  const CompactRequestCard({super.key, required this.request, required this.allRelatedContacts});
+  const CompactRequestCard({super.key, required this.request, required this.allRelatedContacts, this.child});
 
   final PrayerRequest request;
   final List<RelatedContact> allRelatedContacts;
+  final Widget? child;
 
   @override
   ConsumerState<CompactRequestCard> createState() => _CompactRequestCardState();
@@ -115,8 +121,11 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
     
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
-      child: SizedBox(
-        height: _editMode ? null : 105,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: 105,
+          maxHeight: _editMode ? double.infinity : 105,
+        ),
         child: Card(
           margin: const EdgeInsets.only(bottom: 5, top: 5),
           child: ListTile(
@@ -126,7 +135,8 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 subtitle,
-                CompactRequestButtonGroup(request: widget.request),
+                (widget.child != null) ? widget.child! :
+                  CompactRequestButtonGroup(request: widget.request, allRelatedContacts: widget.allRelatedContacts,),
               ],
             ),
             // trailing: sentimentIcon(request.sentiment),
@@ -140,12 +150,14 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
 }
 
 class CompactRequestButtonGroup extends ConsumerWidget {
-  const CompactRequestButtonGroup({super.key, required this.request});
+  const CompactRequestButtonGroup({super.key, required this.request, required this.allRelatedContacts});
 
   final PrayerRequest request;
+  final List<RelatedContact> allRelatedContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var prayerWithAll = PrayerRequestWithAll(request: request, relatedContacts: allRelatedContacts);
     return SizedBox(
       height: 26,
       child: Row(
@@ -161,7 +173,7 @@ class CompactRequestButtonGroup extends ConsumerWidget {
             visualDensity: VisualDensity.compact,
             icon: const Icon(Icons.dashboard_customize),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => RequestDashboard(request: request))
+              MaterialPageRoute(builder: (context) => RequestDashboard(prayerWithAll: prayerWithAll)),
             ),
           ),
           const Spacer(),
@@ -230,14 +242,16 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
 }
 
 class RequestDashboard extends StatelessWidget {
-  const RequestDashboard({super.key, required this.request});
+  const RequestDashboard({super.key, required this.prayerWithAll});
 
-  final PrayerRequest request;
+  final PrayerRequestWithAll prayerWithAll;
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
+    var request = prayerWithAll.request;
+    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, request);
     return Column(
       children: <Widget> [
         AppBar(title: const Text("Request Dashboard")),
@@ -260,13 +274,14 @@ class RequestDashboard extends StatelessWidget {
                     Text(request.request),
                     Text("Sentiment: ${request.sentiment}"),
                     Text("Created At: ${dateTimeToDate(request.createdAt)}"),
+                    Text("Related contacts: ${relatedContactsFullDescription(relatedContacts)}"),
                   ],
                 ),
               ),
               AccordionSection(
                 isOpen: true,
                 header: Text("Related Requests", style: headerStyle),
-                content: SizedBox(height: 400, child: RelatedRequests(request: request)),
+                content: SizedBox(height: 400, child: RelatedRequests(prayerWithAll: prayerWithAll)),
               ),
               AccordionSection(
                 header: Text("Stats", style: headerStyle),
@@ -281,38 +296,47 @@ class RequestDashboard extends StatelessWidget {
 }
 
 class RelatedRequests extends ConsumerWidget {
-  const RelatedRequests({super.key, required this.request});
+  const RelatedRequests({super.key, required this.prayerWithAll});
 
-  final PrayerRequest request;
+  final PrayerRequestWithAll prayerWithAll;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var request = prayerWithAll.request;
     var viewModel = ref.watch(fetchSimilarRequestsProvider(request.id));
     return switch(viewModel) {
-      AsyncData(:final value) => SimplifiedPrayerRequests(requests: value),
+      AsyncData(:final value) => CompactSimplifiedPrayerRequests(requests: value, prayerWithAll: prayerWithAll,), // SimplifiedPrayerRequests(requests: value, prayerWithAll: prayerWithAll),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "RelatedRequests", error: error, stackTrace: stackTrace),
       _ => const CircularProgressIndicator(),
     };
   }
 }
 
-class SimplifiedPrayerRequests extends StatelessWidget {
-  const SimplifiedPrayerRequests({super.key, required this.requests});
+class CompactSimplifiedPrayerRequests extends StatelessWidget {
+  const CompactSimplifiedPrayerRequests({super.key, required this.requests, required this.prayerWithAll});
 
   final List<PrayerRequestScore> requests;
+  final PrayerRequestWithAll prayerWithAll;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(8),
       itemCount: requests.length,
-      itemBuilder: (context, index) => Card(
-        child: ListTile(
-          title: Text(requests[index].request),
-          subtitle: Text(dateTimeToDate(requests[index].createdAt)),
-          trailing: Text("${(requests[index].score * 100).toStringAsFixed(2)}%"),
-        ),
-      ),
+      itemBuilder: (context, index) {
+        var request = prayerRequestScoreToPrayerRequest(requests[index]);
+        var child = Row(
+          children: [
+            Text(dateTimeToDate(requests[index].createdAt)),
+            const Spacer(),
+            Text(
+              "${(requests[index].score * 100).toStringAsFixed(2)}%", 
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ],
+        );
+        return CompactRequestCard(request: request, allRelatedContacts: prayerWithAll.relatedContacts, child: child,);
+      },
     );
   }
 }

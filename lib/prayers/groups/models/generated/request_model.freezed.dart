@@ -394,6 +394,7 @@ PrayerRequestScore _$PrayerRequestScoreFromJson(Map<String, dynamic> json) {
 mixin _$PrayerRequestScore {
   int get id => throw _privateConstructorUsedError;
   String get request => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_group')
@@ -402,6 +403,8 @@ mixin _$PrayerRequestScore {
   double get score => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds => throw _privateConstructorUsedError;
 
   /// Serializes this PrayerRequestScore to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -422,11 +425,13 @@ abstract class $PrayerRequestScoreCopyWith<$Res> {
   $Res call(
       {int id,
       String request,
+      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
       double score,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   $ContactCopyWith<$Res> get user;
   $ContactGroupPairsCopyWith<$Res> get group;
@@ -449,11 +454,13 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
   $Res call({
     Object? id = null,
     Object? request = null,
+    Object? title = freezed,
     Object? user = null,
     Object? group = null,
     Object? sentiment = freezed,
     Object? score = null,
     Object? createdAt = null,
+    Object? relatedContactIds = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -464,6 +471,10 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -484,6 +495,10 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      relatedContactIds: null == relatedContactIds
+          ? _value.relatedContactIds
+          : relatedContactIds // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ) as $Val);
   }
 
@@ -519,11 +534,13 @@ abstract class _$$PrayerRequestScoreImplCopyWith<$Res>
   $Res call(
       {int id,
       String request,
+      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       String? sentiment,
       double score,
-      @JsonKey(name: 'created_at') String createdAt});
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   @override
   $ContactCopyWith<$Res> get user;
@@ -546,11 +563,13 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? request = null,
+    Object? title = freezed,
     Object? user = null,
     Object? group = null,
     Object? sentiment = freezed,
     Object? score = null,
     Object? createdAt = null,
+    Object? relatedContactIds = null,
   }) {
     return _then(_$PrayerRequestScoreImpl(
       id: null == id
@@ -561,6 +580,10 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -581,6 +604,10 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      relatedContactIds: null == relatedContactIds
+          ? _value._relatedContactIds
+          : relatedContactIds // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ));
   }
 }
@@ -593,11 +620,15 @@ class _$PrayerRequestScoreImpl
   const _$PrayerRequestScoreImpl(
       {required this.id,
       required this.request,
+      this.title,
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
       this.sentiment = "",
       required this.score,
-      @JsonKey(name: 'created_at') this.createdAt = ""});
+      @JsonKey(name: 'created_at') this.createdAt = "",
+      @JsonKey(name: 'related_contact_ids')
+      required final List<int> relatedContactIds})
+      : _relatedContactIds = relatedContactIds;
 
   factory _$PrayerRequestScoreImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrayerRequestScoreImplFromJson(json);
@@ -606,6 +637,8 @@ class _$PrayerRequestScoreImpl
   final int id;
   @override
   final String request;
+  @override
+  final String? title;
   @override
   @JsonKey(name: 'contact')
   final Contact user;
@@ -620,10 +653,19 @@ class _$PrayerRequestScoreImpl
   @override
   @JsonKey(name: 'created_at')
   final String createdAt;
+  final List<int> _relatedContactIds;
+  @override
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds {
+    if (_relatedContactIds is EqualUnmodifiableListView)
+      return _relatedContactIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_relatedContactIds);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PrayerRequestScore(id: $id, request: $request, user: $user, group: $group, sentiment: $sentiment, score: $score, createdAt: $createdAt)';
+    return 'PrayerRequestScore(id: $id, request: $request, title: $title, user: $user, group: $group, sentiment: $sentiment, score: $score, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
   }
 
   @override
@@ -633,11 +675,13 @@ class _$PrayerRequestScoreImpl
       ..add(DiagnosticsProperty('type', 'PrayerRequestScore'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('request', request))
+      ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
       ..add(DiagnosticsProperty('sentiment', sentiment))
       ..add(DiagnosticsProperty('score', score))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+      ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds));
   }
 
   @override
@@ -647,19 +691,31 @@ class _$PrayerRequestScoreImpl
             other is _$PrayerRequestScoreImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.request, request) || other.request == request) &&
+            (identical(other.title, title) || other.title == title) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.sentiment, sentiment) ||
                 other.sentiment == sentiment) &&
             (identical(other.score, score) || other.score == score) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality()
+                .equals(other._relatedContactIds, _relatedContactIds));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, request, user, group, sentiment, score, createdAt);
+      runtimeType,
+      id,
+      request,
+      title,
+      user,
+      group,
+      sentiment,
+      score,
+      createdAt,
+      const DeepCollectionEquality().hash(_relatedContactIds));
 
   /// Create a copy of PrayerRequestScore
   /// with the given fields replaced by the non-null parameter values.
@@ -682,12 +738,14 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   const factory _PrayerRequestScore(
       {required final int id,
       required final String request,
+      final String? title,
       @JsonKey(name: 'contact') required final Contact user,
       @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
       final String? sentiment,
       required final double score,
-      @JsonKey(name: 'created_at')
-      final String createdAt}) = _$PrayerRequestScoreImpl;
+      @JsonKey(name: 'created_at') final String createdAt,
+      @JsonKey(name: 'related_contact_ids')
+      required final List<int> relatedContactIds}) = _$PrayerRequestScoreImpl;
 
   factory _PrayerRequestScore.fromJson(Map<String, dynamic> json) =
       _$PrayerRequestScoreImpl.fromJson;
@@ -696,6 +754,8 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   int get id;
   @override
   String get request;
+  @override
+  String? get title;
   @override
   @JsonKey(name: 'contact')
   Contact get user;
@@ -709,6 +769,9 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   @override
   @JsonKey(name: 'created_at')
   String get createdAt;
+  @override
+  @JsonKey(name: 'related_contact_ids')
+  List<int> get relatedContactIds;
 
   /// Create a copy of PrayerRequestScore
   /// with the given fields replaced by the non-null parameter values.
