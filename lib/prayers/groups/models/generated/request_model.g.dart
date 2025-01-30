@@ -15,6 +15,8 @@ _$PrayerRequestImpl _$$PrayerRequestImplFromJson(Map<String, dynamic> json) =>
       group: ContactGroupPairs.fromJson(
           json['contact_group'] as Map<String, dynamic>),
       sentiment: json['sentiment'] as String? ?? "",
+      emotion: json['emotion'] as String? ?? "",
+      prayerType: json['prayer_type'] as String?,
       createdAt: json['created_at'] as String? ?? "",
       relatedContactIds: (json['related_contact_ids'] as List<dynamic>)
           .map((e) => (e as num).toInt())
@@ -29,6 +31,8 @@ Map<String, dynamic> _$$PrayerRequestImplToJson(_$PrayerRequestImpl instance) =>
       'contact': instance.user,
       'contact_group': instance.group,
       'sentiment': instance.sentiment,
+      'emotion': instance.emotion,
+      'prayer_type': instance.prayerType,
       'created_at': instance.createdAt,
       'related_contact_ids': instance.relatedContactIds,
     };

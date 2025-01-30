@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
@@ -127,6 +128,12 @@ class GroupCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: ExpansionTile(
+        leading: IconButton(
+          icon: const Icon(Icons.edit_document),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => PaperMode()),
+          ),
+        ),
         title: Text(groupContacts.group.name),
         subtitle: Text(groupContacts.group.description ?? ""),
         trailing: IconButton(

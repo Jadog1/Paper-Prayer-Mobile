@@ -274,6 +274,8 @@ class RequestDashboard extends StatelessWidget {
                     Text(request.request),
                     Text("Sentiment: ${request.sentiment}"),
                     Text("Created At: ${dateTimeToDate(request.createdAt)}"),
+                    Text("Type: ${request.prayerType}"),
+                    Text("Emotion: ${request.emotion}"),
                     Text("Related contacts: ${relatedContactsFullDescription(relatedContacts)}"),
                   ],
                 ),
