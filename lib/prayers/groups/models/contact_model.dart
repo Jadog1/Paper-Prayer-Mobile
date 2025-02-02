@@ -28,6 +28,8 @@ class ContactGroupPairs with _$ContactGroupPairs {
   factory ContactGroupPairs.fromJson(Map<String, dynamic> json) => _$ContactGroupPairsFromJson(json);
 } 
 
+Contact defaultContact = const Contact(id: 0, name: '', createdAt: '');
+
 @freezed
 class RelatedContact with _$RelatedContact {
   const factory RelatedContact({

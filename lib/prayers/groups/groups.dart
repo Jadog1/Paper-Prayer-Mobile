@@ -131,7 +131,7 @@ class GroupCard extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.edit_document),
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => PaperMode()),
+            MaterialPageRoute(builder: (context) => PaperMode(groupContacts: groupContacts,)),
           ),
         ),
         title: Text(groupContacts.group.name),

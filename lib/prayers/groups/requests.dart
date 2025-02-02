@@ -75,10 +75,12 @@ class PrayerRequests extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: prayerRequestContact.prayerRequests.length,
-      itemBuilder: (context, index) => CompactRequestCard(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
+    return Scrollbar(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: prayerRequestContact.prayerRequests.length,
+        itemBuilder: (context, index) => CompactRequestCard(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
+      ),
     );
   }
 }

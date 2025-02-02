@@ -2,19 +2,63 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
+import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
+import 'package:prayer_ml/shared/widgets.dart';
 
 class PaperMode extends ConsumerWidget {
-  const PaperMode({super.key});
+  const PaperMode({super.key, required this.groupContacts});
+
+  final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const OpenPaper();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          AppBar(
+            title: const Text("Paper Mode"),
+          ),
+          const Flexible(
+            flex: 3,
+            child: QueuedPrayerRequests(),
+          ),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 100),
+            child: const RecommendedPrayerRequestsLoader()
+          ),
+          Flexible(
+            child: OpenPaper(users: groupContacts.members),
+          ),
+        ],
+      ),
+    );
   }
+} 
+
+class SelectedUserTitle extends ConsumerWidget {
+  const SelectedUserTitle({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    return Text(
+      state.selectedUser != null ? state.selectedUser!.name : 'No user selected',
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+      textAlign: TextAlign.center,
+    );
+}
 }
 
 
 class OpenPaper extends ConsumerStatefulWidget {
-  const OpenPaper({super.key});
+  const OpenPaper({super.key, required this.users});
+  final List<Contact> users;
 
   @override
   ConsumerState<OpenPaper> createState() => _OpenPaperState();
@@ -23,10 +67,11 @@ class OpenPaper extends ConsumerStatefulWidget {
 class _OpenPaperState extends ConsumerState<OpenPaper>{
   final TextEditingController _controller = TextEditingController();
   OverlayEntry? _overlayEntry;
-  final List<String> _suggestions = ['John Doe', 'Jane Smith', 'Alex Johnson'];
   String _searchQuery = '';
   int _triggerPosition = -1;
-  String _selectedUser = '';
+  Contact? _selectedUser;
+  late TextField _textField;
+  final GlobalKey _textFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -45,8 +90,11 @@ class _OpenPaperState extends ConsumerState<OpenPaper>{
   void _onTextChanged() {
     String text = _controller.text;
     int cursorPos = _controller.selection.baseOffset;
+    var state = ref.read(paperModeSharedStateProvider);
 
-    if (text.contains('\n\n')) {
+    // TODO: Show error text if _selectedUser is null
+    if (text.contains('\n\n') && _selectedUser != null) {
+      state.addRequest(AsyncSavedPrayerRequest(request: text.trim(), user: _selectedUser!));
       _controller.clear();
       return;
     }
@@ -89,21 +137,27 @@ class _OpenPaperState extends ConsumerState<OpenPaper>{
     return OverlayEntry(
       builder: (context) => Positioned(
         left: caretOffset.dx,
-        top: caretOffset.dy + 60, // Position below the caret
+        top: caretOffset.dy + 15, // Position below the caret
         width: 200,
         child: Material(
           elevation: 4.0,
           color: Colors.white,
-          child: ListView(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            children: _suggestions
-                .where((s) => s.toLowerCase().contains(_searchQuery.toLowerCase()))
-                .map((s) => ListTile(
-                      title: Text(s),
-                      onTap: () => _selectSuggestion(s),
-                    ))
-                .toList(),
+          child: Scrollbar(
+            child: SizedBox(
+              height: 200,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                children: widget.users
+                    .where((user) => user.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+                    .map((user) => ListTile(
+                          title: Text(user.name),
+                          subtitle: Text(user.description ?? ''),
+                          onTap: () => _selectSuggestion(user),
+                        ))
+                    .toList(),
+              ),
+            ),
           ),
         ),
       ),
@@ -111,50 +165,148 @@ class _OpenPaperState extends ConsumerState<OpenPaper>{
   }
 
   Offset _getCaretPosition() {
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: _controller.text, style: const TextStyle(fontSize: 16.0)),
+    TextPainter painter = TextPainter(
       textDirection: TextDirection.ltr,
-    )..layout();
-    
-    final TextPosition position = TextPosition(offset: _controller.selection.baseOffset);
-    final Offset caretOffset = textPainter.getOffsetForCaret(position, Rect.zero);
+      text: TextSpan(text: _controller.text, style: const TextStyle(fontSize: 16.0)),
+    );
+    painter.layout();
+
+    TextPosition cursorTextPosition = _controller.selection.base;
+    RenderBox box = _textFieldKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    Rect caretPrototype = Rect.fromLTWH(
+        0.0, 0.0, _textField.cursorWidth, _textField.cursorHeight ?? 0);
+    Offset caretOffset =
+        painter.getOffsetForCaret(cursorTextPosition, caretPrototype);
+    caretOffset = Offset(caretOffset.dx, caretOffset.dy + position.dy);
     
     return caretOffset;
   }
 
-  void _selectSuggestion(String suggestion) {
+  void _selectSuggestion(Contact user) {
+    var state = ref.read(paperModeSharedStateProvider);
     String text = _controller.text;
     _controller.text = text.replaceRange(_triggerPosition, _controller.selection.baseOffset, '');
     _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-    setState(() => _selectedUser = suggestion);
+    setState(() => _selectedUser = user);
+    state.addContact(user);
+    state.setContact(user);
 
     _hideSuggestions();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        height: 200,
-        child: Column(
-          children: [
-            Text(
-              _selectedUser.isEmpty ? 'No user selected' : _selectedUser,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-              textAlign: TextAlign.center,
-            ),
-            TextField(
-              controller: _controller,
-              maxLines: 10,
-              decoration: const InputDecoration(
-                hintText: 'Use @ to set the current user',
-                constraints: BoxConstraints(maxHeight: 200.0),
-              ),
-            ),
-          ],
-        ),
+    _textField = TextField(
+      controller: _controller,
+      minLines: null,
+      maxLines: null,
+      key: _textFieldKey,
+      expands: true,
+      decoration: const InputDecoration(
+        hintText: 'Use @ to set the current user',
+        border: null,
+        // constraints: BoxConstraints(maxHeight: 50),
+      ),
+    );
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 250),
+      child: Column(
+        children: [
+          const SelectedUserTitle(),
+          Expanded(
+            child: _textField,
+          ),
+        ],
       ),
     );
   }
 }
+
+class QueuedPrayerRequests extends ConsumerWidget {
+  const QueuedPrayerRequests({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    return Scrollbar(
+      thumbVisibility: true,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: state.requests.length,
+        itemBuilder: (context, index) {
+          var prayerRequest = state.requests[index];
+          var currentUser = prayerRequest.user;
+          Contact? lastUser; 
+          if (index > 0) {
+            lastUser = state.requests[index - 1].user;
+          }
+          Widget elem = QueuedPrayerRequest(asyncPrayerRequest: prayerRequest);
+          if (lastUser == null || lastUser.id != currentUser.id) {
+            elem = Column(
+              textDirection: TextDirection.ltr,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                (lastUser != null) ? const Divider() : const SizedBox.shrink(),
+                Text(currentUser.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                elem,
+              ],
+            );
+          }
+          return elem;
+        },
+      ),
+    );
+  }
+}
+
+class QueuedPrayerRequest extends ConsumerWidget {
+  const QueuedPrayerRequest({super.key, required this.asyncPrayerRequest});
+
+  final AsyncSavedPrayerRequest asyncPrayerRequest;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Text(
+      "- ${asyncPrayerRequest.request}", 
+      textAlign: TextAlign.left,
+      );
+  }
+}
+
+class RecommendedPrayerRequestsLoader extends ConsumerWidget {
+  const RecommendedPrayerRequestsLoader({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    if (state.selectedUser == null) {
+      return const SizedBox.shrink();
+    }
+    var recommendedRequests = ref.watch(prayerRequestRepoProvider(state.selectedUser!.id));
+    return switch(recommendedRequests) {
+      AsyncData(:final value) => RecommendedPrayerRequestsView(prayerRequests: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
+      _ => const CircularProgressIndicator(),
+    };
+  }
+}
+
+class RecommendedPrayerRequestsView extends ConsumerWidget {
+  const RecommendedPrayerRequestsView({super.key, required this.prayerRequests});
+
+  final List<PrayerRequest> prayerRequests;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: prayerRequests.length,
+      itemBuilder: (context, index) {
+        var prayerRequest = prayerRequests[index];
+        return CompactRequestCard(request: prayerRequest, allRelatedContacts: const [], compactionMode: CompactionMode.withoutRequest);
+      },
+    );
+  }
+}
+    
