@@ -6,6 +6,7 @@ import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
+import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class PrayerRequestWithAll {
@@ -39,8 +40,6 @@ class PrayerRequestView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var theme = Theme.of(context);
-
     var user = prayerRequestContact.user;
     var contactGroup = const ContactGroupPairs(id: 0, contactId: 0, groupId: 0, createdAt: "");
     if (prayerRequestContact.prayerRequests.isNotEmpty) {
@@ -48,22 +47,14 @@ class PrayerRequestView extends ConsumerWidget {
     }
 
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(user.name),
-      ),
-      body: Column(
-        children: [
-          Expanded(child: PrayerRequests(prayerRequestContact: prayerRequestContact,)),
-          ElevatedButton(
-          onPressed: () => editPrayerRequestBottomSheet(context, ref, PrayerRequest(id: 0, request: "", user: user, group: contactGroup, relatedContactIds: [],)),
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
-          ),
-          child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+    return Column(
+      children: [
+        AppBar(
+          title: Text(user.name),
         ),
-        ],
-      ),
+        Expanded(child: PrayerRequests(prayerRequestContact: prayerRequestContact,)),
+        AddPrayerRequest(user: user, contactGroup: contactGroup),
+      ],
     );
   }
 }
@@ -79,72 +70,11 @@ class PrayerRequests extends StatelessWidget {
       child: ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: prayerRequestContact.prayerRequests.length,
-        itemBuilder: (context, index) => CompactRequestCard(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
-      ),
-    );
-  }
-}
-
-class CompactRequestCard extends ConsumerStatefulWidget {
-  const CompactRequestCard({super.key, required this.request, required this.allRelatedContacts, this.child});
-
-  final PrayerRequest request;
-  final List<RelatedContact> allRelatedContacts;
-  final Widget? child;
-
-  @override
-  ConsumerState<CompactRequestCard> createState() => _CompactRequestCardState();
-}
-class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
-  var _editMode = false;
-
-  Widget expandText(String text, int maxLines, {style = const TextStyle()}) {
-    return Text(
-      text, 
-      overflow: _editMode ? TextOverflow.visible : TextOverflow.ellipsis, 
-      maxLines: _editMode ? null : maxLines,
-      style: style,
-      );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget subtitle = expandText(widget.request.request, 3);
-    var relatedContactText = relatedContactsAsString(findRelatedContacts(widget.allRelatedContacts, widget.request));
-    if (relatedContactText.isNotEmpty) {
-      subtitle = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          expandText(relatedContactText, 1, style: const TextStyle(fontStyle: FontStyle.italic)),
-          expandText(widget.request.request, 2),
-        ],
-      );
-    }
-    
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: 105,
-          maxHeight: _editMode ? double.infinity : 105,
-        ),
-        child: Card(
-          margin: const EdgeInsets.only(bottom: 5, top: 5),
-          child: ListTile(
-            leading: _editMode ? const Icon(Icons.chevron_left) : const Icon(Icons.chevron_right),
-            title: expandText(widget.request.title ?? "", 1, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: !_editMode ? subtitle : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                subtitle,
-                (widget.child != null) ? widget.child! :
-                  CompactRequestButtonGroup(request: widget.request, allRelatedContacts: widget.allRelatedContacts,),
-              ],
-            ),
-            // trailing: sentimentIcon(request.sentiment),
-            visualDensity: VisualDensity.compact,
-            onTap: () => setState(() => _editMode = !_editMode),
-          ),
+        reverse: true,
+        itemBuilder: (context, index) => CompactRequestCard(
+          request: prayerRequestContact.prayerRequests[index], 
+          allRelatedContacts: prayerRequestContact.relatedContacts,
+          child: CompactRequestButtonGroup(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
         ),
       ),
     );
@@ -212,6 +142,51 @@ Icon sentimentIcon(String? sentiment) {
       return const Icon(Icons.sentiment_neutral_rounded);
     default:
       return const Icon(Icons.question_mark);
+  }
+}
+
+// AddPrayerRequest will contain a text field to add a new prayer request
+// The save button should be hidden unless the text field is not empty
+// It should have hint text of "Create a new prayer request"
+class AddPrayerRequest extends ConsumerStatefulWidget {
+  const AddPrayerRequest({super.key, required this.user, required this.contactGroup});
+
+  final Contact user;
+  final ContactGroupPairs contactGroup;
+
+  @override
+  ConsumerState<AddPrayerRequest> createState() => _AddPrayerRequestState();
+}
+class _AddPrayerRequestState extends ConsumerState<AddPrayerRequest> {
+  var newRequest = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 200),
+      child: Column(
+        children: [
+          const Text("Create a new prayer request", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Prayer Request',
+              ),
+              onChanged: (value) => setState(() => newRequest = value),
+              maxLines: 5,
+              minLines: 3
+            ),
+          ),
+          newRequest.isEmpty ? const SizedBox.shrink() :
+            InteractiveLoadButton(
+              customProvider: () => ref.read(prayerRequestRepoProvider(widget.user.id).notifier).saveRequest(PrayerRequest(id: 0, request: newRequest, user: widget.user, group: widget.contactGroup, relatedContactIds: [])),
+              buttonText: 'Save',
+              buttonStyle: saveButtonStyle,
+              successCallback: () => setState(() => newRequest = ""),
+            ),
+        ],
+      ),
+    );
   }
 }
 

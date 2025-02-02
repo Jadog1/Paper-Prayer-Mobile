@@ -50,11 +50,18 @@ class GroupView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var searchState = ref.watch(searchStateProvider(groupContacts));
-    var theme = Theme.of(context);
 
     return Column(
       children: [
-        const Text("Groups", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+        ElevatedButton.icon(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const GroupSettings(groupContacts: GroupContacts(group: Group(name: "New group"), members: []))),
+          ),
+          label: const Text("Groups", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          icon: const Icon(Icons.create),
+          iconAlignment: IconAlignment.end,
+        ),
+        
         FilterSearchBar(searchState: searchState),
         Flexible(
           child: ListView(
@@ -63,15 +70,6 @@ class GroupView extends ConsumerWidget {
                 .map((group) => GroupCard(groupContacts: group))
                 .toList(),
           ),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const GroupSettings(groupContacts: GroupContacts(group: Group(name: "New group"), members: []))),
-          ),
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
-          ),
-          child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
         ),
       ],
     );

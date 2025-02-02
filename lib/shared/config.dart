@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:prayer_ml/prayers/groups/repos/prayer_api.dart';
 
 class Config {
-  String apiUrl = '10.0.2.2:8000';
+  String apiUrl = '10.0.0.46:8000';
   late ContactsApiClient contactApiClient;
   late PrayerRequestApiClient prayerRequestApiClient;
 

@@ -18,22 +18,20 @@ class PaperMode extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
       child: Column(
         children: [
           AppBar(
             title: const Text("Paper Mode"),
           ),
-          const Flexible(
-            flex: 3,
-            child: QueuedPrayerRequests(),
-          ),
           ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 100),
-            child: const RecommendedPrayerRequestsLoader()
+            constraints: const BoxConstraints(maxHeight: 200),
+            child: const QueuedPrayerRequests(),
           ),
-          Flexible(
-            child: OpenPaper(users: groupContacts.members),
+          const SelectedUserTitle(),
+          OpenPaper(users: groupContacts.members),
+          const Expanded(
+            child: RecommendedPrayerRequestsLoader(),
           ),
         ],
       ),
@@ -199,27 +197,16 @@ class _OpenPaperState extends ConsumerState<OpenPaper>{
   Widget build(BuildContext context) {
     _textField = TextField(
       controller: _controller,
-      minLines: null,
-      maxLines: null,
+      minLines: 4,
+      maxLines: 6,
       key: _textFieldKey,
-      expands: true,
       decoration: const InputDecoration(
         hintText: 'Use @ to set the current user',
         border: null,
         // constraints: BoxConstraints(maxHeight: 50),
       ),
     );
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 250),
-      child: Column(
-        children: [
-          const SelectedUserTitle(),
-          Expanded(
-            child: _textField,
-          ),
-        ],
-      ),
-    );
+    return _textField;
   }
 }
 
@@ -281,7 +268,7 @@ class RecommendedPrayerRequestsLoader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var state = ref.watch(paperModeSharedStateProvider);
     if (state.selectedUser == null) {
-      return const SizedBox.shrink();
+      return const Text("No recommended requests");
     }
     var recommendedRequests = ref.watch(prayerRequestRepoProvider(state.selectedUser!.id));
     return switch(recommendedRequests) {
@@ -299,13 +286,19 @@ class RecommendedPrayerRequestsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: prayerRequests.length,
-      itemBuilder: (context, index) {
-        var prayerRequest = prayerRequests[index];
-        return CompactRequestCard(request: prayerRequest, allRelatedContacts: const [], compactionMode: CompactionMode.withoutRequest);
-      },
+    return Column(
+      children: [
+        const Text("Recommended follow ups", style: TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(
+          child: ListView.builder(
+            itemCount: prayerRequests.length,
+            itemBuilder: (context, index) {
+              var prayerRequest = prayerRequests[index];
+              return CompactRequestCard(request: prayerRequest, allRelatedContacts: const [], compactionMode: CompactionMode.withoutRequest);
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -32,11 +32,9 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     var groupContacts = widget.groupContacts;
     var newGroup = Group(id: groupContacts.group.id, name: _name, description: _description);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(groupContacts.group.name),
-      ),
-      body: Column(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      child: Column(
         children: [
           TextFormField(
             initialValue: groupContacts.group.name,

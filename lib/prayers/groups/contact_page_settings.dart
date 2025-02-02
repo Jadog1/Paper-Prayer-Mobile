@@ -31,44 +31,39 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
     var today = DateTime.now();
     var newContact = Contact(id: contact.id, name: _name, description: _description, createdAt: today.toString());
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(contact.name),
-      ),
-      body: Column(
-        children: [
-          TextFormField(
-            initialValue: contact.name,
-            decoration: const InputDecoration(
-              labelText: 'Contact Name',
-              hintText: 'Enter a new contact name',
-            ),
-            onChanged: (value) => _name = value,
+    return Column(
+      children: [
+        TextFormField(
+          initialValue: contact.name,
+          decoration: const InputDecoration(
+            labelText: 'Contact Name',
+            hintText: 'Enter a new contact name',
           ),
-          TextFormField(
-            initialValue: contact.description,
-            decoration: const InputDecoration(
-              labelText: 'Description',
-              hintText: 'Enter a new description',
-            ),
-            onChanged: (value) => _description = value,
+          onChanged: (value) => _name = value,
+        ),
+        TextFormField(
+          initialValue: contact.description,
+          decoration: const InputDecoration(
+            labelText: 'Description',
+            hintText: 'Enter a new description',
           ),
-          Row(
-            spacing: 20,
-            children: [
-              // Delete float left most
-              DeleteContactButton(contactId: contact.id),
-              const Spacer(),
-              InteractiveLoadButton(
-                customProvider: () => ref.read(groupContactsRepoProvider.notifier).saveContact(newContact),
-                buttonText: 'Save',
-                buttonStyle: saveButtonStyle,
-                successCallback: () => Navigator.of(context).pop(),
-              )
-            ],
-          ),
-        ],
-      ),
+          onChanged: (value) => _description = value,
+        ),
+        Row(
+          spacing: 20,
+          children: [
+            // Delete float left most
+            DeleteContactButton(contactId: contact.id),
+            const Spacer(),
+            InteractiveLoadButton(
+              customProvider: () => ref.read(groupContactsRepoProvider.notifier).saveContact(newContact),
+              buttonText: 'Save',
+              buttonStyle: saveButtonStyle,
+              successCallback: () => Navigator.of(context).pop(),
+            )
+          ],
+        ),
+      ],
     );
   }
 }
