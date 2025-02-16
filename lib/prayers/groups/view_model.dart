@@ -48,8 +48,8 @@ class PrayerRequestViewModel extends ChangeNotifier {
   }
 }
 
-List<RelatedContact> findRelatedContacts(List<RelatedContact> allRelated, PrayerRequest request) {
-  return allRelated.where((related) => request.relatedContactIds.contains(related.id)).toList();
+List<RelatedContact> findRelatedContacts(List<RelatedContact> allRelated, List<int> relatedContactIds) {
+  return allRelated.where((related) => relatedContactIds.contains(related.id)).toList();
 }
 
 String relatedContactsAsString(List<RelatedContact> relatedContacts) {

@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
-import 'package:prayer_ml/prayers/groups/repos/repo.dart';
+import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
@@ -270,9 +270,9 @@ class RecommendedPrayerRequestsLoader extends ConsumerWidget {
     if (state.selectedUser == null) {
       return const Text("No recommended requests");
     }
-    var recommendedRequests = ref.watch(prayerRequestRepoProvider(state.selectedUser!.id));
+    var recommendedRequests = ref.watch(fetchRecommendationsProvider(state.selectedUser!.id));
     return switch(recommendedRequests) {
-      AsyncData(:final value) => RecommendedPrayerRequestsView(prayerRequests: value),
+      AsyncData(:final value) => RecommendedPrayerRequestsView(collections: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
       _ => const CircularProgressIndicator(),
     };
@@ -280,9 +280,9 @@ class RecommendedPrayerRequestsLoader extends ConsumerWidget {
 }
 
 class RecommendedPrayerRequestsView extends ConsumerWidget {
-  const RecommendedPrayerRequestsView({super.key, required this.prayerRequests});
+  const RecommendedPrayerRequestsView({super.key, required this.collections});
 
-  final List<PrayerRequest> prayerRequests;
+  final List<Collection> collections;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -291,10 +291,16 @@ class RecommendedPrayerRequestsView extends ConsumerWidget {
         const Text("Recommended follow ups", style: TextStyle(fontWeight: FontWeight.bold)),
         Expanded(
           child: ListView.builder(
-            itemCount: prayerRequests.length,
+            itemCount: collections.length,
             itemBuilder: (context, index) {
-              var prayerRequest = prayerRequests[index];
-              return CompactRequestCard(request: prayerRequest, allRelatedContacts: const [], compactionMode: CompactionMode.withoutRequest);
+              var collection = collections[index];
+              return CompactRequestCard(
+                title: collection.title,
+                description: collection.description,
+                relatedContactIds: collection.relatedContactIds,
+                allRelatedContacts: const [], 
+                compactionMode: CompactionMode.withoutRequest
+              );
             },
           ),
         ),

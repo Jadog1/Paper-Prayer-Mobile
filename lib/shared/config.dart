@@ -5,11 +5,13 @@ class Config {
   String apiUrl = '10.0.0.46:8000';
   late ContactsApiClient contactApiClient;
   late PrayerRequestApiClient prayerRequestApiClient;
+  late CollectionsApiClient collectionsApiClient;
 
   Config() {
     var sharedClient = http.Client();
     contactApiClient = ContactsApiClient(httpClient: sharedClient, baseUrl: apiUrl);
     prayerRequestApiClient = PrayerRequestApiClient(httpClient: sharedClient, baseUrl: apiUrl);
+    collectionsApiClient = CollectionsApiClient(httpClient: sharedClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {

@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'dart:convert';
 
@@ -162,5 +163,45 @@ class PrayerRequestApiClient {
 
     final json = jsonDecode(response.body) as List;
     return json.map((request) => PrayerRequestScore.fromJson(request)).toList();
+  }
+}
+
+class CollectionsApiClient {
+  final http.Client httpClient;
+  final String baseUrl;
+
+  CollectionsApiClient({required this.httpClient, required this.baseUrl});
+
+  Future<List<Collection>> fetchCollections(int contactId) async {
+    final response = await httpClient.get(config.uri("/collections/contact/$contactId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting collections: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((collection) => Collection.fromJson(collection)).toList();
+  }
+
+  Future<List<Collection>> fetchRecommendations(int contactId) async {
+    final response = await httpClient.get(config.uri("/collections/recommendations/$contactId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting recommended collections: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((collection) => Collection.fromJson(collection)).toList();
+  } 
+
+  Future<List<PrayerRequest>> fetchRelatedRequests(int collectionId) async {
+    final response = await httpClient.get(config.uri("/collections/requests/$collectionId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting requests: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
 }

@@ -11,7 +11,7 @@ part 'generated/request_model.g.dart';
 class PrayerRequest with _$PrayerRequest {
   const factory PrayerRequest({
     required int id,
-    required String request,
+    @JsonKey(name: 'request') required String description,
     String? title,
     @JsonKey(name: 'contact') required Contact user,
     @JsonKey(name: 'contact_group') required ContactGroupPairs group,
@@ -46,7 +46,7 @@ class PrayerRequestScore with _$PrayerRequestScore {
 PrayerRequest prayerRequestScoreToPrayerRequest(PrayerRequestScore score) {
   return PrayerRequest(
     id: score.id,
-    request: score.request,
+    description: score.request,
     title: score.title,
     user: score.user,
     group: score.group,

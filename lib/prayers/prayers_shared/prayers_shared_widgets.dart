@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
-import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 
 enum CompactionMode {
@@ -11,11 +10,24 @@ enum CompactionMode {
   withRequest, // Dense is the title, related contacts, and the request
 }
 
+// Accept an interface that has a title, description, and related contacts
+abstract class RequestCardInterface {
+  final String title;
+  final String description;
+  final List<int> relatedContactIds;
+
+  RequestCardInterface(this.title, this.description, this.relatedContactIds);
+}
+
 class CompactRequestCard extends ConsumerStatefulWidget {
-  const CompactRequestCard({super.key, required this.request, required this.allRelatedContacts, 
+  const CompactRequestCard({super.key, 
+    required this.allRelatedContacts, 
+    required this.title, required this.description, required this.relatedContactIds,
     this.compactionMode = CompactionMode.withRequest, this.child});
 
-  final PrayerRequest request;
+  final String? title;
+  final String? description;
+  final List<int> relatedContactIds;
   final List<RelatedContact> allRelatedContacts;
   final CompactionMode compactionMode;
   final Widget? child;
@@ -37,15 +49,15 @@ class _CompactRequestCardState extends ConsumerState<CompactRequestCard> {
 
   @override
   Widget build(BuildContext context) {
-    var relatedContactText = relatedContactsAsString(findRelatedContacts(widget.allRelatedContacts, widget.request));
-    Widget title = expandText(widget.request.title ?? "", 1, style: const TextStyle(fontWeight: FontWeight.bold));
-    Widget subtitle = expandText(widget.request.request, 3);
+    var relatedContactText = relatedContactsAsString(findRelatedContacts(widget.allRelatedContacts, widget.relatedContactIds));
+    Widget title = expandText(widget.title ?? "", 1, style: const TextStyle(fontWeight: FontWeight.bold));
+    Widget subtitle = expandText(widget.description ?? "", 3);
     if (relatedContactText.isNotEmpty) {
       subtitle = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           expandText(relatedContactText, 1, style: const TextStyle(fontStyle: FontStyle.italic)),
-          expandText(widget.request.request, 2),
+          expandText(widget.description ?? "", 2),
         ],
       );
     }

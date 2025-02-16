@@ -72,7 +72,9 @@ class PrayerRequests extends StatelessWidget {
         itemCount: prayerRequestContact.prayerRequests.length,
         reverse: true,
         itemBuilder: (context, index) => CompactRequestCard(
-          request: prayerRequestContact.prayerRequests[index], 
+          title: prayerRequestContact.prayerRequests[index].title, 
+          description: prayerRequestContact.prayerRequests[index].description,
+          relatedContactIds: prayerRequestContact.prayerRequests[index].relatedContactIds,
           allRelatedContacts: prayerRequestContact.relatedContacts,
           child: CompactRequestButtonGroup(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
         ),
@@ -179,7 +181,7 @@ class _AddPrayerRequestState extends ConsumerState<AddPrayerRequest> {
           ),
           newRequest.isEmpty ? const SizedBox.shrink() :
             InteractiveLoadButton(
-              customProvider: () => ref.read(prayerRequestRepoProvider(widget.user.id).notifier).saveRequest(PrayerRequest(id: 0, request: newRequest, user: widget.user, group: widget.contactGroup, relatedContactIds: [])),
+              customProvider: () => ref.read(prayerRequestRepoProvider(widget.user.id).notifier).saveRequest(PrayerRequest(id: 0, description: newRequest, user: widget.user, group: widget.contactGroup, relatedContactIds: [])),
               buttonText: 'Save',
               buttonStyle: saveButtonStyle,
               successCallback: () => setState(() => newRequest = ""),
@@ -191,7 +193,7 @@ class _AddPrayerRequestState extends ConsumerState<AddPrayerRequest> {
 }
 
 Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref, PrayerRequest request) {
-  var newRequest = request.request;
+  var newRequest = request.description;
   return showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -199,7 +201,7 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
         children: [
           const Text("Edit Prayer Request"),
           TextField(
-            controller: TextEditingController(text: request.request),
+            controller: TextEditingController(text: request.description),
             decoration: const InputDecoration(
               labelText: 'Prayer Request',
             ),
@@ -207,7 +209,7 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
             maxLines: 5,
           ),
           InteractiveLoadButton(
-            customProvider: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).saveRequest(request.copyWith(request: newRequest)),
+            customProvider: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).saveRequest(request.copyWith(description: newRequest)),
             buttonText: 'Save',
             buttonStyle: saveButtonStyle,
             successCallback: () => Navigator.of(context).pop(),
@@ -228,7 +230,7 @@ class RequestDashboard extends StatelessWidget {
     var theme = Theme.of(context);
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
     var request = prayerWithAll.request;
-    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, request);
+    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, request.relatedContactIds);
     return Column(
       children: <Widget> [
         AppBar(title: const Text("Request Dashboard")),
@@ -248,7 +250,7 @@ class RequestDashboard extends StatelessWidget {
                 header: Text("Request Details", style: headerStyle),
                 content: Column(
                   children: [
-                    Text(request.request),
+                    Text(request.description),
                     Text("Sentiment: ${request.sentiment}"),
                     Text("Created At: ${dateTimeToDate(request.createdAt)}"),
                     Text("Type: ${request.prayerType}"),
@@ -314,7 +316,12 @@ class CompactSimplifiedPrayerRequests extends StatelessWidget {
             ),
           ],
         );
-        return CompactRequestCard(request: request, allRelatedContacts: prayerWithAll.relatedContacts, child: child,);
+        return CompactRequestCard(
+        title: request.title,
+        description: request.description,
+        relatedContactIds: request.relatedContactIds,
+        allRelatedContacts: prayerWithAll.relatedContacts, 
+        child: child,);
       },
     );
   }
