@@ -7,7 +7,6 @@ import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 
-import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 // import 'view_model.dart';
 
@@ -40,147 +39,208 @@ class GroupConsumer extends ConsumerWidget {
 }
 
 class GroupView extends ConsumerWidget {
-  const GroupView({
-    super.key,
-    required this.groupContacts,
-  });
-
+  const GroupView({super.key, required this.groupContacts});
   final List<GroupContacts> groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var searchState = ref.watch(searchStateProvider(groupContacts));
 
-    return Column(
-      children: [
-        ElevatedButton.icon(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const GroupSettings(groupContacts: GroupContacts(group: Group(name: "New group"), members: []))),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          SearchBarWidget(searchState: searchState),
+          const SizedBox(height: 10 ),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.1,
+              ),
+              itemCount: searchState.groupContacts.length,
+              itemBuilder: (context, index) {
+                return GroupCard(groupContacts: searchState.groupContacts[index]);
+              },
+            ),
           ),
-          label: const Text("Groups", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-          icon: const Icon(Icons.create),
-          iconAlignment: IconAlignment.end,
-        ),
-        
-        FilterSearchBar(searchState: searchState),
-        Flexible(
-          child: ListView(
-            padding: const EdgeInsets.all(8),
-            children: searchState.groupContacts
-                .map((group) => GroupCard(groupContacts: group))
-                .toList(),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
-class FilterSearchBar extends ConsumerWidget {
-  const FilterSearchBar({super.key, required this.searchState});
-  
+
+class SearchBarWidget extends StatefulWidget {
+  const SearchBarWidget({super.key, required this.searchState});
+
   final SearchState searchState;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ThemeData theme = Theme.of(context);
+  _SearchBarWidgetState createState() => _SearchBarWidgetState();
+}
 
-    return SearchBar(
-      // controller: TextEditingController(text: searchState.searchText),
-      onChanged: (text) => searchState.filter(text),
-      hintText: 'Search by ${searchState.isGroupFilter ? 'Groups' : 'People'}',
-      leading: searchState.searchText == "" ? 
-        Icon(Icons.search, color: theme.colorScheme.onPrimary) :
-        IconButton(
-          icon: const Icon(Icons.clear),
-          color: theme.colorScheme.onPrimary,
-          onPressed: () => searchState.filter(""),
+class _SearchBarWidgetState extends State<SearchBarWidget> {
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusScope(
+      onFocusChange: (focused) => setState(() => _isFocused = focused),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        height: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: _isFocused
+              ? [BoxShadow(color: Colors.grey.shade300, blurRadius: 2)]
+              : [],
         ),
-      backgroundColor: WidgetStatePropertyAll(theme.colorScheme.primary),
-      hintStyle: WidgetStatePropertyAll(
-        TextStyle(color: theme.colorScheme.onPrimary.withAlpha(150)),
-      ),
-      textStyle: WidgetStatePropertyAll(
-        TextStyle(color: theme.colorScheme.onPrimary),
-      ),
-      trailing: [
-        ElevatedButton.icon(
-          onPressed: () => searchState.toggleSearchMode(),
-          icon:  searchState.isGroupFilter ? const Icon(Icons.people) : const Icon(Icons.person),
-          label: Text(searchState.isGroupFilter ? 'Group' : 'Person'),
+        child: TextField(
+          onChanged: (text) => widget.searchState.filter(text),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search),
+            hintText: 'Search Groups or People',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
         ),
-      ],
+      ),
     );
   }
 }
+
+
 class GroupCard extends StatelessWidget {
-  const GroupCard({
-    super.key,
-    required this.groupContacts,
-  });
+  const GroupCard({super.key, required this.groupContacts});
 
   final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context) {
-
     return Card(
-      margin: const EdgeInsets.only(bottom: 10, top: 10),
-      child: ExpansionTile(
-        leading: IconButton(
-          icon: const Icon(Icons.edit_document),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => PaperMode(groupContacts: groupContacts,)),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PaperMode(groupContacts: groupContacts),
           ),
         ),
-        title: Text(groupContacts.group.name),
-        subtitle: Text(groupContacts.group.description ?? ""),
-        trailing: IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) =>  GroupSettings(groupContacts: groupContacts)),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Group Name & Description
+              Text(
+                groupContacts.group.name,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              if (groupContacts.group.description != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    groupContacts.group.description!,
+                    style: TextStyle(color: Colors.grey[700]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              const Spacer(),
+              Container(
+                // color: Colors.grey[200],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.settings, color: Colors.blueGrey),
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                      style: const ButtonStyle(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+                      ),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => GroupSettings(groupContacts: groupContacts),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.people),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
+                      style: const ButtonStyle(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+                      ),
+                      onPressed: () => _showMembersModal(context, groupContacts),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
-        children: groupContacts.members
-            .map((member) => MemberCard(user: member))
-            .toList(), // Show member cards when expanded
       ),
     );
   }
-}
 
-
-
-class MemberCard extends StatelessWidget {
-  const MemberCard({super.key, required this.user});
-
-  final Contact user;
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10, top: 10),
-      color: theme.colorScheme.secondary,
-      child: ListTile(
-
-        title: Text(user.name),
-        subtitle: Text(user.description ?? ""),
-        textColor: theme.colorScheme.onSecondary,
-        leading: IconButton( 
-          icon: const Icon(Icons.edit),
-          color: theme.colorScheme.onSecondaryContainer,
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user)),
-          ),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.remove_red_eye),
-          color: theme.colorScheme.onSecondaryContainer,
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => PrayerRequestConsumer(user: user)),
-          ),
-        ),
+  void _showMembersModal(BuildContext context, GroupContacts groupContacts) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Members of ${groupContacts.group.name}",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 250,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: groupContacts.members.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PrayerRequestConsumer(user: groupContacts.members[index]),
+                        ),
+                      ),
+                      leading: const CircleAvatar(child: Icon(Icons.person)),
+                      title: Text(groupContacts.members[index].name),
+                      subtitle: Text(groupContacts.members[index].description ?? ""),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ContactPageSettings(contact: groupContacts.members[index]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
