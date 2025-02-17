@@ -128,45 +128,50 @@ class GroupCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PaperMode(groupContacts: groupContacts),
-          ),
-        ),
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Group Name & Description
-              Text(
-                groupContacts.group.name,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              if (groupContacts.group.description != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    groupContacts.group.description!,
-                    style: TextStyle(color: Colors.grey[700]),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PaperMode(groupContacts: groupContacts),
                   ),
                 ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    children: [
+                      Text(
+                        groupContacts.group.name,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      if (groupContacts.group.description != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            groupContacts.group.description!,
+                            style: TextStyle(color: Colors.grey[700]),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
               const Spacer(),
               Container(
-                // color: Colors.grey[200],
+                color: Theme.of(context).cardColor.withValues(alpha: 0.9),
+                height: 30,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.settings, color: Colors.blueGrey),
-                      constraints: const BoxConstraints(),
-                      visualDensity: VisualDensity.compact,
-                      style: const ButtonStyle(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      visualDensity: VisualDensity.comfortable,
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => GroupSettings(groupContacts: groupContacts),
@@ -175,12 +180,8 @@ class GroupCard extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.people),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      visualDensity: VisualDensity.compact,
-                      style: const ButtonStyle(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      visualDensity: VisualDensity.comfortable,
                       onPressed: () => _showMembersModal(context, groupContacts),
                     ),
                   ],
@@ -189,8 +190,7 @@ class GroupCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   void _showMembersModal(BuildContext context, GroupContacts groupContacts) {
