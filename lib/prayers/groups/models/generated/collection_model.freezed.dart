@@ -26,6 +26,12 @@ mixin _$Collection {
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'related_contact_ids')
   List<int> get relatedContactIds => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact')
+  Contact get user => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact_group')
+  ContactGroupPairs get group => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String get createdAt => throw _privateConstructorUsedError;
   double? get score => throw _privateConstructorUsedError;
 
   /// Serializes this Collection to a JSON map.
@@ -49,7 +55,13 @@ abstract class $CollectionCopyWith<$Res> {
       String? title,
       @JsonKey(name: 'summary') String? description,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds,
+      @JsonKey(name: 'contact') Contact user,
+      @JsonKey(name: 'contact_group') ContactGroupPairs group,
+      @JsonKey(name: 'created_at') String createdAt,
       double? score});
+
+  $ContactCopyWith<$Res> get user;
+  $ContactGroupPairsCopyWith<$Res> get group;
 }
 
 /// @nodoc
@@ -71,6 +83,9 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
     Object? title = freezed,
     Object? description = freezed,
     Object? relatedContactIds = null,
+    Object? user = null,
+    Object? group = null,
+    Object? createdAt = null,
     Object? score = freezed,
   }) {
     return _then(_value.copyWith(
@@ -90,11 +105,43 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
           ? _value.relatedContactIds
           : relatedContactIds // ignore: cast_nullable_to_non_nullable
               as List<int>,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Contact,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as ContactGroupPairs,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
       score: freezed == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
               as double?,
     ) as $Val);
+  }
+
+  /// Create a copy of Collection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ContactCopyWith<$Res> get user {
+    return $ContactCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Collection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ContactGroupPairsCopyWith<$Res> get group {
+    return $ContactGroupPairsCopyWith<$Res>(_value.group, (value) {
+      return _then(_value.copyWith(group: value) as $Val);
+    });
   }
 }
 
@@ -111,7 +158,15 @@ abstract class _$$CollectionImplCopyWith<$Res>
       String? title,
       @JsonKey(name: 'summary') String? description,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds,
+      @JsonKey(name: 'contact') Contact user,
+      @JsonKey(name: 'contact_group') ContactGroupPairs group,
+      @JsonKey(name: 'created_at') String createdAt,
       double? score});
+
+  @override
+  $ContactCopyWith<$Res> get user;
+  @override
+  $ContactGroupPairsCopyWith<$Res> get group;
 }
 
 /// @nodoc
@@ -131,6 +186,9 @@ class __$$CollectionImplCopyWithImpl<$Res>
     Object? title = freezed,
     Object? description = freezed,
     Object? relatedContactIds = null,
+    Object? user = null,
+    Object? group = null,
+    Object? createdAt = null,
     Object? score = freezed,
   }) {
     return _then(_$CollectionImpl(
@@ -150,6 +208,18 @@ class __$$CollectionImplCopyWithImpl<$Res>
           ? _value._relatedContactIds
           : relatedContactIds // ignore: cast_nullable_to_non_nullable
               as List<int>,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Contact,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as ContactGroupPairs,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
       score: freezed == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -167,6 +237,9 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       @JsonKey(name: 'summary') this.description = "",
       @JsonKey(name: 'related_contact_ids')
       final List<int> relatedContactIds = const [],
+      @JsonKey(name: 'contact') required this.user,
+      @JsonKey(name: 'contact_group') required this.group,
+      @JsonKey(name: 'created_at') this.createdAt = "",
       this.score})
       : _relatedContactIds = relatedContactIds;
 
@@ -192,11 +265,20 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
   }
 
   @override
+  @JsonKey(name: 'contact')
+  final Contact user;
+  @override
+  @JsonKey(name: 'contact_group')
+  final ContactGroupPairs group;
+  @override
+  @JsonKey(name: 'created_at')
+  final String createdAt;
+  @override
   final double? score;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Collection(id: $id, title: $title, description: $description, relatedContactIds: $relatedContactIds, score: $score)';
+    return 'Collection(id: $id, title: $title, description: $description, relatedContactIds: $relatedContactIds, user: $user, group: $group, createdAt: $createdAt, score: $score)';
   }
 
   @override
@@ -208,6 +290,9 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds))
+      ..add(DiagnosticsProperty('user', user))
+      ..add(DiagnosticsProperty('group', group))
+      ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('score', score));
   }
 
@@ -222,13 +307,25 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
                 other.description == description) &&
             const DeepCollectionEquality()
                 .equals(other._relatedContactIds, _relatedContactIds) &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.group, group) || other.group == group) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
             (identical(other.score, score) || other.score == score));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, title, description,
-      const DeepCollectionEquality().hash(_relatedContactIds), score);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      description,
+      const DeepCollectionEquality().hash(_relatedContactIds),
+      user,
+      group,
+      createdAt,
+      score);
 
   /// Create a copy of Collection
   /// with the given fields replaced by the non-null parameter values.
@@ -252,6 +349,9 @@ abstract class _Collection implements Collection {
       final String? title,
       @JsonKey(name: 'summary') final String? description,
       @JsonKey(name: 'related_contact_ids') final List<int> relatedContactIds,
+      @JsonKey(name: 'contact') required final Contact user,
+      @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
+      @JsonKey(name: 'created_at') final String createdAt,
       final double? score}) = _$CollectionImpl;
 
   factory _Collection.fromJson(Map<String, dynamic> json) =
@@ -267,6 +367,15 @@ abstract class _Collection implements Collection {
   @override
   @JsonKey(name: 'related_contact_ids')
   List<int> get relatedContactIds;
+  @override
+  @JsonKey(name: 'contact')
+  Contact get user;
+  @override
+  @JsonKey(name: 'contact_group')
+  ContactGroupPairs get group;
+  @override
+  @JsonKey(name: 'created_at')
+  String get createdAt;
   @override
   double? get score;
 

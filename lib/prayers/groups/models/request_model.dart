@@ -25,6 +25,7 @@ class PrayerRequest with _$PrayerRequest {
   factory PrayerRequest.fromJson(Map<String, dynamic> json) => _$PrayerRequestFromJson(json);
 }
 
+// TODO: Should this be deprecated?
 @freezed
 class PrayerRequestScore with _$PrayerRequestScore {
   const factory PrayerRequestScore({

@@ -16,20 +16,28 @@ class CollectionContactRepo extends _$CollectionContactRepo {
 
   @override
   Future<List<Collection>> build(int contactId) async {
-    var contactApi = config.collectionsApiClient;
-    final contacts = await contactApi.fetchCollections(contactId);
+    var api = config.collectionsApiClient;
+    final contacts = await api.fetchCollections(contactId);
     return contacts;
   }
 
-  Future<List<PrayerRequest>> fetchRequests(int contactId) async {
-    var contactApi = config.collectionsApiClient;
-    return await contactApi.fetchRelatedRequests(contactId);
+  Future<void> remove(Collection collection) async {
+    var api = config.collectionsApiClient;
+    await api.removeCollection(collection.id);
+
+    ref.invalidateSelf();
   }
 }
 
 @riverpod
 Future<List<Collection>> fetchRecommendations(Ref ref,int contactId) async {
   var config = Config();
-  var prayerApi = config.collectionsApiClient;
-  return await prayerApi.fetchRecommendations(contactId);
+  var api = config.collectionsApiClient;
+  return await api.fetchRecommendations(contactId);
+}
+
+@riverpod
+Future<List<PrayerRequest>> fetchRequestsInCollection(Ref ref, int collectionId) async {
+  var api = config.collectionsApiClient;
+  return await api.fetchRelatedRequests(collectionId);
 }

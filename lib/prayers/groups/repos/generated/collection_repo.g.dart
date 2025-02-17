@@ -7,7 +7,7 @@ part of '../collection_repo.dart';
 // **************************************************************************
 
 String _$fetchRecommendationsHash() =>
-    r'74f3d27413032ac4d4cbd6cf66a46a1019b9bf9d';
+    r'6c01931323e4e914ade96f5613c3eee658a8b135';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -163,8 +163,147 @@ class _FetchRecommendationsProviderElement
   int get contactId => (origin as FetchRecommendationsProvider).contactId;
 }
 
+String _$fetchRequestsInCollectionHash() =>
+    r'42219accf8df12c57f3caca07d37d9cd699d548e';
+
+/// See also [fetchRequestsInCollection].
+@ProviderFor(fetchRequestsInCollection)
+const fetchRequestsInCollectionProvider = FetchRequestsInCollectionFamily();
+
+/// See also [fetchRequestsInCollection].
+class FetchRequestsInCollectionFamily
+    extends Family<AsyncValue<List<PrayerRequest>>> {
+  /// See also [fetchRequestsInCollection].
+  const FetchRequestsInCollectionFamily();
+
+  /// See also [fetchRequestsInCollection].
+  FetchRequestsInCollectionProvider call(
+    int collectionId,
+  ) {
+    return FetchRequestsInCollectionProvider(
+      collectionId,
+    );
+  }
+
+  @override
+  FetchRequestsInCollectionProvider getProviderOverride(
+    covariant FetchRequestsInCollectionProvider provider,
+  ) {
+    return call(
+      provider.collectionId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchRequestsInCollectionProvider';
+}
+
+/// See also [fetchRequestsInCollection].
+class FetchRequestsInCollectionProvider
+    extends AutoDisposeFutureProvider<List<PrayerRequest>> {
+  /// See also [fetchRequestsInCollection].
+  FetchRequestsInCollectionProvider(
+    int collectionId,
+  ) : this._internal(
+          (ref) => fetchRequestsInCollection(
+            ref as FetchRequestsInCollectionRef,
+            collectionId,
+          ),
+          from: fetchRequestsInCollectionProvider,
+          name: r'fetchRequestsInCollectionProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchRequestsInCollectionHash,
+          dependencies: FetchRequestsInCollectionFamily._dependencies,
+          allTransitiveDependencies:
+              FetchRequestsInCollectionFamily._allTransitiveDependencies,
+          collectionId: collectionId,
+        );
+
+  FetchRequestsInCollectionProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.collectionId,
+  }) : super.internal();
+
+  final int collectionId;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<PrayerRequest>> Function(
+            FetchRequestsInCollectionRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchRequestsInCollectionProvider._internal(
+        (ref) => create(ref as FetchRequestsInCollectionRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        collectionId: collectionId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<PrayerRequest>> createElement() {
+    return _FetchRequestsInCollectionProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchRequestsInCollectionProvider &&
+        other.collectionId == collectionId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, collectionId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchRequestsInCollectionRef
+    on AutoDisposeFutureProviderRef<List<PrayerRequest>> {
+  /// The parameter `collectionId` of this provider.
+  int get collectionId;
+}
+
+class _FetchRequestsInCollectionProviderElement
+    extends AutoDisposeFutureProviderElement<List<PrayerRequest>>
+    with FetchRequestsInCollectionRef {
+  _FetchRequestsInCollectionProviderElement(super.provider);
+
+  @override
+  int get collectionId =>
+      (origin as FetchRequestsInCollectionProvider).collectionId;
+}
+
 String _$collectionContactRepoHash() =>
-    r'501250d19946c571d7f8f94f95e22046fe3c6a5b';
+    r'37fe3d96a9a7ae83e7366a58cc222eb4caf17ba4';
 
 abstract class _$CollectionContactRepo
     extends BuildlessAutoDisposeAsyncNotifier<List<Collection>> {

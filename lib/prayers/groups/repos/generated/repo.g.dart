@@ -7,7 +7,7 @@ part of '../repo.dart';
 // **************************************************************************
 
 String _$fetchPrayerRequestContactHash() =>
-    r'4181e41f13654f94018ffe11a6bb6c839b2483dd';
+    r'b70be12537bbd43d35b42aa181962490facf1051';
 
 /// Copied from Dart SDK
 class _SystemHash {

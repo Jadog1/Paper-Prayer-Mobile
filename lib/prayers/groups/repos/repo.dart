@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -76,7 +78,7 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 class PrayerRequestContact {
   final Contact user;
   final List<RelatedContact> relatedContacts;
-  final List<PrayerRequest> prayerRequests;
+  final List<Collection> prayerRequests;
 
   PrayerRequestContact({required this.user, required this.relatedContacts, required this.prayerRequests});
 }
@@ -84,7 +86,7 @@ class PrayerRequestContact {
 @riverpod
 Future<PrayerRequestContact> fetchPrayerRequestContact(Ref ref, Contact contact) async {
   var contactApi = config.contactApiClient;
-  var prayerRequests = await ref.watch(prayerRequestRepoProvider(contact.id).future);
+  var prayerRequests = await ref.watch(collectionContactRepoProvider(contact.id).future);
   var relatedContacts = await contactApi.fetchRelatedContacts(contact.id);
   var user = contact;
 

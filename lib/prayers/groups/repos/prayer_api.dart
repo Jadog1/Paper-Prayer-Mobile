@@ -204,4 +204,12 @@ class CollectionsApiClient {
     final json = jsonDecode(response.body) as List;
     return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
+
+  Future<void> removeCollection(int collectionId) async {
+    final response = await httpClient.delete(config.uri("/collections/$collectionId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error removing collection: ${response.statusCode} - ${response.body}");
+    }
+  }
 }

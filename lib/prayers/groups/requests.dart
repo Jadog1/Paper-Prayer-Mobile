@@ -2,18 +2,20 @@ import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class PrayerRequestWithAll {
-  final PrayerRequest request;
+  final Collection collection;
   final List<RelatedContact> relatedContacts;
 
-  PrayerRequestWithAll({required this.request, required this.relatedContacts});
+  PrayerRequestWithAll({required this.collection, required this.relatedContacts});
 }
 
 class PrayerRequestConsumer extends ConsumerWidget {
@@ -86,12 +88,12 @@ class PrayerRequests extends StatelessWidget {
 class CompactRequestButtonGroup extends ConsumerWidget {
   const CompactRequestButtonGroup({super.key, required this.request, required this.allRelatedContacts});
 
-  final PrayerRequest request;
+  final Collection request;
   final List<RelatedContact> allRelatedContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prayerWithAll = PrayerRequestWithAll(request: request, relatedContacts: allRelatedContacts);
+    var prayerWithAll = PrayerRequestWithAll(collection: request, relatedContacts: allRelatedContacts);
     return SizedBox(
       height: 26,
       child: Row(
@@ -111,18 +113,18 @@ class CompactRequestButtonGroup extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            style: const ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
-            ),
-            visualDensity: VisualDensity.compact,
-            icon: const Icon(Icons.edit),
-            onPressed: () => editPrayerRequestBottomSheet(context, ref, request),
-          ),
+          // IconButton(
+          //   padding: EdgeInsets.zero,
+          //   constraints: const BoxConstraints(),
+          //   style: const ButtonStyle(
+          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
+          //   ),
+          //   visualDensity: VisualDensity.compact,
+          //   icon: const Icon(Icons.edit),
+          //   onPressed: () => editPrayerRequestBottomSheet(context, ref, request),
+          // ),
           DeleteConfirmationButton(
-            onDelete: () => ref.read(prayerRequestRepoProvider(request.user.id).notifier).removeRequest(request),
+            onDelete: () => ref.read(collectionContactRepoProvider(request.user.id).notifier).remove(request),
             onCancel: () => {},
             deleteContext: "prayer request",
             child:  const Icon(Icons.delete),
@@ -229,8 +231,8 @@ class RequestDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
-    var request = prayerWithAll.request;
-    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, request.relatedContactIds);
+    var collection = prayerWithAll.collection;
+    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, collection.relatedContactIds);
     return Column(
       children: <Widget> [
         AppBar(title: const Text("Request Dashboard")),
@@ -250,11 +252,9 @@ class RequestDashboard extends StatelessWidget {
                 header: Text("Request Details", style: headerStyle),
                 content: Column(
                   children: [
-                    Text(request.description),
-                    Text("Sentiment: ${request.sentiment}"),
-                    Text("Created At: ${dateTimeToDate(request.createdAt)}"),
-                    Text("Type: ${request.prayerType}"),
-                    Text("Emotion: ${request.emotion}"),
+                    Text(collection.title ?? ""),
+                    Text(collection.description ?? ""),
+                    Text("Created At: ${dateTimeToDate(collection.createdAt)}"),
                     Text("Related contacts: ${relatedContactsFullDescription(relatedContacts)}"),
                   ],
                 ),
@@ -283,8 +283,8 @@ class RelatedRequests extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var request = prayerWithAll.request;
-    var viewModel = ref.watch(fetchSimilarRequestsProvider(request.id));
+    var collection = prayerWithAll.collection;
+    var viewModel = ref.watch(fetchRequestsInCollectionProvider(collection.id));
     return switch(viewModel) {
       AsyncData(:final value) => CompactSimplifiedPrayerRequests(requests: value, prayerWithAll: prayerWithAll,), // SimplifiedPrayerRequests(requests: value, prayerWithAll: prayerWithAll),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "RelatedRequests", error: error, stackTrace: stackTrace),
@@ -296,7 +296,7 @@ class RelatedRequests extends ConsumerWidget {
 class CompactSimplifiedPrayerRequests extends StatelessWidget {
   const CompactSimplifiedPrayerRequests({super.key, required this.requests, required this.prayerWithAll});
 
-  final List<PrayerRequestScore> requests;
+  final List<PrayerRequest> requests;
   final PrayerRequestWithAll prayerWithAll;
 
   @override
@@ -305,15 +305,15 @@ class CompactSimplifiedPrayerRequests extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       itemCount: requests.length,
       itemBuilder: (context, index) {
-        var request = prayerRequestScoreToPrayerRequest(requests[index]);
+        var request = requests[index];
         var child = Row(
           children: [
             Text(dateTimeToDate(requests[index].createdAt)),
-            const Spacer(),
-            Text(
-              "${(requests[index].score * 100).toStringAsFixed(2)}%", 
-              style: const TextStyle(fontStyle: FontStyle.italic),
-            ),
+            // const Spacer(),
+            // Text(
+            //   "${(requests[index].score * 100).toStringAsFixed(2)}%", 
+            //   style: const TextStyle(fontStyle: FontStyle.italic),
+            // ),
           ],
         );
         return CompactRequestCard(

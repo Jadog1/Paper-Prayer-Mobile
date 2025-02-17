@@ -15,6 +15,10 @@ _$CollectionImpl _$$CollectionImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => (e as num).toInt())
               .toList() ??
           const [],
+      user: Contact.fromJson(json['contact'] as Map<String, dynamic>),
+      group: ContactGroupPairs.fromJson(
+          json['contact_group'] as Map<String, dynamic>),
+      createdAt: json['created_at'] as String? ?? "",
       score: (json['score'] as num?)?.toDouble(),
     );
 
@@ -24,5 +28,8 @@ Map<String, dynamic> _$$CollectionImplToJson(_$CollectionImpl instance) =>
       'title': instance.title,
       'summary': instance.description,
       'related_contact_ids': instance.relatedContactIds,
+      'contact': instance.user,
+      'contact_group': instance.group,
+      'created_at': instance.createdAt,
       'score': instance.score,
     };
