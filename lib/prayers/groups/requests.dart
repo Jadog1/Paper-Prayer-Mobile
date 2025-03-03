@@ -54,8 +54,10 @@ class PrayerRequestView extends ConsumerWidget {
         AppBar(
           title: Text(user.name),
         ),
-        Expanded(child: PrayerRequests(prayerRequestContact: prayerRequestContact,)),
-        AddPrayerRequest(user: user, contactGroup: contactGroup),
+        FloatingPrayerRequestButton(user: user, contactGroup: contactGroup),
+        Expanded(
+          child: PrayerRequests(prayerRequestContact: prayerRequestContact),
+        ),
       ],
     );
   }
@@ -72,14 +74,15 @@ class PrayerRequests extends StatelessWidget {
       child: ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: prayerRequestContact.prayerRequests.length,
-        reverse: true,
-        itemBuilder: (context, index) => CompactRequestCard(
-          title: prayerRequestContact.prayerRequests[index].title, 
-          description: prayerRequestContact.prayerRequests[index].description,
-          relatedContactIds: prayerRequestContact.prayerRequests[index].relatedContactIds,
-          allRelatedContacts: prayerRequestContact.relatedContacts,
-          child: CompactRequestButtonGroup(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
-        ),
+        itemBuilder: (context, index) {
+          return CompactRequestCard(
+            title: prayerRequestContact.prayerRequests[index].title, 
+            description: prayerRequestContact.prayerRequests[index].description,
+            relatedContactIds: prayerRequestContact.prayerRequests[index].relatedContactIds,
+            allRelatedContacts: prayerRequestContact.relatedContacts,
+            child: CompactRequestButtonGroup(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
+          );
+        },
       ),
     );
   }
@@ -146,6 +149,32 @@ Icon sentimentIcon(String? sentiment) {
       return const Icon(Icons.sentiment_neutral_rounded);
     default:
       return const Icon(Icons.question_mark);
+  }
+}
+
+class FloatingPrayerRequestButton extends StatelessWidget {
+  const FloatingPrayerRequestButton({super.key, required this.user, required this.contactGroup});
+
+  final Contact user;
+  final ContactGroupPairs contactGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+      child: FloatingActionButton(
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+          builder: (context) => Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: AddPrayerRequest(user: user, contactGroup: contactGroup),
+          ),
+        ),
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }
 

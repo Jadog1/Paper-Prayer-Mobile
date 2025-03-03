@@ -101,7 +101,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           onChanged: (text) => widget.searchState.filter(text),
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
-            hintText: 'Search Groups or People',
+            hintText: 'Search Groups',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -133,35 +133,39 @@ class GroupCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Group Name & Description
-              GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PaperMode(groupContacts: groupContacts),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => PaperMode(groupContacts: groupContacts),
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      Text(
-                        groupContacts.group.name,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      if (groupContacts.group.description != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            groupContacts.group.description!,
-                            style: TextStyle(color: Colors.grey[700]),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                  child: Container(
+                    color: Colors.transparent, // Needed for gesture detector so that we can click any area of the card
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Text(
+                            groupContacts.group.name,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                    ],
+                          if (groupContacts.group.description != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                groupContacts.group.description!,
+                                style: TextStyle(color: Colors.grey[700]),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              const Spacer(),
               Container(
                 color: Theme.of(context).cardColor.withValues(alpha: 0.9),
                 height: 30,
