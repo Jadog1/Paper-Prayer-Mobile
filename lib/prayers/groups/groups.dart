@@ -33,9 +33,9 @@ class GroupConsumer extends ConsumerWidget {
     return switch(viewModel) {
       AsyncData(:final value) => GroupView(groupContacts: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "GroupConsumer", error: error, stackTrace: stackTrace),
-      _ => const RefreshProgressIndicator(),
+      _ => const Center(child: CircularProgressIndicator()),
     };
-  } // GroupView(viewModel: viewModel)
+  }
 }
 
 class GroupView extends ConsumerWidget {

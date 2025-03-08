@@ -6,8 +6,8 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchPrayerRequestContactHash() =>
-    r'b70be12537bbd43d35b42aa181962490facf1051';
+String _$fetchCollectionsAndContactsHash() =>
+    r'0fb8c8f18a934905c549449e2d72cc8bc68f51f9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,28 +30,28 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchPrayerRequestContact].
-@ProviderFor(fetchPrayerRequestContact)
-const fetchPrayerRequestContactProvider = FetchPrayerRequestContactFamily();
+/// See also [fetchCollectionsAndContacts].
+@ProviderFor(fetchCollectionsAndContacts)
+const fetchCollectionsAndContactsProvider = FetchCollectionsAndContactsFamily();
 
-/// See also [fetchPrayerRequestContact].
-class FetchPrayerRequestContactFamily
-    extends Family<AsyncValue<PrayerRequestContact>> {
-  /// See also [fetchPrayerRequestContact].
-  const FetchPrayerRequestContactFamily();
+/// See also [fetchCollectionsAndContacts].
+class FetchCollectionsAndContactsFamily
+    extends Family<AsyncValue<UserCollectionsAndContacts>> {
+  /// See also [fetchCollectionsAndContacts].
+  const FetchCollectionsAndContactsFamily();
 
-  /// See also [fetchPrayerRequestContact].
-  FetchPrayerRequestContactProvider call(
+  /// See also [fetchCollectionsAndContacts].
+  FetchCollectionsAndContactsProvider call(
     Contact contact,
   ) {
-    return FetchPrayerRequestContactProvider(
+    return FetchCollectionsAndContactsProvider(
       contact,
     );
   }
 
   @override
-  FetchPrayerRequestContactProvider getProviderOverride(
-    covariant FetchPrayerRequestContactProvider provider,
+  FetchCollectionsAndContactsProvider getProviderOverride(
+    covariant FetchCollectionsAndContactsProvider provider,
   ) {
     return call(
       provider.contact,
@@ -70,33 +70,33 @@ class FetchPrayerRequestContactFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchPrayerRequestContactProvider';
+  String? get name => r'fetchCollectionsAndContactsProvider';
 }
 
-/// See also [fetchPrayerRequestContact].
-class FetchPrayerRequestContactProvider
-    extends AutoDisposeFutureProvider<PrayerRequestContact> {
-  /// See also [fetchPrayerRequestContact].
-  FetchPrayerRequestContactProvider(
+/// See also [fetchCollectionsAndContacts].
+class FetchCollectionsAndContactsProvider
+    extends AutoDisposeFutureProvider<UserCollectionsAndContacts> {
+  /// See also [fetchCollectionsAndContacts].
+  FetchCollectionsAndContactsProvider(
     Contact contact,
   ) : this._internal(
-          (ref) => fetchPrayerRequestContact(
-            ref as FetchPrayerRequestContactRef,
+          (ref) => fetchCollectionsAndContacts(
+            ref as FetchCollectionsAndContactsRef,
             contact,
           ),
-          from: fetchPrayerRequestContactProvider,
-          name: r'fetchPrayerRequestContactProvider',
+          from: fetchCollectionsAndContactsProvider,
+          name: r'fetchCollectionsAndContactsProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchPrayerRequestContactHash,
-          dependencies: FetchPrayerRequestContactFamily._dependencies,
+                  : _$fetchCollectionsAndContactsHash,
+          dependencies: FetchCollectionsAndContactsFamily._dependencies,
           allTransitiveDependencies:
-              FetchPrayerRequestContactFamily._allTransitiveDependencies,
+              FetchCollectionsAndContactsFamily._allTransitiveDependencies,
           contact: contact,
         );
 
-  FetchPrayerRequestContactProvider._internal(
+  FetchCollectionsAndContactsProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -110,14 +110,14 @@ class FetchPrayerRequestContactProvider
 
   @override
   Override overrideWith(
-    FutureOr<PrayerRequestContact> Function(
-            FetchPrayerRequestContactRef provider)
+    FutureOr<UserCollectionsAndContacts> Function(
+            FetchCollectionsAndContactsRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchPrayerRequestContactProvider._internal(
-        (ref) => create(ref as FetchPrayerRequestContactRef),
+      override: FetchCollectionsAndContactsProvider._internal(
+        (ref) => create(ref as FetchCollectionsAndContactsRef),
         from: from,
         name: null,
         dependencies: null,
@@ -129,13 +129,13 @@ class FetchPrayerRequestContactProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<PrayerRequestContact> createElement() {
-    return _FetchPrayerRequestContactProviderElement(this);
+  AutoDisposeFutureProviderElement<UserCollectionsAndContacts> createElement() {
+    return _FetchCollectionsAndContactsProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchPrayerRequestContactProvider &&
+    return other is FetchCollectionsAndContactsProvider &&
         other.contact == contact;
   }
 
@@ -150,19 +150,20 @@ class FetchPrayerRequestContactProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchPrayerRequestContactRef
-    on AutoDisposeFutureProviderRef<PrayerRequestContact> {
+mixin FetchCollectionsAndContactsRef
+    on AutoDisposeFutureProviderRef<UserCollectionsAndContacts> {
   /// The parameter `contact` of this provider.
   Contact get contact;
 }
 
-class _FetchPrayerRequestContactProviderElement
-    extends AutoDisposeFutureProviderElement<PrayerRequestContact>
-    with FetchPrayerRequestContactRef {
-  _FetchPrayerRequestContactProviderElement(super.provider);
+class _FetchCollectionsAndContactsProviderElement
+    extends AutoDisposeFutureProviderElement<UserCollectionsAndContacts>
+    with FetchCollectionsAndContactsRef {
+  _FetchCollectionsAndContactsProviderElement(super.provider);
 
   @override
-  Contact get contact => (origin as FetchPrayerRequestContactProvider).contact;
+  Contact get contact =>
+      (origin as FetchCollectionsAndContactsProvider).contact;
 }
 
 String _$fetchSimilarRequestsHash() =>

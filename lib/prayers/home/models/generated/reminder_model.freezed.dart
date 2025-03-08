@@ -24,6 +24,8 @@ mixin _$ReminderGroups {
   String get name => throw _privateConstructorUsedError;
   int get count => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(name: "max_created_at")
+  String get maxCreatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this ReminderGroups to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +43,12 @@ abstract class $ReminderGroupsCopyWith<$Res> {
           ReminderGroups value, $Res Function(ReminderGroups) then) =
       _$ReminderGroupsCopyWithImpl<$Res, ReminderGroups>;
   @useResult
-  $Res call({int id, String name, int count, String type});
+  $Res call(
+      {int id,
+      String name,
+      int count,
+      String type,
+      @JsonKey(name: "max_created_at") String maxCreatedAt});
 }
 
 /// @nodoc
@@ -63,6 +70,7 @@ class _$ReminderGroupsCopyWithImpl<$Res, $Val extends ReminderGroups>
     Object? name = null,
     Object? count = null,
     Object? type = null,
+    Object? maxCreatedAt = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -81,6 +89,10 @@ class _$ReminderGroupsCopyWithImpl<$Res, $Val extends ReminderGroups>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      maxCreatedAt: null == maxCreatedAt
+          ? _value.maxCreatedAt
+          : maxCreatedAt // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -93,7 +105,12 @@ abstract class _$$ReminderGroupsImplCopyWith<$Res>
       __$$ReminderGroupsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, int count, String type});
+  $Res call(
+      {int id,
+      String name,
+      int count,
+      String type,
+      @JsonKey(name: "max_created_at") String maxCreatedAt});
 }
 
 /// @nodoc
@@ -113,6 +130,7 @@ class __$$ReminderGroupsImplCopyWithImpl<$Res>
     Object? name = null,
     Object? count = null,
     Object? type = null,
+    Object? maxCreatedAt = null,
   }) {
     return _then(_$ReminderGroupsImpl(
       id: null == id
@@ -131,6 +149,10 @@ class __$$ReminderGroupsImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      maxCreatedAt: null == maxCreatedAt
+          ? _value.maxCreatedAt
+          : maxCreatedAt // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -144,7 +166,8 @@ class _$ReminderGroupsImpl
       {required this.id,
       required this.name,
       required this.count,
-      required this.type});
+      required this.type,
+      @JsonKey(name: "max_created_at") required this.maxCreatedAt});
 
   factory _$ReminderGroupsImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReminderGroupsImplFromJson(json);
@@ -157,10 +180,13 @@ class _$ReminderGroupsImpl
   final int count;
   @override
   final String type;
+  @override
+  @JsonKey(name: "max_created_at")
+  final String maxCreatedAt;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ReminderGroups(id: $id, name: $name, count: $count, type: $type)';
+    return 'ReminderGroups(id: $id, name: $name, count: $count, type: $type, maxCreatedAt: $maxCreatedAt)';
   }
 
   @override
@@ -171,7 +197,8 @@ class _$ReminderGroupsImpl
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('count', count))
-      ..add(DiagnosticsProperty('type', type));
+      ..add(DiagnosticsProperty('type', type))
+      ..add(DiagnosticsProperty('maxCreatedAt', maxCreatedAt));
   }
 
   @override
@@ -182,12 +209,15 @@ class _$ReminderGroupsImpl
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.count, count) || other.count == count) &&
-            (identical(other.type, type) || other.type == type));
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.maxCreatedAt, maxCreatedAt) ||
+                other.maxCreatedAt == maxCreatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, count, type);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, count, type, maxCreatedAt);
 
   /// Create a copy of ReminderGroups
   /// with the given fields replaced by the non-null parameter values.
@@ -211,7 +241,9 @@ abstract class _ReminderGroups implements ReminderGroups {
       {required final int id,
       required final String name,
       required final int count,
-      required final String type}) = _$ReminderGroupsImpl;
+      required final String type,
+      @JsonKey(name: "max_created_at")
+      required final String maxCreatedAt}) = _$ReminderGroupsImpl;
 
   factory _ReminderGroups.fromJson(Map<String, dynamic> json) =
       _$ReminderGroupsImpl.fromJson;
@@ -224,6 +256,9 @@ abstract class _ReminderGroups implements ReminderGroups {
   int get count;
   @override
   String get type;
+  @override
+  @JsonKey(name: "max_created_at")
+  String get maxCreatedAt;
 
   /// Create a copy of ReminderGroups
   /// with the given fields replaced by the non-null parameter values.

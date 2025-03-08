@@ -12,6 +12,7 @@ _$ReminderGroupsImpl _$$ReminderGroupsImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       count: (json['count'] as num).toInt(),
       type: json['type'] as String,
+      maxCreatedAt: json['max_created_at'] as String,
     );
 
 Map<String, dynamic> _$$ReminderGroupsImplToJson(
@@ -21,6 +22,7 @@ Map<String, dynamic> _$$ReminderGroupsImplToJson(
       'name': instance.name,
       'count': instance.count,
       'type': instance.type,
+      'max_created_at': instance.maxCreatedAt,
     };
 
 _$RemindersForGroupImpl _$$RemindersForGroupImplFromJson(

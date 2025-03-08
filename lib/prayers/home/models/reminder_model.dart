@@ -12,6 +12,7 @@ class ReminderGroups with _$ReminderGroups {
     required String name,
     required int count,
     required String type,
+    @JsonKey(name: "max_created_at") required String maxCreatedAt,
   }) = _ReminderGroups;
 
   factory ReminderGroups.fromJson(Map<String, dynamic> json) => _$ReminderGroupsFromJson(json);

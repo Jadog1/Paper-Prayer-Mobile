@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prayer_ml/prayers/home/home.dart';
 import './groups/groups.dart';
 
 class PrayersPage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _PrayersPageState extends State<PrayersPage> {
           onDestinationSelected: (value) => setState(() => pageIndex = value),
         ),
         body: const <Widget> [
-          Placeholder(),
+          HomePageConsumer(),
           Groups(),
           Placeholder(),
         ][pageIndex],

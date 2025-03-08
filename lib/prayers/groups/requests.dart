@@ -25,12 +25,12 @@ class PrayerRequestConsumer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchPrayerRequestContactProvider(user));
+    var viewModel = ref.watch(fetchCollectionsAndContactsProvider(user));
 
     return switch(viewModel) {
       AsyncData(:final value) => PrayerRequestView(prayerRequestContact: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
-      _ => const CircularProgressIndicator(),
+      _ => const Center(child: CircularProgressIndicator()),
     };
   }
 }
@@ -38,7 +38,7 @@ class PrayerRequestConsumer extends ConsumerWidget {
 class PrayerRequestView extends ConsumerWidget {
   const PrayerRequestView({super.key, required this.prayerRequestContact});
 
-  final PrayerRequestContact prayerRequestContact;
+  final UserCollectionsAndContacts prayerRequestContact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,7 +66,7 @@ class PrayerRequestView extends ConsumerWidget {
 class PrayerRequests extends StatelessWidget {
   const PrayerRequests({super.key, required this.prayerRequestContact});
 
-  final PrayerRequestContact prayerRequestContact;
+  final UserCollectionsAndContacts prayerRequestContact;
 
   @override
   Widget build(BuildContext context) {
@@ -116,16 +116,6 @@ class CompactRequestButtonGroup extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          // IconButton(
-          //   padding: EdgeInsets.zero,
-          //   constraints: const BoxConstraints(),
-          //   style: const ButtonStyle(
-          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap, // the '2023' part
-          //   ),
-          //   visualDensity: VisualDensity.compact,
-          //   icon: const Icon(Icons.edit),
-          //   onPressed: () => editPrayerRequestBottomSheet(context, ref, request),
-          // ),
           DeleteConfirmationButton(
             onDelete: () => ref.read(collectionContactRepoProvider(request.user.id).notifier).remove(request),
             onCancel: () => {},
