@@ -34,4 +34,15 @@ class ReminderApiClient{
     return json.map((group) => RemindersForGroup.fromJson(group)).toList();
   }
 
+  Future<List<Reminder>> getReminderRecommendations() async {
+    final response = await httpClient.get(config.uri("/reminders/recommendations"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting reminder recommendations: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((group) => Reminder.fromJson(group)).toList();
+  }
+
 }

@@ -471,3 +471,243 @@ abstract class _RemindersForGroup implements RemindersForGroup {
   _$$RemindersForGroupImplCopyWith<_$RemindersForGroupImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+Reminder _$ReminderFromJson(Map<String, dynamic> json) {
+  return _Reminder.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Reminder {
+  @JsonKey(name: "reminder_label")
+  String get reminderLabel => throw _privateConstructorUsedError;
+  Group get group => throw _privateConstructorUsedError;
+  @JsonKey(name: "prayer_collection")
+  Collection get prayerCollection => throw _privateConstructorUsedError;
+
+  /// Serializes this Reminder to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ReminderCopyWith<Reminder> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ReminderCopyWith<$Res> {
+  factory $ReminderCopyWith(Reminder value, $Res Function(Reminder) then) =
+      _$ReminderCopyWithImpl<$Res, Reminder>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "reminder_label") String reminderLabel,
+      Group group,
+      @JsonKey(name: "prayer_collection") Collection prayerCollection});
+
+  $GroupCopyWith<$Res> get group;
+  $CollectionCopyWith<$Res> get prayerCollection;
+}
+
+/// @nodoc
+class _$ReminderCopyWithImpl<$Res, $Val extends Reminder>
+    implements $ReminderCopyWith<$Res> {
+  _$ReminderCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reminderLabel = null,
+    Object? group = null,
+    Object? prayerCollection = null,
+  }) {
+    return _then(_value.copyWith(
+      reminderLabel: null == reminderLabel
+          ? _value.reminderLabel
+          : reminderLabel // ignore: cast_nullable_to_non_nullable
+              as String,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as Group,
+      prayerCollection: null == prayerCollection
+          ? _value.prayerCollection
+          : prayerCollection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+    ) as $Val);
+  }
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GroupCopyWith<$Res> get group {
+    return $GroupCopyWith<$Res>(_value.group, (value) {
+      return _then(_value.copyWith(group: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CollectionCopyWith<$Res> get prayerCollection {
+    return $CollectionCopyWith<$Res>(_value.prayerCollection, (value) {
+      return _then(_value.copyWith(prayerCollection: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$ReminderImplCopyWith<$Res>
+    implements $ReminderCopyWith<$Res> {
+  factory _$$ReminderImplCopyWith(
+          _$ReminderImpl value, $Res Function(_$ReminderImpl) then) =
+      __$$ReminderImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "reminder_label") String reminderLabel,
+      Group group,
+      @JsonKey(name: "prayer_collection") Collection prayerCollection});
+
+  @override
+  $GroupCopyWith<$Res> get group;
+  @override
+  $CollectionCopyWith<$Res> get prayerCollection;
+}
+
+/// @nodoc
+class __$$ReminderImplCopyWithImpl<$Res>
+    extends _$ReminderCopyWithImpl<$Res, _$ReminderImpl>
+    implements _$$ReminderImplCopyWith<$Res> {
+  __$$ReminderImplCopyWithImpl(
+      _$ReminderImpl _value, $Res Function(_$ReminderImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reminderLabel = null,
+    Object? group = null,
+    Object? prayerCollection = null,
+  }) {
+    return _then(_$ReminderImpl(
+      reminderLabel: null == reminderLabel
+          ? _value.reminderLabel
+          : reminderLabel // ignore: cast_nullable_to_non_nullable
+              as String,
+      group: null == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as Group,
+      prayerCollection: null == prayerCollection
+          ? _value.prayerCollection
+          : prayerCollection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
+  const _$ReminderImpl(
+      {@JsonKey(name: "reminder_label") required this.reminderLabel,
+      required this.group,
+      @JsonKey(name: "prayer_collection") required this.prayerCollection});
+
+  factory _$ReminderImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ReminderImplFromJson(json);
+
+  @override
+  @JsonKey(name: "reminder_label")
+  final String reminderLabel;
+  @override
+  final Group group;
+  @override
+  @JsonKey(name: "prayer_collection")
+  final Collection prayerCollection;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'Reminder(reminderLabel: $reminderLabel, group: $group, prayerCollection: $prayerCollection)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'Reminder'))
+      ..add(DiagnosticsProperty('reminderLabel', reminderLabel))
+      ..add(DiagnosticsProperty('group', group))
+      ..add(DiagnosticsProperty('prayerCollection', prayerCollection));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReminderImpl &&
+            (identical(other.reminderLabel, reminderLabel) ||
+                other.reminderLabel == reminderLabel) &&
+            (identical(other.group, group) || other.group == group) &&
+            (identical(other.prayerCollection, prayerCollection) ||
+                other.prayerCollection == prayerCollection));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, reminderLabel, group, prayerCollection);
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ReminderImplCopyWith<_$ReminderImpl> get copyWith =>
+      __$$ReminderImplCopyWithImpl<_$ReminderImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ReminderImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Reminder implements Reminder {
+  const factory _Reminder(
+      {@JsonKey(name: "reminder_label") required final String reminderLabel,
+      required final Group group,
+      @JsonKey(name: "prayer_collection")
+      required final Collection prayerCollection}) = _$ReminderImpl;
+
+  factory _Reminder.fromJson(Map<String, dynamic> json) =
+      _$ReminderImpl.fromJson;
+
+  @override
+  @JsonKey(name: "reminder_label")
+  String get reminderLabel;
+  @override
+  Group get group;
+  @override
+  @JsonKey(name: "prayer_collection")
+  Collection get prayerCollection;
+
+  /// Create a copy of Reminder
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ReminderImplCopyWith<_$ReminderImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

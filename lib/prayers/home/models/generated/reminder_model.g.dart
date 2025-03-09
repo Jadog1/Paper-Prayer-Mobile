@@ -40,3 +40,18 @@ Map<String, dynamic> _$$RemindersForGroupImplToJson(
       'reminders': instance.reminders,
       'group': instance.group,
     };
+
+_$ReminderImpl _$$ReminderImplFromJson(Map<String, dynamic> json) =>
+    _$ReminderImpl(
+      reminderLabel: json['reminder_label'] as String,
+      group: Group.fromJson(json['group'] as Map<String, dynamic>),
+      prayerCollection: Collection.fromJson(
+          json['prayer_collection'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ReminderImplToJson(_$ReminderImpl instance) =>
+    <String, dynamic>{
+      'reminder_label': instance.reminderLabel,
+      'group': instance.group,
+      'prayer_collection': instance.prayerCollection,
+    };

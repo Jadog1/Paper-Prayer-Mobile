@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 
 part 'generated/reminder_model.freezed.dart';
@@ -26,4 +28,18 @@ class RemindersForGroup with _$RemindersForGroup {
   }) = _RemindersForGroup;
 
   factory RemindersForGroup.fromJson(Map<String, dynamic> json) => _$RemindersForGroupFromJson(json);
+}
+
+@freezed
+class Reminder with _$Reminder {
+  const factory Reminder({
+    @JsonKey(name: "reminder_label") required String reminderLabel,
+    required Group group,
+    @JsonKey(name: "prayer_collection") required Collection prayerCollection,
+  }) = _Reminder;
+
+  factory Reminder.fromJson(Map<String, dynamic> json) => _$ReminderFromJson(json);
+}
+
+class PrayerCollection {
 }

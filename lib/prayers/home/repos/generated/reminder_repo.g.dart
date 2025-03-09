@@ -184,5 +184,25 @@ final fetchReminderGroupsProvider =
 // ignore: unused_element
 typedef FetchReminderGroupsRef
     = AutoDisposeFutureProviderRef<List<ReminderGroups>>;
+String _$fetchReminderRecommendationsHash() =>
+    r'c92732b587083417e263192a8df964627f1a791a';
+
+/// See also [fetchReminderRecommendations].
+@ProviderFor(fetchReminderRecommendations)
+final fetchReminderRecommendationsProvider =
+    AutoDisposeFutureProvider<List<Reminder>>.internal(
+  fetchReminderRecommendations,
+  name: r'fetchReminderRecommendationsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fetchReminderRecommendationsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FetchReminderRecommendationsRef
+    = AutoDisposeFutureProviderRef<List<Reminder>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

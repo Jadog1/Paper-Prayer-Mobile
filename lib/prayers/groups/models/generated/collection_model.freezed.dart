@@ -32,6 +32,12 @@ mixin _$Collection {
   ContactGroupPairs get group => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'follow_up_rank_label')
+  String get followUpRankLabel => throw _privateConstructorUsedError;
+  @JsonKey(name: 'start_range_of_event_date')
+  String? get startRangeOfEventDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'end_range_of_event_date')
+  String? get endRangeOfEventDate => throw _privateConstructorUsedError;
   double? get score => throw _privateConstructorUsedError;
 
   /// Serializes this Collection to a JSON map.
@@ -58,6 +64,9 @@ abstract class $CollectionCopyWith<$Res> {
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
+      @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
+      @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
       double? score});
 
   $ContactCopyWith<$Res> get user;
@@ -86,6 +95,9 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
     Object? user = null,
     Object? group = null,
     Object? createdAt = null,
+    Object? followUpRankLabel = null,
+    Object? startRangeOfEventDate = freezed,
+    Object? endRangeOfEventDate = freezed,
     Object? score = freezed,
   }) {
     return _then(_value.copyWith(
@@ -117,6 +129,18 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      followUpRankLabel: null == followUpRankLabel
+          ? _value.followUpRankLabel
+          : followUpRankLabel // ignore: cast_nullable_to_non_nullable
+              as String,
+      startRangeOfEventDate: freezed == startRangeOfEventDate
+          ? _value.startRangeOfEventDate
+          : startRangeOfEventDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endRangeOfEventDate: freezed == endRangeOfEventDate
+          ? _value.endRangeOfEventDate
+          : endRangeOfEventDate // ignore: cast_nullable_to_non_nullable
+              as String?,
       score: freezed == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -161,6 +185,9 @@ abstract class _$$CollectionImplCopyWith<$Res>
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
       @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
+      @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
+      @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
       double? score});
 
   @override
@@ -189,6 +216,9 @@ class __$$CollectionImplCopyWithImpl<$Res>
     Object? user = null,
     Object? group = null,
     Object? createdAt = null,
+    Object? followUpRankLabel = null,
+    Object? startRangeOfEventDate = freezed,
+    Object? endRangeOfEventDate = freezed,
     Object? score = freezed,
   }) {
     return _then(_$CollectionImpl(
@@ -220,6 +250,18 @@ class __$$CollectionImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
+      followUpRankLabel: null == followUpRankLabel
+          ? _value.followUpRankLabel
+          : followUpRankLabel // ignore: cast_nullable_to_non_nullable
+              as String,
+      startRangeOfEventDate: freezed == startRangeOfEventDate
+          ? _value.startRangeOfEventDate
+          : startRangeOfEventDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      endRangeOfEventDate: freezed == endRangeOfEventDate
+          ? _value.endRangeOfEventDate
+          : endRangeOfEventDate // ignore: cast_nullable_to_non_nullable
+              as String?,
       score: freezed == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -240,6 +282,10 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
       @JsonKey(name: 'created_at') this.createdAt = "",
+      @JsonKey(name: 'follow_up_rank_label') this.followUpRankLabel = "",
+      @JsonKey(name: 'start_range_of_event_date')
+      this.startRangeOfEventDate = "",
+      @JsonKey(name: 'end_range_of_event_date') this.endRangeOfEventDate = "",
       this.score})
       : _relatedContactIds = relatedContactIds;
 
@@ -274,11 +320,20 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
   @JsonKey(name: 'created_at')
   final String createdAt;
   @override
+  @JsonKey(name: 'follow_up_rank_label')
+  final String followUpRankLabel;
+  @override
+  @JsonKey(name: 'start_range_of_event_date')
+  final String? startRangeOfEventDate;
+  @override
+  @JsonKey(name: 'end_range_of_event_date')
+  final String? endRangeOfEventDate;
+  @override
   final double? score;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Collection(id: $id, title: $title, description: $description, relatedContactIds: $relatedContactIds, user: $user, group: $group, createdAt: $createdAt, score: $score)';
+    return 'Collection(id: $id, title: $title, description: $description, relatedContactIds: $relatedContactIds, user: $user, group: $group, createdAt: $createdAt, followUpRankLabel: $followUpRankLabel, startRangeOfEventDate: $startRangeOfEventDate, endRangeOfEventDate: $endRangeOfEventDate, score: $score)';
   }
 
   @override
@@ -293,6 +348,9 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
       ..add(DiagnosticsProperty('createdAt', createdAt))
+      ..add(DiagnosticsProperty('followUpRankLabel', followUpRankLabel))
+      ..add(DiagnosticsProperty('startRangeOfEventDate', startRangeOfEventDate))
+      ..add(DiagnosticsProperty('endRangeOfEventDate', endRangeOfEventDate))
       ..add(DiagnosticsProperty('score', score));
   }
 
@@ -311,6 +369,12 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
             (identical(other.group, group) || other.group == group) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.followUpRankLabel, followUpRankLabel) ||
+                other.followUpRankLabel == followUpRankLabel) &&
+            (identical(other.startRangeOfEventDate, startRangeOfEventDate) ||
+                other.startRangeOfEventDate == startRangeOfEventDate) &&
+            (identical(other.endRangeOfEventDate, endRangeOfEventDate) ||
+                other.endRangeOfEventDate == endRangeOfEventDate) &&
             (identical(other.score, score) || other.score == score));
   }
 
@@ -325,6 +389,9 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       user,
       group,
       createdAt,
+      followUpRankLabel,
+      startRangeOfEventDate,
+      endRangeOfEventDate,
       score);
 
   /// Create a copy of Collection
@@ -352,6 +419,11 @@ abstract class _Collection implements Collection {
       @JsonKey(name: 'contact') required final Contact user,
       @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
       @JsonKey(name: 'created_at') final String createdAt,
+      @JsonKey(name: 'follow_up_rank_label') final String followUpRankLabel,
+      @JsonKey(name: 'start_range_of_event_date')
+      final String? startRangeOfEventDate,
+      @JsonKey(name: 'end_range_of_event_date')
+      final String? endRangeOfEventDate,
       final double? score}) = _$CollectionImpl;
 
   factory _Collection.fromJson(Map<String, dynamic> json) =
@@ -376,6 +448,15 @@ abstract class _Collection implements Collection {
   @override
   @JsonKey(name: 'created_at')
   String get createdAt;
+  @override
+  @JsonKey(name: 'follow_up_rank_label')
+  String get followUpRankLabel;
+  @override
+  @JsonKey(name: 'start_range_of_event_date')
+  String? get startRangeOfEventDate;
+  @override
+  @JsonKey(name: 'end_range_of_event_date')
+  String? get endRangeOfEventDate;
   @override
   double? get score;
 

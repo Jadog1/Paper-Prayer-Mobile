@@ -18,3 +18,10 @@ Future<List<ReminderGroups>> fetchReminderGroups(Ref ref) async {
   var reminderApi = config.reminderApiClient;
   return await reminderApi.getReminderGroups();
 }
+
+@riverpod
+Future<List<Reminder>> fetchReminderRecommendations(Ref ref) async {
+  config = Config();
+  var reminderApi = config.reminderApiClient;
+  return await reminderApi.getReminderRecommendations();
+}
