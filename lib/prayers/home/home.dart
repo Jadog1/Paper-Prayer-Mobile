@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/home/models/reminder_model.dart';
 import 'package:prayer_ml/prayers/home/repos/reminder_repo.dart';
 import 'package:prayer_ml/shared/utility.dart';
@@ -11,17 +12,14 @@ class HomePageConsumer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(fetchReminderRecommendationsProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text("Prayer Reminders")),
-      body: switch (viewModel) {
-          AsyncData(:final value) => ReminderDashboard(reminders: value),
-          AsyncError(:final error, :final stackTrace) => PrintError(
-              caller: "PrayerRequestConsumer",
-              error: error,
-              stackTrace: stackTrace),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
-    );
+    return switch (viewModel) {
+      AsyncData(:final value) => ReminderDashboard(reminders: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(
+          caller: "PrayerRequestConsumer",
+          error: error,
+          stackTrace: stackTrace),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
   }
 }
 class ReminderDashboard extends StatelessWidget {
@@ -40,18 +38,22 @@ class ReminderDashboard extends StatelessWidget {
             delegate: _StickyHeaderDelegate(),
           ),
 
-          // Scrollable "Recently Happened" Section
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: "Recently Happened"),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                var reminder = reminders[index];
-                return PrayerCard(reminder: reminder);
-              },
-              childCount: 5, // Example data count
-            ),
+          SliverList.builder(
+            itemCount: reminders.length,
+            itemBuilder: (context, index) {
+              var reminder = reminders[index];
+              var previousReminderLabel = (index > 0) ? reminders[index - 1].reminderLabel : "";
+              var widget = PrayerCard(reminder: reminder);
+              if (reminder.reminderLabel != previousReminderLabel) {
+                return Column(
+                  children: [
+                    _SectionTitle(title: reminder.reminderLabel),
+                    widget,
+                  ],
+                );
+              }
+              return widget;
+            },
           ),
         ],
       );
@@ -94,44 +96,71 @@ class PrayerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var prayerCollection = reminder.prayerCollection;
-    var group = reminder.group.name;
-    var user = prayerCollection.user.name;
     var urgencyLabel = prayerCollection.followUpRankLabel;
+    var groupName = reminder.group.name;
+    var userName = prayerCollection.user.name;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         title: Text(prayerCollection.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("$group  |  $user"),
+            Text("$userName  |  $groupName", textAlign: TextAlign.left,),
             Row(
               children: [
-                _getUrgencyIcon(urgencyLabel),
-                const SizedBox(width: 4),
-                Text(urgencyLabel),
+                _urgencyLabel(urgencyLabel),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.check_circle, color: Colors.green),
+                  onPressed: () {
+                    // Handle marking as prayed
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Marked as prayed!")),
+                    );
+                  },
+                ),
               ],
             ),
-            Row(
-              children: [
-                const Icon(Icons.calendar_today),
-                const SizedBox(width: 4),
-                Text(dateToTextualDate(prayerCollection.createdAt)),
-              ],
-            )
+            _collectionDateInformation(prayerCollection),
           ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.check_circle, color: Colors.green),
-          onPressed: () {
-            // Handle marking as prayed
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Marked as prayed!")),
-            );
-          },
         ),
       ),
     );
   }
+}
+
+Widget _urgencyLabel(String urgencyLabel) {
+  return Row(
+    children: [
+      _getUrgencyIcon(urgencyLabel),
+      const SizedBox(width: 4),
+      Text(urgencyLabel),
+    ],
+  );
+}
+
+Widget _collectionDateInformation(Collection prayerCollection) {
+  var createdAt = dateToTextualDate(prayerCollection.updatedAt);
+  List<Widget> otherState = [];
+  if (todayIsBetween(prayerCollection.startRangeOfEventDate, prayerCollection.endRangeOfEventDate)) {
+    otherState.add(const Icon(Icons.hourglass_bottom));
+    otherState.add(const SizedBox(width: 4));
+    otherState.add(Text("${prayerCollection.startRangeOfEventDate} - ${prayerCollection.endRangeOfEventDate}"));
+  } else if (prayerCollection.startRangeOfEventDate != null) {
+    otherState.add(const Icon(Icons.access_time));
+    otherState.add(const SizedBox(width: 4));
+    otherState.add(Text(dateToTextualDate(prayerCollection.startRangeOfEventDate!)));
+  }
+  return Row(
+    children: [
+      const Icon(Icons.edit_calendar),
+      const SizedBox(width: 4),
+      Text(createdAt),
+      const Spacer(),
+      ...otherState,
+    ],
+  );
 }
 
 Icon _getUrgencyIcon(String urgencyLabel) {

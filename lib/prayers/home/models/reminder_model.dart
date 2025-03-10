@@ -40,6 +40,3 @@ class Reminder with _$Reminder {
 
   factory Reminder.fromJson(Map<String, dynamic> json) => _$ReminderFromJson(json);
 }
-
-class PrayerCollection {
-}

@@ -13,8 +13,18 @@ String formatTimestamp(String timestamp) {
 String dateToTextualDate(String date) {
   try {
     DateTime dateTime = DateTime.parse(date).toLocal();
-    return timeago.format(dateTime); // Example: 3 hours ago
+    return timeago.format(dateTime, allowFromNow: true); // Example: 3 hours ago
   } catch (e) {
     return "Invalid date";
   }
+}
+
+bool todayIsBetween(String? start, String? end) {
+  if (start == null || end == null) {
+    return false;
+  }
+  DateTime now = DateTime.now();
+  DateTime startDate = DateTime.parse(start).toLocal();
+  DateTime endDate = DateTime.parse(end).toLocal();
+  return now.isAfter(startDate) && now.isBefore(endDate);
 }
