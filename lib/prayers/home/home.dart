@@ -100,6 +100,8 @@ class PrayerCard extends StatelessWidget {
     var groupName = reminder.group.name;
     var userName = prayerCollection.user.name;
     return Card(
+      elevation: 4,   
+      shadowColor: Colors.black12, 
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         title: Text(prayerCollection.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -168,11 +170,11 @@ Icon _getUrgencyIcon(String urgencyLabel) {
     case "High":
       return const Icon(Icons.warning, color: Colors.red);
     case "Medium":
-      return const Icon(Icons.warning, color: Colors.orange);
+      return const Icon(Icons.warning_amber, color: Colors.orange);
     case "Low":
-      return const Icon(Icons.warning, color: Colors.yellow);
+      return const Icon(Icons.info, color: Colors.yellow);
     default:
-      return const Icon(Icons.warning, color: Colors.grey);
+      return const Icon(Icons.question_mark, color: Colors.grey);
   }
 }
 
