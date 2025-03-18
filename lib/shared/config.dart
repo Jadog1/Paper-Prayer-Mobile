@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/api/prayer_api.dart';
 import 'package:prayer_ml/api/reminder_api.dart';
 
@@ -11,10 +12,12 @@ class Config {
 
   Config() {
     var sharedClient = http.Client();
-    contactApiClient = ContactsApiClient(httpClient: sharedClient, baseUrl: apiUrl);
-    prayerRequestApiClient = PrayerRequestApiClient(httpClient: sharedClient, baseUrl: apiUrl);
-    collectionsApiClient = CollectionsApiClient(httpClient: sharedClient, baseUrl: apiUrl);
-    reminderApiClient = ReminderApiClient(httpClient: sharedClient, baseUrl: apiUrl);
+    var authClient = FirebaseAuthHttpClient(httpClient: sharedClient);
+
+    contactApiClient = ContactsApiClient(authClient: authClient, baseUrl: apiUrl);
+    prayerRequestApiClient = PrayerRequestApiClient(authClient: authClient, baseUrl: apiUrl);
+    collectionsApiClient = CollectionsApiClient(authClient: authClient, baseUrl: apiUrl);
+    reminderApiClient = ReminderApiClient(authClient: authClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {

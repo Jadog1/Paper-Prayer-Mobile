@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prayer_ml/prayers/home/home.dart';
+import 'package:prayer_ml/prayers/settings/settings.dart';
 import './groups/groups.dart';
 
 class PrayersPage extends StatefulWidget {
@@ -32,9 +33,9 @@ class _PrayersPageState extends State<PrayersPage> {
               label: 'Groups',
             ),
             NavigationDestination(
-              icon: Icon(Icons.summarize_outlined),
-              selectedIcon: Icon(Icons.summarize),
-              label: 'Summary',
+              icon: Icon(Icons.manage_accounts_outlined),
+              selectedIcon: Icon(Icons.manage_accounts),
+              label: 'Account',
             ),
           ],
           selectedIndex: pageIndex,
@@ -43,7 +44,7 @@ class _PrayersPageState extends State<PrayersPage> {
         body: const <Widget> [
           HomePageConsumer(),
           Groups(),
-          Placeholder(),
+          AccountSettingsPage(),
         ][pageIndex],
       ),
     );

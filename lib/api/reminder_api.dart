@@ -1,17 +1,17 @@
-import 'package:http/http.dart' as http;
+import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/prayers/home/models/reminder_model.dart';
 import 'dart:convert';
 
 import 'package:prayer_ml/shared/config.dart';
 
 class ReminderApiClient{
-  final http.Client httpClient;
+  final FirebaseAuthHttpClient authClient;
   final String baseUrl;
 
-  ReminderApiClient({required this.httpClient, required this.baseUrl});
+  ReminderApiClient({required this.authClient, required this.baseUrl});
 
   Future<List<ReminderGroups>> getReminderGroups() async {
-    final response = await httpClient.get(config.uri("/reminders/groups"));
+    final response = await authClient.get(config.uri("/reminders/groups"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting reminder groups: ${response.statusCode} - ${response.body}");
@@ -23,7 +23,7 @@ class ReminderApiClient{
   }
 
   Future<List<RemindersForGroup>> getRemindersForGroup(int groupId, String type) async {
-    final response = await httpClient.post(config.uri("/reminders/group"), 
+    final response = await authClient.post(config.uri("/reminders/group"), 
       body: jsonEncode({"group_id": groupId, "type": type}), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -35,7 +35,7 @@ class ReminderApiClient{
   }
 
   Future<List<Reminder>> getReminderRecommendations() async {
-    final response = await httpClient.get(config.uri("/reminders/recommendations"));
+    final response = await authClient.get(config.uri("/reminders/recommendations"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting reminder recommendations: ${response.statusCode} - ${response.body}");

@@ -1,4 +1,4 @@
-import 'package:http/http.dart' as http;
+import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'dart:convert';
@@ -7,14 +7,15 @@ import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/shared/config.dart';
 
+
 class ContactsApiClient {
-  final http.Client httpClient;
+  final FirebaseAuthHttpClient authClient;
   final String baseUrl;
 
-  ContactsApiClient({required this.httpClient, required this.baseUrl});
+  ContactsApiClient({required this.authClient, required this.baseUrl});
 
   Future<void> removeContactFromGroup(int groupId, int contactId) async {
-    final response = await httpClient.delete(config.uri("/contacts/groups"), 
+    final response = await authClient.delete(config.uri("/contacts/groups"), 
       body: jsonEncode({"group_id": groupId, "contact_id": contactId}), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -23,7 +24,7 @@ class ContactsApiClient {
   }
 
   Future<void> removeContact(int contactId) async {
-    final response = await httpClient.delete(config.uri("/contacts/$contactId"));
+    final response = await authClient.delete(config.uri("/contacts/$contactId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error removing contact: ${response.statusCode} - ${response.body}");
@@ -31,7 +32,7 @@ class ContactsApiClient {
   }
 
   Future<void> removeGroup(int groupId) async {
-    final response = await httpClient.delete(config.uri("/contacts/groups/$groupId"));
+    final response = await authClient.delete(config.uri("/contacts/groups/$groupId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error removing group: ${response.statusCode} - ${response.body}");
@@ -39,7 +40,7 @@ class ContactsApiClient {
   }
 
   Future<void> addContactToGroup(int groupId, int contactId) async {
-    final response = await httpClient.post(config.uri("/contacts/groups"), 
+    final response = await authClient.post(config.uri("/contacts/groups"), 
       body: jsonEncode({"group_id": groupId, "contact_id": contactId}), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -48,7 +49,7 @@ class ContactsApiClient {
   }
 
   Future<void> saveGroup(Group group) async {
-    final response = await httpClient.post(config.uri("/contacts/groups"), 
+    final response = await authClient.post(config.uri("/contacts/groups"), 
       body: jsonEncode(group.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -57,7 +58,7 @@ class ContactsApiClient {
   }
 
   Future<void> saveContact(Contact contact) async {
-    final response = await httpClient.post(config.uri("/contacts"), 
+    final response = await authClient.post(config.uri("/contacts"), 
       body: jsonEncode(contact.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -66,7 +67,7 @@ class ContactsApiClient {
   }
 
   Future<List<Contact>> fetchContacts() async {
-    final response = await httpClient.get(config.uri("/contacts/"));
+    final response = await authClient.get(config.uri("/contacts/"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting contacts: ${response.statusCode} - ${response.body}");
@@ -77,7 +78,7 @@ class ContactsApiClient {
   }
 
   Future<List<Group>> fetchGroups() async {
-    final response = await httpClient.get(config.uri("/contacts/groups"));
+    final response = await authClient.get(config.uri("/contacts/groups"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting groups: ${response.statusCode} - ${response.body}");
@@ -88,7 +89,7 @@ class ContactsApiClient {
   }
 
   Future<List<ContactGroupPairs>> fetchContactGroupPairs() async {
-    final response = await httpClient.get(config.uri("/contacts/contact_groups"));
+    final response = await authClient.get(config.uri("/contacts/contact_groups"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting contact group pairs: ${response.statusCode} - ${response.body}");
@@ -99,7 +100,7 @@ class ContactsApiClient {
   }
 
   Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
-    final response = await httpClient.get(config.uri("/contacts/related/$contactId"));
+    final response = await authClient.get(config.uri("/contacts/related/$contactId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting related contacts: ${response.statusCode} - ${response.body}");
@@ -111,13 +112,13 @@ class ContactsApiClient {
 }
 
 class PrayerRequestApiClient {
-  final http.Client httpClient;
+  final FirebaseAuthHttpClient authClient;
   final String baseUrl;
 
-  PrayerRequestApiClient({required this.httpClient, required this.baseUrl});
+  PrayerRequestApiClient({required this.authClient, required this.baseUrl});
 
   Future<List<PrayerRequest>> fetchPrayerRequests(int contactId) async {
-    final response = await httpClient.get(config.uri("/prayer_requests/contact/$contactId"));
+    final response = await authClient.get(config.uri("/prayer_requests/contact/$contactId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting prayer requests: ${response.statusCode} - ${response.body}");
@@ -128,7 +129,7 @@ class PrayerRequestApiClient {
   }
 
   Future<void> removeRequest(int requestId) async {
-    final response = await httpClient.delete(config.uri("/prayer_requests/$requestId"));
+    final response = await authClient.delete(config.uri("/prayer_requests/$requestId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error removing prayer request: ${response.statusCode} - ${response.body}");
@@ -136,7 +137,7 @@ class PrayerRequestApiClient {
   }
 
   Future<void> saveRequest(PrayerRequest request) async {
-    final response = await httpClient.post(config.uri("/prayer_requests/"), 
+    final response = await authClient.post(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -145,7 +146,7 @@ class PrayerRequestApiClient {
   }
 
   Future<void> updateRequest(PrayerRequest request) async {
-    final response = await httpClient.put(config.uri("/prayer_requests/"), 
+    final response = await authClient.put(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
@@ -155,7 +156,7 @@ class PrayerRequestApiClient {
 
   
   Future<List<PrayerRequestScore>> fetchSimilarRequests(int requestId) async {
-    final response = await config.prayerRequestApiClient.httpClient.get(config.uri("/prayer_requests/similar/$requestId"));
+    final response = await config.prayerRequestApiClient.authClient.get(config.uri("/prayer_requests/similar/$requestId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting similar requests: ${response.statusCode} - ${response.body}");
@@ -167,13 +168,13 @@ class PrayerRequestApiClient {
 }
 
 class CollectionsApiClient {
-  final http.Client httpClient;
+  final FirebaseAuthHttpClient authClient;
   final String baseUrl;
 
-  CollectionsApiClient({required this.httpClient, required this.baseUrl});
+  CollectionsApiClient({required this.authClient, required this.baseUrl});
 
   Future<List<Collection>> fetchCollections(int contactId) async {
-    final response = await httpClient.get(config.uri("/collections/contact/$contactId"));
+    final response = await authClient.get(config.uri("/collections/contact/$contactId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting collections: ${response.statusCode} - ${response.body}");
@@ -184,7 +185,7 @@ class CollectionsApiClient {
   }
 
   Future<List<Collection>> fetchRecommendations(int contactId) async {
-    final response = await httpClient.get(config.uri("/collections/recommendations/$contactId"));
+    final response = await authClient.get(config.uri("/collections/recommendations/$contactId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting recommended collections: ${response.statusCode} - ${response.body}");
@@ -195,7 +196,7 @@ class CollectionsApiClient {
   } 
 
   Future<List<PrayerRequest>> fetchRelatedRequests(int collectionId) async {
-    final response = await httpClient.get(config.uri("/collections/requests/$collectionId"));
+    final response = await authClient.get(config.uri("/collections/requests/$collectionId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting requests: ${response.statusCode} - ${response.body}");
@@ -206,7 +207,7 @@ class CollectionsApiClient {
   }
 
   Future<void> removeCollection(int collectionId) async {
-    final response = await httpClient.delete(config.uri("/collections/$collectionId"));
+    final response = await authClient.delete(config.uri("/collections/$collectionId"));
 
     if (response.statusCode != 200) {
       throw Exception("Error removing collection: ${response.statusCode} - ${response.body}");
