@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"paper-prayer","appId":"1:900351344597:android:9ec58cafae6045201f075c","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"paper-prayer","configurations":{"android":"1:900351344597:android:9ec58cafae6045201f075c","ios":"1:900351344597:ios:373c06d557db4baf1f075c","macos":"1:900351344597:ios:373c06d557db4baf1f075c","web":"1:900351344597:web:8dd77cd32a8fa5231f075c","windows":"1:900351344597:web:aad9747f66796b4c1f075c"}}}}}}
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "paper-prayer",
+                    "appId": "1:900351344597:android:9ec58cafae6045201f075c",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "paper-prayer",
+                    "configurations": {
+                        "android": "1:900351344597:android:9ec58cafae6045201f075c",
+                        "ios": "1:900351344597:ios:373c06d557db4baf1f075c",
+                        "macos": "1:900351344597:ios:373c06d557db4baf1f075c",
+                        "web": "1:900351344597:web:8dd77cd32a8fa5231f075c",
+                        "windows": "1:900351344597:web:aad9747f66796b4c1f075c"
+                    }
+                }
+            }
+        }
+    }
+}
