@@ -99,6 +99,17 @@ class ContactsApiClient {
     return json.map((group) => ContactGroupPairs.fromJson(group)).toList();
   }
 
+  Future<ContactGroupPairs> fetchContactGroup(int contactId, int groupId) async {
+    final response = await authClient.get(config.uri("/contacts/contact_group", {"contact_id": contactId.toString(), "group_id": groupId.toString()}));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting contact group: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return ContactGroupPairs.fromJson(json);
+  }
+
   Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
     final response = await authClient.get(config.uri("/contacts/related/$contactId"));
 

@@ -53,7 +53,9 @@ class InteractiveLoadButton extends HookConsumerWidget {
     final isErrored = snapshot.hasError && !isWaiting;
 
     if (snapshot.connectionState == ConnectionState.done && !isErrored && successCallback != null) {
-      successCallback!();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        successCallback!();
+      });
     }
 
     if (isErrored) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
@@ -19,13 +20,14 @@ class PrayerRequestWithAll {
 }
 
 class PrayerRequestConsumer extends ConsumerWidget {
-  const PrayerRequestConsumer({super.key, required this.user});
+  const PrayerRequestConsumer({super.key, required this.user, required this.group});
 
   final Contact user;
+  final Group group;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchCollectionsAndContactsProvider(user));
+    var viewModel = ref.watch(fetchCollectionsAndContactsProvider(user, group));
 
     return switch(viewModel) {
       AsyncData(:final value) => PrayerRequestView(prayerRequestContact: value),
@@ -43,10 +45,7 @@ class PrayerRequestView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var user = prayerRequestContact.user;
-    var contactGroup = const ContactGroupPairs(id: 0, contactId: 0, groupId: 0, createdAt: "");
-    if (prayerRequestContact.prayerRequests.isNotEmpty) {
-      contactGroup = prayerRequestContact.prayerRequests[0].group;
-    }
+    var contactGroup = prayerRequestContact.contactGroup;
 
 
     return Column(

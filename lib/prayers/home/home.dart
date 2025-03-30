@@ -154,13 +154,18 @@ Widget _collectionDateInformation(Collection prayerCollection) {
     otherState.add(const SizedBox(width: 4));
     otherState.add(Text(dateToTextualDate(prayerCollection.startRangeOfEventDate!)));
   }
-  return Row(
+  return Column(
     children: [
-      const Icon(Icons.edit_calendar),
-      const SizedBox(width: 4),
-      Text(createdAt),
-      const Spacer(),
-      ...otherState,
+      Row(
+        children: [
+          const Icon(Icons.edit_calendar),
+          const SizedBox(width: 4),
+          Text(createdAt),
+        ],
+      ),
+      Row(
+        children: [...otherState],
+      ),
     ],
   );
 }

@@ -77,20 +77,22 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 
 class UserCollectionsAndContacts {
   final Contact user;
+  final ContactGroupPairs contactGroup;
   final List<RelatedContact> relatedContacts;
   final List<Collection> prayerRequests;
 
-  UserCollectionsAndContacts({required this.user, required this.relatedContacts, required this.prayerRequests});
+  UserCollectionsAndContacts({required this.user, required this.relatedContacts, required this.prayerRequests, required this.contactGroup});
 }
 
 @riverpod
-Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(Ref ref, Contact contact) async {
+Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(Ref ref, Contact contact, Group group) async {
   var contactApi = config.contactApiClient;
   var prayerRequests = await ref.read(collectionContactRepoProvider(contact.id).future);
   var relatedContacts = await contactApi.fetchRelatedContacts(contact.id);
   var user = contact;
+  var contactGroup = await contactApi.fetchContactGroup(contact.id, group.id);
 
-  return UserCollectionsAndContacts(user: user, relatedContacts: relatedContacts, prayerRequests: prayerRequests);
+  return UserCollectionsAndContacts(user: user, relatedContacts: relatedContacts, prayerRequests: prayerRequests, contactGroup: contactGroup);
 }
 
 @riverpod

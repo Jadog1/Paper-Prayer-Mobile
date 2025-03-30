@@ -7,7 +7,7 @@ part of '../repo.dart';
 // **************************************************************************
 
 String _$fetchCollectionsAndContactsHash() =>
-    r'0fb8c8f18a934905c549449e2d72cc8bc68f51f9';
+    r'5b34428a929183ffc2e722e09db7101ff1ab78ee';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,9 +43,11 @@ class FetchCollectionsAndContactsFamily
   /// See also [fetchCollectionsAndContacts].
   FetchCollectionsAndContactsProvider call(
     Contact contact,
+    Group group,
   ) {
     return FetchCollectionsAndContactsProvider(
       contact,
+      group,
     );
   }
 
@@ -55,6 +57,7 @@ class FetchCollectionsAndContactsFamily
   ) {
     return call(
       provider.contact,
+      provider.group,
     );
   }
 
@@ -79,10 +82,12 @@ class FetchCollectionsAndContactsProvider
   /// See also [fetchCollectionsAndContacts].
   FetchCollectionsAndContactsProvider(
     Contact contact,
+    Group group,
   ) : this._internal(
           (ref) => fetchCollectionsAndContacts(
             ref as FetchCollectionsAndContactsRef,
             contact,
+            group,
           ),
           from: fetchCollectionsAndContactsProvider,
           name: r'fetchCollectionsAndContactsProvider',
@@ -94,6 +99,7 @@ class FetchCollectionsAndContactsProvider
           allTransitiveDependencies:
               FetchCollectionsAndContactsFamily._allTransitiveDependencies,
           contact: contact,
+          group: group,
         );
 
   FetchCollectionsAndContactsProvider._internal(
@@ -104,9 +110,11 @@ class FetchCollectionsAndContactsProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.contact,
+    required this.group,
   }) : super.internal();
 
   final Contact contact;
+  final Group group;
 
   @override
   Override overrideWith(
@@ -124,6 +132,7 @@ class FetchCollectionsAndContactsProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         contact: contact,
+        group: group,
       ),
     );
   }
@@ -136,13 +145,15 @@ class FetchCollectionsAndContactsProvider
   @override
   bool operator ==(Object other) {
     return other is FetchCollectionsAndContactsProvider &&
-        other.contact == contact;
+        other.contact == contact &&
+        other.group == group;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, contact.hashCode);
+    hash = _SystemHash.combine(hash, group.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -154,6 +165,9 @@ mixin FetchCollectionsAndContactsRef
     on AutoDisposeFutureProviderRef<UserCollectionsAndContacts> {
   /// The parameter `contact` of this provider.
   Contact get contact;
+
+  /// The parameter `group` of this provider.
+  Group get group;
 }
 
 class _FetchCollectionsAndContactsProviderElement
@@ -164,6 +178,8 @@ class _FetchCollectionsAndContactsProviderElement
   @override
   Contact get contact =>
       (origin as FetchCollectionsAndContactsProvider).contact;
+  @override
+  Group get group => (origin as FetchCollectionsAndContactsProvider).group;
 }
 
 String _$fetchSimilarRequestsHash() =>

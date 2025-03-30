@@ -223,7 +223,7 @@ class GroupCard extends StatelessWidget {
                     return ListTile(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => PrayerRequestConsumer(user: groupContacts.members[index]),
+                          builder: (context) => PrayerRequestConsumer(user: groupContacts.members[index], group: groupContacts.group),
                         ),
                       ),
                       leading: const CircleAvatar(child: Icon(Icons.person)),
