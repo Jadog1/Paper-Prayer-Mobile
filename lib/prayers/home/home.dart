@@ -25,7 +25,7 @@ class HomePageConsumer extends ConsumerWidget {
 class ReminderDashboard extends StatelessWidget {
   const ReminderDashboard({super.key, required this.reminders});
 
-  final List<Reminder> reminders;
+  final List<Recommendation> reminders;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +96,7 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
 // Prayer Request Card
 class PrayerCard extends ConsumerWidget {
-  final Reminder recommendation;
+  final Recommendation recommendation;
 
   const PrayerCard({
     super.key,
@@ -169,7 +169,7 @@ Widget _urgencyLabel(String urgencyLabel) {
   );
 }
 
-Widget _collectionDateInformation(Reminder recommendation) {
+Widget _collectionDateInformation(Recommendation recommendation) {
   Collection prayerCollection = recommendation.prayerCollection;
 
   List<Widget> dateRangeState = [];

@@ -28,9 +28,9 @@ class _PrayersPageState extends State<PrayersPage> {
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.people_outline),
-              selectedIcon: Icon(Icons.people),
-              label: 'Groups',
+              icon: Icon(Icons.book_outlined),
+              selectedIcon: Icon(Icons.book),
+              label: 'Notebooks',
             ),
             NavigationDestination(
               icon: Icon(Icons.manage_accounts_outlined),
