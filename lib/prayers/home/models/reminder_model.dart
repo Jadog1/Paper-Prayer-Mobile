@@ -36,6 +36,10 @@ class Reminder with _$Reminder {
     @JsonKey(name: "reminder_label") required String reminderLabel,
     required Group group,
     @JsonKey(name: "prayer_collection") required Collection prayerCollection,
+    @JsonKey(name: "default_snooze_days") required int defaultSnoozeDays,
+    @JsonKey(name: "is_snoozed") required bool isSnoozed,
+    @JsonKey(name: "updated_at") DateTime? updatedAt,
+    @JsonKey(name: "snooze_until") DateTime? snoozeUntil,
   }) = _Reminder;
 
   factory Reminder.fromJson(Map<String, dynamic> json) => _$ReminderFromJson(json);

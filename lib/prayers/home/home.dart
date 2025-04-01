@@ -11,7 +11,7 @@ class HomePageConsumer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchReminderRecommendationsProvider);
+    var viewModel = ref.watch(recommendationRepoProvider);
     return switch (viewModel) {
       AsyncData(:final value) => ReminderDashboard(reminders: value),
       AsyncError(:final error, :final stackTrace) => PrintError(
@@ -42,9 +42,19 @@ class ReminderDashboard extends StatelessWidget {
             itemCount: reminders.length,
             itemBuilder: (context, index) {
               var reminder = reminders[index];
-              var previousReminderLabel = (index > 0) ? reminders[index - 1].reminderLabel : "";
-              var widget = PrayerCard(reminder: reminder);
-              if (reminder.reminderLabel != previousReminderLabel) {
+              var previousReminder = (index > 0) ? reminders[index - 1] : null;
+              var previousReminderLabel = previousReminder?.reminderLabel ?? "";
+              var widget = PrayerCard(recommendation: reminder);
+              if (reminder.isSnoozed && previousReminder != null && !previousReminder.isSnoozed) {
+                return Column(
+                  children: [
+                    const Divider(thickness: 1, color: Colors.grey),
+                    const _SectionTitle(title: "Snoozed"),
+                    _SectionTitle(title: reminder.reminderLabel),
+                    widget,
+                  ],
+                );
+              } else if (reminder.reminderLabel != previousReminderLabel) {
                 return Column(
                   children: [
                     _SectionTitle(title: reminder.reminderLabel),
@@ -85,23 +95,49 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 // Prayer Request Card
-class PrayerCard extends StatelessWidget {
-  final Reminder reminder;
+class PrayerCard extends ConsumerWidget {
+  final Reminder recommendation;
 
   const PrayerCard({
     super.key,
-    required this.reminder
+    required this.recommendation
   });
 
   @override
-  Widget build(BuildContext context) {
-    var prayerCollection = reminder.prayerCollection;
+  Widget build(BuildContext context, WidgetRef ref) {
+    var prayerCollection = recommendation.prayerCollection;
     var urgencyLabel = prayerCollection.followUpRankLabel;
-    var groupName = reminder.group.name;
+    var groupName = recommendation.group.name;
     var userName = prayerCollection.user.name;
+    List<Widget> actions = [
+      const Spacer(),
+      InteractiveLoadButton(
+        customProvider: () async {
+            // Get the current timestamp plus the default count of days from now
+            var utcTimestamp = DateTime.now().add(Duration(days: recommendation.defaultSnoozeDays)).toIso8601String();
+            await ref.read(recommendationRepoProvider.notifier).updateAction(prayerCollection.id, CollectionRecommendationAction.prayed, utcTimestamp);
+        },
+        successCallback: () async => {
+          if (context.mounted) {
+            // Show a success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Marked as prayed!")),
+            )
+          }
+        },
+        buttonStyle: transparentButtonStyle,  
+        childOverride: const Icon(Icons.mark_as_unread, color: Colors.green, size: 20),
+      )
+    ];
+    // If snoozed and was updated today, then hide actions
+    if (recommendation.isSnoozed && recommendation.updatedAt != null && isSameDateAsToday(recommendation.updatedAt!)) {
+      actions = [];
+    }
     return Card(
-      elevation: 4,   
-      shadowColor: Colors.black12, 
+      elevation: 4, // Adjust elevation for more or less shadow
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6), // Optional rounded corners
+      ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         title: Text(prayerCollection.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -112,19 +148,10 @@ class PrayerCard extends StatelessWidget {
             Row(
               children: [
                 _urgencyLabel(urgencyLabel),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.check_circle, color: Colors.green),
-                  onPressed: () {
-                    // Handle marking as prayed
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Marked as prayed!")),
-                    );
-                  },
-                ),
+                ...actions,
               ],
             ),
-            _collectionDateInformation(prayerCollection),
+            _collectionDateInformation(recommendation),
           ],
         ),
       ),
@@ -142,29 +169,41 @@ Widget _urgencyLabel(String urgencyLabel) {
   );
 }
 
-Widget _collectionDateInformation(Collection prayerCollection) {
-  var createdAt = dateToTextualDate(prayerCollection.updatedAt);
-  List<Widget> otherState = [];
+Widget _collectionDateInformation(Reminder recommendation) {
+  Collection prayerCollection = recommendation.prayerCollection;
+
+  List<Widget> dateRangeState = [];
   if (todayIsBetween(prayerCollection.startRangeOfEventDate, prayerCollection.endRangeOfEventDate)) {
-    otherState.add(const Icon(Icons.hourglass_bottom));
-    otherState.add(const SizedBox(width: 4));
-    otherState.add(Text("${prayerCollection.startRangeOfEventDate} - ${prayerCollection.endRangeOfEventDate}"));
+    dateRangeState.add(const Icon(Icons.today));
+    dateRangeState.add(const SizedBox(width: 4));
+    dateRangeState.add(Text("Happening now until ${dateToTextualDate(prayerCollection.endRangeOfEventDate!)}"));
   } else if (prayerCollection.startRangeOfEventDate != null) {
-    otherState.add(const Icon(Icons.access_time));
-    otherState.add(const SizedBox(width: 4));
-    otherState.add(Text(dateToTextualDate(prayerCollection.startRangeOfEventDate!)));
+    dateRangeState.add(const Icon(Icons.hourglass_top));
+    dateRangeState.add(const SizedBox(width: 4));
+    dateRangeState.add(Text("Happening ${dateToTextualDate(prayerCollection.startRangeOfEventDate!)}"));
   }
+
+  List<Widget> snoozeState = [];
+  if (recommendation.isSnoozed && recommendation.updatedAt != null) {
+    snoozeState.add(const Icon(Icons.snooze));
+    snoozeState.add(const SizedBox(width: 4));
+    snoozeState.add(Text("Snoozed until ${dateToTextualDate(recommendation.snoozeUntil!.toIso8601String())}"));
+  }
+
   return Column(
     children: [
       Row(
         children: [
           const Icon(Icons.edit_calendar),
           const SizedBox(width: 4),
-          Text(createdAt),
+          Text("Last updated ${dateToTextualDate(prayerCollection.updatedAt)}"),
         ],
       ),
       Row(
-        children: [...otherState],
+        children: dateRangeState,
+      ),
+      Row(
+        children: snoozeState,
       ),
     ],
   );

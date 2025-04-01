@@ -28,3 +28,10 @@ bool todayIsBetween(String? start, String? end) {
   DateTime endDate = DateTime.parse(end).toLocal();
   return now.isAfter(startDate) && now.isBefore(endDate);
 }
+
+bool isSameDateAsToday(DateTime date) {
+  DateTime today = DateTime.now();
+  return date.year == today.year &&
+         date.month == today.month &&
+         date.day == today.day;
+}

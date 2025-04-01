@@ -6,8 +6,8 @@ part of '../reminder_repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchRemindersForGroupHash() =>
-    r'56da2a390c3acc0dbd89d3dc918a3f0a24fc46b7';
+String _$fetchRecommendationsForGroupHash() =>
+    r'd6744f669464f114d0529a345ba0180d388b150b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,28 +30,29 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchRemindersForGroup].
-@ProviderFor(fetchRemindersForGroup)
-const fetchRemindersForGroupProvider = FetchRemindersForGroupFamily();
+/// See also [fetchRecommendationsForGroup].
+@ProviderFor(fetchRecommendationsForGroup)
+const fetchRecommendationsForGroupProvider =
+    FetchRecommendationsForGroupFamily();
 
-/// See also [fetchRemindersForGroup].
-class FetchRemindersForGroupFamily
+/// See also [fetchRecommendationsForGroup].
+class FetchRecommendationsForGroupFamily
     extends Family<AsyncValue<List<RemindersForGroup>>> {
-  /// See also [fetchRemindersForGroup].
-  const FetchRemindersForGroupFamily();
+  /// See also [fetchRecommendationsForGroup].
+  const FetchRecommendationsForGroupFamily();
 
-  /// See also [fetchRemindersForGroup].
-  FetchRemindersForGroupProvider call(
+  /// See also [fetchRecommendationsForGroup].
+  FetchRecommendationsForGroupProvider call(
     int groupId,
   ) {
-    return FetchRemindersForGroupProvider(
+    return FetchRecommendationsForGroupProvider(
       groupId,
     );
   }
 
   @override
-  FetchRemindersForGroupProvider getProviderOverride(
-    covariant FetchRemindersForGroupProvider provider,
+  FetchRecommendationsForGroupProvider getProviderOverride(
+    covariant FetchRecommendationsForGroupProvider provider,
   ) {
     return call(
       provider.groupId,
@@ -70,33 +71,33 @@ class FetchRemindersForGroupFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchRemindersForGroupProvider';
+  String? get name => r'fetchRecommendationsForGroupProvider';
 }
 
-/// See also [fetchRemindersForGroup].
-class FetchRemindersForGroupProvider
+/// See also [fetchRecommendationsForGroup].
+class FetchRecommendationsForGroupProvider
     extends AutoDisposeFutureProvider<List<RemindersForGroup>> {
-  /// See also [fetchRemindersForGroup].
-  FetchRemindersForGroupProvider(
+  /// See also [fetchRecommendationsForGroup].
+  FetchRecommendationsForGroupProvider(
     int groupId,
   ) : this._internal(
-          (ref) => fetchRemindersForGroup(
-            ref as FetchRemindersForGroupRef,
+          (ref) => fetchRecommendationsForGroup(
+            ref as FetchRecommendationsForGroupRef,
             groupId,
           ),
-          from: fetchRemindersForGroupProvider,
-          name: r'fetchRemindersForGroupProvider',
+          from: fetchRecommendationsForGroupProvider,
+          name: r'fetchRecommendationsForGroupProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchRemindersForGroupHash,
-          dependencies: FetchRemindersForGroupFamily._dependencies,
+                  : _$fetchRecommendationsForGroupHash,
+          dependencies: FetchRecommendationsForGroupFamily._dependencies,
           allTransitiveDependencies:
-              FetchRemindersForGroupFamily._allTransitiveDependencies,
+              FetchRecommendationsForGroupFamily._allTransitiveDependencies,
           groupId: groupId,
         );
 
-  FetchRemindersForGroupProvider._internal(
+  FetchRecommendationsForGroupProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -111,13 +112,13 @@ class FetchRemindersForGroupProvider
   @override
   Override overrideWith(
     FutureOr<List<RemindersForGroup>> Function(
-            FetchRemindersForGroupRef provider)
+            FetchRecommendationsForGroupRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchRemindersForGroupProvider._internal(
-        (ref) => create(ref as FetchRemindersForGroupRef),
+      override: FetchRecommendationsForGroupProvider._internal(
+        (ref) => create(ref as FetchRecommendationsForGroupRef),
         from: from,
         name: null,
         dependencies: null,
@@ -130,12 +131,13 @@ class FetchRemindersForGroupProvider
 
   @override
   AutoDisposeFutureProviderElement<List<RemindersForGroup>> createElement() {
-    return _FetchRemindersForGroupProviderElement(this);
+    return _FetchRecommendationsForGroupProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchRemindersForGroupProvider && other.groupId == groupId;
+    return other is FetchRecommendationsForGroupProvider &&
+        other.groupId == groupId;
   }
 
   @override
@@ -149,60 +151,57 @@ class FetchRemindersForGroupProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchRemindersForGroupRef
+mixin FetchRecommendationsForGroupRef
     on AutoDisposeFutureProviderRef<List<RemindersForGroup>> {
   /// The parameter `groupId` of this provider.
   int get groupId;
 }
 
-class _FetchRemindersForGroupProviderElement
+class _FetchRecommendationsForGroupProviderElement
     extends AutoDisposeFutureProviderElement<List<RemindersForGroup>>
-    with FetchRemindersForGroupRef {
-  _FetchRemindersForGroupProviderElement(super.provider);
+    with FetchRecommendationsForGroupRef {
+  _FetchRecommendationsForGroupProviderElement(super.provider);
 
   @override
-  int get groupId => (origin as FetchRemindersForGroupProvider).groupId;
+  int get groupId => (origin as FetchRecommendationsForGroupProvider).groupId;
 }
 
-String _$fetchReminderGroupsHash() =>
-    r'51ea47d4741a47c1098f090f4c72146af295493f';
+String _$fetchRecommendationGroupsHash() =>
+    r'756f7367424b26690c7121eb51782861e6a9bca4';
 
-/// See also [fetchReminderGroups].
-@ProviderFor(fetchReminderGroups)
-final fetchReminderGroupsProvider =
+/// See also [fetchRecommendationGroups].
+@ProviderFor(fetchRecommendationGroups)
+final fetchRecommendationGroupsProvider =
     AutoDisposeFutureProvider<List<ReminderGroups>>.internal(
-  fetchReminderGroups,
-  name: r'fetchReminderGroupsProvider',
+  fetchRecommendationGroups,
+  name: r'fetchRecommendationGroupsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$fetchReminderGroupsHash,
+      : _$fetchRecommendationGroupsHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef FetchReminderGroupsRef
+typedef FetchRecommendationGroupsRef
     = AutoDisposeFutureProviderRef<List<ReminderGroups>>;
-String _$fetchReminderRecommendationsHash() =>
-    r'c92732b587083417e263192a8df964627f1a791a';
+String _$recommendationRepoHash() =>
+    r'022a17815d70bec40aeda6ced5df5f8c9789652f';
 
-/// See also [fetchReminderRecommendations].
-@ProviderFor(fetchReminderRecommendations)
-final fetchReminderRecommendationsProvider =
-    AutoDisposeFutureProvider<List<Reminder>>.internal(
-  fetchReminderRecommendations,
-  name: r'fetchReminderRecommendationsProvider',
+/// See also [RecommendationRepo].
+@ProviderFor(RecommendationRepo)
+final recommendationRepoProvider = AutoDisposeAsyncNotifierProvider<
+    RecommendationRepo, List<Reminder>>.internal(
+  RecommendationRepo.new,
+  name: r'recommendationRepoProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$fetchReminderRecommendationsHash,
+      : _$recommendationRepoHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef FetchReminderRecommendationsRef
-    = AutoDisposeFutureProviderRef<List<Reminder>>;
+typedef _$RecommendationRepo = AutoDisposeAsyncNotifier<List<Reminder>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

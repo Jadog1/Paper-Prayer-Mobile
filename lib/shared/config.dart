@@ -8,7 +8,7 @@ class Config {
   late ContactsApiClient contactApiClient;
   late PrayerRequestApiClient prayerRequestApiClient;
   late CollectionsApiClient collectionsApiClient;
-  late ReminderApiClient reminderApiClient;
+  late RecommendationApiClient reminderApiClient;
 
   Config() {
     var sharedClient = http.Client();
@@ -17,7 +17,7 @@ class Config {
     contactApiClient = ContactsApiClient(authClient: authClient, baseUrl: apiUrl);
     prayerRequestApiClient = PrayerRequestApiClient(authClient: authClient, baseUrl: apiUrl);
     collectionsApiClient = CollectionsApiClient(authClient: authClient, baseUrl: apiUrl);
-    reminderApiClient = ReminderApiClient(authClient: authClient, baseUrl: apiUrl);
+    reminderApiClient = RecommendationApiClient(authClient: authClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {

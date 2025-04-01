@@ -1,6 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 import 'package:flutter/material.dart';
@@ -8,9 +7,9 @@ import 'package:flutter/material.dart';
 class PrintError extends StatelessWidget {
   const PrintError({super.key, required this.caller, required this.error, required this.stackTrace});
 
+  final String caller;
   final Object error;
   final StackTrace stackTrace;
-  final String caller;
 
   @override
   Widget build(BuildContext context) {
@@ -32,70 +31,89 @@ const saveButtonStyle = ButtonStyle(
   foregroundColor: WidgetStatePropertyAll(Colors.white),
 );
 
+ButtonStyle transparentButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: Colors.transparent,
+  shadowColor: Colors.transparent,
+  elevation: 0,
+  padding: EdgeInsets.zero,
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.zero, // Ensures no border radius
+  ),
+);
+
 // InteractiveLoadButton is a button that can be clicked to trigger a customProvider function.
 // The button will show a CircularProgressIndicator while the customProvider is running.
-class InteractiveLoadButton extends HookConsumerWidget {
+class InteractiveLoadButton extends ConsumerStatefulWidget {
   const InteractiveLoadButton({
     super.key, 
     required this.customProvider, this.successCallback, 
-    required this.buttonText, this.buttonStyle});
+    this.buttonText, this.childOverride,
+    this.buttonStyle});
 
-  final Future<void> Function() customProvider;
-  final String buttonText;
-  final ButtonStyle? buttonStyle;
   final void Function()? successCallback;
+  final ButtonStyle? buttonStyle;
+  final String? buttonText;
+  final Widget? childOverride;
+  final Future<void> Function() customProvider;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pendingCustomProvider = useState<Future<void>?>(null);
-    final snapshot = useFuture(pendingCustomProvider.value);
-    final isWaiting = snapshot.connectionState == ConnectionState.waiting;
-    final isErrored = snapshot.hasError && !isWaiting;
+  ConsumerState<InteractiveLoadButton> createState() => _InteractiveLoadButtonState();
+}
+class _InteractiveLoadButtonState extends ConsumerState<InteractiveLoadButton> {
+  var isWaiting = false;
 
-    if (snapshot.connectionState == ConnectionState.done && !isErrored && successCallback != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        successCallback!();
-      });
-    }
+  @override
+  Widget build(BuildContext context) {
+    var child = widget.childOverride ?? Text(widget.buttonText ?? '');
+    return ElevatedButton(
+      style: widget.buttonStyle,
+      onPressed: () async {
+        if (isWaiting) {
+          return;
+        }
+        setState(() {
+          isWaiting = true;
+        });
 
-    if (isErrored) {
-      PrintError(caller: 'InteractiveLoadButton', error: snapshot.error!, stackTrace: snapshot.stackTrace!);
-    }
+        var hasError = false;
+        try {
+          await widget.customProvider();
+        } catch (e) {
+          hasError = true;
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("An error occured. Please try again.")),
+            );
+            developer.log('Error in InteractiveLoadButton', error: e);
+            developer.log('StackTrace: ${Trace.current}');
+          }
+        }
 
-    return Column(
-      children: [
-        ElevatedButton(
-          style: buttonStyle,
-          onPressed: () async {
-            if (isWaiting) {
-              return;
-            }
-        
-            final future = customProvider();
-            pendingCustomProvider.value = future;
-          },
-          child: isWaiting
-              ? const CircularProgressIndicator()
-              : Text(buttonText),
-        ),
-        if (isErrored)
-          const Text('Error', style: TextStyle(color: Colors.red)),
-      ],
+        setState(() {
+          isWaiting = false;
+        });
+
+        if (!hasError && widget.successCallback != null) {
+          widget.successCallback!();
+        }
+      },
+      child: isWaiting
+          ? const CircularProgressIndicator()
+          : child,
     );
   }
 }
 
-class DeleteConfirmationButton extends HookConsumerWidget {
+class DeleteConfirmationButton extends ConsumerWidget {
   const DeleteConfirmationButton({super.key, 
     required this.onDelete, required this.onCancel, required this.child,
     required this.deleteContext});
 
-  final Future<void> Function() onDelete;
-  final void Function() onCancel;
-  final String deleteContext;
   final Widget child;
+  final String deleteContext;
+  final void Function() onCancel;
+  final Future<void> Function() onDelete;
 
-  
   Future<void> Function() deleteAndGoBack(BuildContext context) {
     return () async {
       onDelete();

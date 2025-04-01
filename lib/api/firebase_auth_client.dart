@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 
 var currentUser = FirebaseAuth.instance.currentUser;
+var timeout = const Duration(seconds: 5);
 // Design an http client that supports get, post, delete, put.
 // It is being wrapped to add authentication headers.
 class FirebaseAuthHttpClient {
@@ -17,7 +18,7 @@ class FirebaseAuthHttpClient {
     headers ??= {};
     var token = await currentUser?.getIdToken();
     headers['Authorization'] = 'Bearer $token';
-    return httpClient.get(uri, headers: headers);
+    return httpClient.get(uri, headers: headers).timeout(timeout);
   }
 
   Future<http.Response> post(Uri uri, {Map<String, String>? headers, Object? body}) async {
@@ -27,7 +28,7 @@ class FirebaseAuthHttpClient {
     headers ??= {};
     var token = await currentUser?.getIdToken();
     headers['Authorization'] = 'Bearer $token';
-    return httpClient.post(uri, headers: headers, body: body);
+    return httpClient.post(uri, headers: headers, body: body).timeout(timeout);
   }
 
   Future<http.Response> delete(Uri uri, {Map<String, String>? headers, Object? body}) async {
@@ -37,7 +38,7 @@ class FirebaseAuthHttpClient {
     headers ??= {};
     var token = await currentUser?.getIdToken();
     headers['Authorization'] = 'Bearer $token';
-    return httpClient.delete(uri, headers: headers, body: body);
+    return httpClient.delete(uri, headers: headers, body: body).timeout(timeout);
   }
 
   Future<http.Response> put(Uri uri, {Map<String, String>? headers, Object? body}) async {
@@ -47,6 +48,6 @@ class FirebaseAuthHttpClient {
     headers ??= {};
     var token = await currentUser?.getIdToken();
     headers['Authorization'] = 'Bearer $token';
-    return httpClient.put(uri, headers: headers, body: body);
+    return httpClient.put(uri, headers: headers, body: body).timeout(timeout);
   }
 }

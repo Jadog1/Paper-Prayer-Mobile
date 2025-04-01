@@ -483,6 +483,14 @@ mixin _$Reminder {
   Group get group => throw _privateConstructorUsedError;
   @JsonKey(name: "prayer_collection")
   Collection get prayerCollection => throw _privateConstructorUsedError;
+  @JsonKey(name: "default_snooze_days")
+  int get defaultSnoozeDays => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_snoozed")
+  bool get isSnoozed => throw _privateConstructorUsedError;
+  @JsonKey(name: "updated_at")
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: "snooze_until")
+  DateTime? get snoozeUntil => throw _privateConstructorUsedError;
 
   /// Serializes this Reminder to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -502,7 +510,11 @@ abstract class $ReminderCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: "reminder_label") String reminderLabel,
       Group group,
-      @JsonKey(name: "prayer_collection") Collection prayerCollection});
+      @JsonKey(name: "prayer_collection") Collection prayerCollection,
+      @JsonKey(name: "default_snooze_days") int defaultSnoozeDays,
+      @JsonKey(name: "is_snoozed") bool isSnoozed,
+      @JsonKey(name: "updated_at") DateTime? updatedAt,
+      @JsonKey(name: "snooze_until") DateTime? snoozeUntil});
 
   $GroupCopyWith<$Res> get group;
   $CollectionCopyWith<$Res> get prayerCollection;
@@ -526,6 +538,10 @@ class _$ReminderCopyWithImpl<$Res, $Val extends Reminder>
     Object? reminderLabel = null,
     Object? group = null,
     Object? prayerCollection = null,
+    Object? defaultSnoozeDays = null,
+    Object? isSnoozed = null,
+    Object? updatedAt = freezed,
+    Object? snoozeUntil = freezed,
   }) {
     return _then(_value.copyWith(
       reminderLabel: null == reminderLabel
@@ -540,6 +556,22 @@ class _$ReminderCopyWithImpl<$Res, $Val extends Reminder>
           ? _value.prayerCollection
           : prayerCollection // ignore: cast_nullable_to_non_nullable
               as Collection,
+      defaultSnoozeDays: null == defaultSnoozeDays
+          ? _value.defaultSnoozeDays
+          : defaultSnoozeDays // ignore: cast_nullable_to_non_nullable
+              as int,
+      isSnoozed: null == isSnoozed
+          ? _value.isSnoozed
+          : isSnoozed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      snoozeUntil: freezed == snoozeUntil
+          ? _value.snoozeUntil
+          : snoozeUntil // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 
@@ -575,7 +607,11 @@ abstract class _$$ReminderImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: "reminder_label") String reminderLabel,
       Group group,
-      @JsonKey(name: "prayer_collection") Collection prayerCollection});
+      @JsonKey(name: "prayer_collection") Collection prayerCollection,
+      @JsonKey(name: "default_snooze_days") int defaultSnoozeDays,
+      @JsonKey(name: "is_snoozed") bool isSnoozed,
+      @JsonKey(name: "updated_at") DateTime? updatedAt,
+      @JsonKey(name: "snooze_until") DateTime? snoozeUntil});
 
   @override
   $GroupCopyWith<$Res> get group;
@@ -599,6 +635,10 @@ class __$$ReminderImplCopyWithImpl<$Res>
     Object? reminderLabel = null,
     Object? group = null,
     Object? prayerCollection = null,
+    Object? defaultSnoozeDays = null,
+    Object? isSnoozed = null,
+    Object? updatedAt = freezed,
+    Object? snoozeUntil = freezed,
   }) {
     return _then(_$ReminderImpl(
       reminderLabel: null == reminderLabel
@@ -613,6 +653,22 @@ class __$$ReminderImplCopyWithImpl<$Res>
           ? _value.prayerCollection
           : prayerCollection // ignore: cast_nullable_to_non_nullable
               as Collection,
+      defaultSnoozeDays: null == defaultSnoozeDays
+          ? _value.defaultSnoozeDays
+          : defaultSnoozeDays // ignore: cast_nullable_to_non_nullable
+              as int,
+      isSnoozed: null == isSnoozed
+          ? _value.isSnoozed
+          : isSnoozed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      snoozeUntil: freezed == snoozeUntil
+          ? _value.snoozeUntil
+          : snoozeUntil // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -623,7 +679,11 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
   const _$ReminderImpl(
       {@JsonKey(name: "reminder_label") required this.reminderLabel,
       required this.group,
-      @JsonKey(name: "prayer_collection") required this.prayerCollection});
+      @JsonKey(name: "prayer_collection") required this.prayerCollection,
+      @JsonKey(name: "default_snooze_days") required this.defaultSnoozeDays,
+      @JsonKey(name: "is_snoozed") required this.isSnoozed,
+      @JsonKey(name: "updated_at") this.updatedAt,
+      @JsonKey(name: "snooze_until") this.snoozeUntil});
 
   factory _$ReminderImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReminderImplFromJson(json);
@@ -636,10 +696,22 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
   @override
   @JsonKey(name: "prayer_collection")
   final Collection prayerCollection;
+  @override
+  @JsonKey(name: "default_snooze_days")
+  final int defaultSnoozeDays;
+  @override
+  @JsonKey(name: "is_snoozed")
+  final bool isSnoozed;
+  @override
+  @JsonKey(name: "updated_at")
+  final DateTime? updatedAt;
+  @override
+  @JsonKey(name: "snooze_until")
+  final DateTime? snoozeUntil;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Reminder(reminderLabel: $reminderLabel, group: $group, prayerCollection: $prayerCollection)';
+    return 'Reminder(reminderLabel: $reminderLabel, group: $group, prayerCollection: $prayerCollection, defaultSnoozeDays: $defaultSnoozeDays, isSnoozed: $isSnoozed, updatedAt: $updatedAt, snoozeUntil: $snoozeUntil)';
   }
 
   @override
@@ -649,7 +721,11 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
       ..add(DiagnosticsProperty('type', 'Reminder'))
       ..add(DiagnosticsProperty('reminderLabel', reminderLabel))
       ..add(DiagnosticsProperty('group', group))
-      ..add(DiagnosticsProperty('prayerCollection', prayerCollection));
+      ..add(DiagnosticsProperty('prayerCollection', prayerCollection))
+      ..add(DiagnosticsProperty('defaultSnoozeDays', defaultSnoozeDays))
+      ..add(DiagnosticsProperty('isSnoozed', isSnoozed))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt))
+      ..add(DiagnosticsProperty('snoozeUntil', snoozeUntil));
   }
 
   @override
@@ -661,13 +737,21 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
                 other.reminderLabel == reminderLabel) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.prayerCollection, prayerCollection) ||
-                other.prayerCollection == prayerCollection));
+                other.prayerCollection == prayerCollection) &&
+            (identical(other.defaultSnoozeDays, defaultSnoozeDays) ||
+                other.defaultSnoozeDays == defaultSnoozeDays) &&
+            (identical(other.isSnoozed, isSnoozed) ||
+                other.isSnoozed == isSnoozed) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.snoozeUntil, snoozeUntil) ||
+                other.snoozeUntil == snoozeUntil));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, reminderLabel, group, prayerCollection);
+  int get hashCode => Object.hash(runtimeType, reminderLabel, group,
+      prayerCollection, defaultSnoozeDays, isSnoozed, updatedAt, snoozeUntil);
 
   /// Create a copy of Reminder
   /// with the given fields replaced by the non-null parameter values.
@@ -687,10 +771,16 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
 
 abstract class _Reminder implements Reminder {
   const factory _Reminder(
-      {@JsonKey(name: "reminder_label") required final String reminderLabel,
-      required final Group group,
-      @JsonKey(name: "prayer_collection")
-      required final Collection prayerCollection}) = _$ReminderImpl;
+          {@JsonKey(name: "reminder_label") required final String reminderLabel,
+          required final Group group,
+          @JsonKey(name: "prayer_collection")
+          required final Collection prayerCollection,
+          @JsonKey(name: "default_snooze_days")
+          required final int defaultSnoozeDays,
+          @JsonKey(name: "is_snoozed") required final bool isSnoozed,
+          @JsonKey(name: "updated_at") final DateTime? updatedAt,
+          @JsonKey(name: "snooze_until") final DateTime? snoozeUntil}) =
+      _$ReminderImpl;
 
   factory _Reminder.fromJson(Map<String, dynamic> json) =
       _$ReminderImpl.fromJson;
@@ -703,6 +793,18 @@ abstract class _Reminder implements Reminder {
   @override
   @JsonKey(name: "prayer_collection")
   Collection get prayerCollection;
+  @override
+  @JsonKey(name: "default_snooze_days")
+  int get defaultSnoozeDays;
+  @override
+  @JsonKey(name: "is_snoozed")
+  bool get isSnoozed;
+  @override
+  @JsonKey(name: "updated_at")
+  DateTime? get updatedAt;
+  @override
+  @JsonKey(name: "snooze_until")
+  DateTime? get snoozeUntil;
 
   /// Create a copy of Reminder
   /// with the given fields replaced by the non-null parameter values.
