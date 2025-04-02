@@ -109,9 +109,7 @@ class PrayerCard extends ConsumerWidget {
     var urgencyLabel = prayerCollection.followUpRankLabel;
     var groupName = recommendation.group.name;
     var userName = prayerCollection.user.name;
-    List<Widget> actions = [
-      const Spacer(),
-      InteractiveLoadButton(
+    Widget? actions = InteractiveLoadButton(
         customProvider: () async {
             // Get the current timestamp plus the default count of days from now
             var utcTimestamp = DateTime.now().add(Duration(days: recommendation.defaultSnoozeDays)).toIso8601String();
@@ -127,11 +125,10 @@ class PrayerCard extends ConsumerWidget {
         },
         buttonStyle: transparentButtonStyle,  
         childOverride: const Icon(Icons.snooze, color: Colors.green, size: 25),
-      )
-    ];
+      );
     // If snoozed and was updated today, then hide actions
     if (recommendation.isSnoozed && recommendation.updatedAt != null && isSameDateAsToday(recommendation.updatedAt!)) {
-      actions = [];
+      actions = null; // Hide the action button
     }
     return Card(
       elevation: 4, // Adjust elevation for more or less shadow
@@ -140,34 +137,40 @@ class PrayerCard extends ConsumerWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        title: Text(prayerCollection.title ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Ensure text is visible
+              fontSize: 16, // Adjust as needed
+            ),
+            children: [
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle, // Aligns icon with text
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4), // Space between icon and text
+                  child: _getUrgencyIcon(urgencyLabel), // Your urgency icon
+                ),
+              ),
+              TextSpan(
+                text: prayerCollection.title ?? "",
+              ),
+            ],
+          ),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("$userName  |  $groupName", textAlign: TextAlign.left,),
-            Row(
-              children: [
-                _urgencyLabel(urgencyLabel),
-                ...actions,
-              ],
-            ),
             _collectionDateInformation(recommendation),
           ],
         ),
+        trailing: actions,
       ),
     );
   }
 }
 
-Widget _urgencyLabel(String urgencyLabel) {
-  return Row(
-    children: [
-      _getUrgencyIcon(urgencyLabel),
-      const SizedBox(width: 4),
-      Text(urgencyLabel),
-    ],
-  );
-}
 
 Widget _collectionDateInformation(Recommendation recommendation) {
   Collection prayerCollection = recommendation.prayerCollection;

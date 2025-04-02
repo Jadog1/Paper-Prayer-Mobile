@@ -30,6 +30,7 @@ bool todayIsBetween(String? start, String? end) {
 }
 
 bool isSameDateAsToday(DateTime date) {
+  date = date.toLocal();
   DateTime today = DateTime.now();
   return date.year == today.year &&
          date.month == today.month &&
