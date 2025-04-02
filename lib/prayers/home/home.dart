@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
-import 'package:prayer_ml/prayers/home/models/reminder_model.dart';
-import 'package:prayer_ml/prayers/home/repos/reminder_repo.dart';
+import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
+import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/shared/utility.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
@@ -13,7 +13,7 @@ class HomePageConsumer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(recommendationRepoProvider);
     return switch (viewModel) {
-      AsyncData(:final value) => ReminderDashboard(reminders: value),
+      AsyncData(:final value) => RecommendationsDashboard(recommendations: value),
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "PrayerRequestConsumer",
           error: error,
@@ -22,10 +22,10 @@ class HomePageConsumer extends ConsumerWidget {
     };
   }
 }
-class ReminderDashboard extends StatelessWidget {
-  const ReminderDashboard({super.key, required this.reminders});
+class RecommendationsDashboard extends StatelessWidget {
+  const RecommendationsDashboard({super.key, required this.recommendations});
 
-  final List<Recommendation> reminders;
+  final List<Recommendation> recommendations;
 
   @override
   Widget build(BuildContext context) {
@@ -39,25 +39,25 @@ class ReminderDashboard extends StatelessWidget {
           ),
 
           SliverList.builder(
-            itemCount: reminders.length,
+            itemCount: recommendations.length,
             itemBuilder: (context, index) {
-              var reminder = reminders[index];
-              var previousReminder = (index > 0) ? reminders[index - 1] : null;
-              var previousReminderLabel = previousReminder?.reminderLabel ?? "";
-              var widget = PrayerCard(recommendation: reminder);
-              if (reminder.isSnoozed && previousReminder != null && !previousReminder.isSnoozed) {
+              var recommendation = recommendations[index];
+              var previousRecommendation = (index > 0) ? recommendations[index - 1] : null;
+              var previousRecommendationLabel = previousRecommendation?.recommendationType ?? "";
+              var widget = PrayerCard(recommendation: recommendation);
+              if (recommendation.isSnoozed && previousRecommendation != null && !previousRecommendation.isSnoozed) {
                 return Column(
                   children: [
                     const Divider(thickness: 1, color: Colors.grey),
                     const _SectionTitle(title: "Snoozed"),
-                    _SectionTitle(title: reminder.reminderLabel),
+                    _SectionTitle(title: recommendation.recommendationType),
                     widget,
                   ],
                 );
-              } else if (reminder.reminderLabel != previousReminderLabel) {
+              } else if (recommendation.recommendationType != previousRecommendationLabel) {
                 return Column(
                   children: [
-                    _SectionTitle(title: reminder.reminderLabel),
+                    _SectionTitle(title: recommendation.recommendationType),
                     widget,
                   ],
                 );
@@ -95,6 +95,7 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 // Prayer Request Card
+// TODO: Allow us to view the inner contents of a collection
 class PrayerCard extends ConsumerWidget {
   final Recommendation recommendation;
 

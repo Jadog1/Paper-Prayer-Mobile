@@ -62,7 +62,7 @@ class GroupView extends ConsumerWidget {
               ),
               itemCount: searchState.groupContacts.length,
               itemBuilder: (context, index) {
-                return GroupCard(groupContacts: searchState.groupContacts[index]);
+                return GroupNotebook(groupContacts: searchState.groupContacts[index]);
               },
             ),
           ),
@@ -116,39 +116,60 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 }
 
 
-class GroupCard extends StatelessWidget {
-  const GroupCard({super.key, required this.groupContacts});
+class GroupNotebook extends StatelessWidget {
+  const GroupNotebook({super.key, required this.groupContacts});
 
   final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 6,
+      // color: const Color.fromARGB(255, 206, 206, 206),
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Group Name & Description
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => PaperMode(groupContacts: groupContacts),
+        child: Stack(
+          children: [
+            // Notebook Binding (Left Side)
+            Positioned(
+              left: 0,
+              top: 10,
+              bottom: 10,
+              child: Container(
+                width: 6,
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(150),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Group Name & Description
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PaperMode(groupContacts: groupContacts),
+                      ),
                     ),
-                  ),
-                  child: Container(
-                    color: Colors.transparent, // Needed for gesture detector so that we can click any area of the card
-                    child: Padding(
+                    child: Container(
+                      color: Colors.transparent,
                       padding: const EdgeInsets.all(12),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             groupContacts.group.name,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           if (groupContacts.group.description != null)
                             Padding(
@@ -165,17 +186,15 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              Container(
-                color: Theme.of(context).cardColor.withValues(alpha: 0.9),
-                height: 30,
-                child: Row(
+
+                // Bottom Action Bar (Settings & Members)
+                Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.settings, color: Colors.blueGrey),
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      visualDensity: VisualDensity.comfortable,
+                      visualDensity: VisualDensity.compact,
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => GroupSettings(groupContacts: groupContacts),
@@ -185,16 +204,17 @@ class GroupCard extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.people),
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      visualDensity: VisualDensity.comfortable,
+                      visualDensity: VisualDensity.compact,
                       onPressed: () => _showMembersModal(context, groupContacts),
                     ),
                   ],
                 ),
-              )
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   void _showMembersModal(BuildContext context, GroupContacts groupContacts) {

@@ -1,5 +1,5 @@
 import 'package:prayer_ml/api/firebase_auth_client.dart';
-import 'package:prayer_ml/prayers/home/models/reminder_model.dart';
+import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
 import 'dart:convert';
 
 import 'package:prayer_ml/shared/config.dart';
@@ -27,7 +27,7 @@ class RecommendationApiClient{
     final response = await authClient.get(config.uri("/recommendations/"));
 
     if (response.statusCode != 200) {
-      throw Exception("Error getting reminder recommendations: ${response.statusCode} - ${response.body}");
+      throw Exception("Error getting recommendations: ${response.statusCode} - ${response.body}");
     }
 
     final json = jsonDecode(response.body) as List;

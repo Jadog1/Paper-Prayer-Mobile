@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../reminder_repo.dart';
+part of '../recommendations_repo.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
 String _$recommendationRepoHash() =>
-    r'54bd5341b46d4b70cab3c133573e253e1d686692';
+    r'd3c3dbe872a466bb41df29ad14b62454e040a91a';
 
 /// See also [RecommendationRepo].
 @ProviderFor(RecommendationRepo)

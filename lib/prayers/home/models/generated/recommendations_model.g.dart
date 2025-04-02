@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../reminder_model.dart';
+part of '../recommendations_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ReminderImpl _$$ReminderImplFromJson(Map<String, dynamic> json) =>
-    _$ReminderImpl(
-      reminderLabel: json['reminder_label'] as String,
+_$RecommendationImpl _$$RecommendationImplFromJson(Map<String, dynamic> json) =>
+    _$RecommendationImpl(
+      recommendationType: json['recommendation_type'] as String,
       group: Group.fromJson(json['group'] as Map<String, dynamic>),
       prayerCollection: Collection.fromJson(
           json['prayer_collection'] as Map<String, dynamic>),
@@ -22,9 +22,10 @@ _$ReminderImpl _$$ReminderImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['snooze_until'] as String),
     );
 
-Map<String, dynamic> _$$ReminderImplToJson(_$ReminderImpl instance) =>
+Map<String, dynamic> _$$RecommendationImplToJson(
+        _$RecommendationImpl instance) =>
     <String, dynamic>{
-      'reminder_label': instance.reminderLabel,
+      'recommendation_type': instance.recommendationType,
       'group': instance.group,
       'prayer_collection': instance.prayerCollection,
       'default_snooze_days': instance.defaultSnoozeDays,

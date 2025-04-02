@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of '../reminder_model.dart';
+part of '../recommendations_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,13 +15,13 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Recommendation _$RecommendationFromJson(Map<String, dynamic> json) {
-  return _Reminder.fromJson(json);
+  return _Recommendation.fromJson(json);
 }
 
 /// @nodoc
 mixin _$Recommendation {
-  @JsonKey(name: "reminder_label")
-  String get reminderLabel => throw _privateConstructorUsedError;
+  @JsonKey(name: "recommendation_type")
+  String get recommendationType => throw _privateConstructorUsedError;
   Group get group => throw _privateConstructorUsedError;
   @JsonKey(name: "prayer_collection")
   Collection get prayerCollection => throw _privateConstructorUsedError;
@@ -51,7 +51,7 @@ abstract class $RecommendationCopyWith<$Res> {
       _$RecommendationCopyWithImpl<$Res, Recommendation>;
   @useResult
   $Res call(
-      {@JsonKey(name: "reminder_label") String reminderLabel,
+      {@JsonKey(name: "recommendation_type") String recommendationType,
       Group group,
       @JsonKey(name: "prayer_collection") Collection prayerCollection,
       @JsonKey(name: "default_snooze_days") int defaultSnoozeDays,
@@ -78,7 +78,7 @@ class _$RecommendationCopyWithImpl<$Res, $Val extends Recommendation>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? reminderLabel = null,
+    Object? recommendationType = null,
     Object? group = null,
     Object? prayerCollection = null,
     Object? defaultSnoozeDays = null,
@@ -87,9 +87,9 @@ class _$RecommendationCopyWithImpl<$Res, $Val extends Recommendation>
     Object? snoozeUntil = freezed,
   }) {
     return _then(_value.copyWith(
-      reminderLabel: null == reminderLabel
-          ? _value.reminderLabel
-          : reminderLabel // ignore: cast_nullable_to_non_nullable
+      recommendationType: null == recommendationType
+          ? _value.recommendationType
+          : recommendationType // ignore: cast_nullable_to_non_nullable
               as String,
       group: null == group
           ? _value.group
@@ -140,15 +140,15 @@ class _$RecommendationCopyWithImpl<$Res, $Val extends Recommendation>
 }
 
 /// @nodoc
-abstract class _$$ReminderImplCopyWith<$Res>
+abstract class _$$RecommendationImplCopyWith<$Res>
     implements $RecommendationCopyWith<$Res> {
-  factory _$$ReminderImplCopyWith(
-          _$ReminderImpl value, $Res Function(_$ReminderImpl) then) =
-      __$$ReminderImplCopyWithImpl<$Res>;
+  factory _$$RecommendationImplCopyWith(_$RecommendationImpl value,
+          $Res Function(_$RecommendationImpl) then) =
+      __$$RecommendationImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "reminder_label") String reminderLabel,
+      {@JsonKey(name: "recommendation_type") String recommendationType,
       Group group,
       @JsonKey(name: "prayer_collection") Collection prayerCollection,
       @JsonKey(name: "default_snooze_days") int defaultSnoozeDays,
@@ -163,11 +163,11 @@ abstract class _$$ReminderImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ReminderImplCopyWithImpl<$Res>
-    extends _$RecommendationCopyWithImpl<$Res, _$ReminderImpl>
-    implements _$$ReminderImplCopyWith<$Res> {
-  __$$ReminderImplCopyWithImpl(
-      _$ReminderImpl _value, $Res Function(_$ReminderImpl) _then)
+class __$$RecommendationImplCopyWithImpl<$Res>
+    extends _$RecommendationCopyWithImpl<$Res, _$RecommendationImpl>
+    implements _$$RecommendationImplCopyWith<$Res> {
+  __$$RecommendationImplCopyWithImpl(
+      _$RecommendationImpl _value, $Res Function(_$RecommendationImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of Recommendation
@@ -175,7 +175,7 @@ class __$$ReminderImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? reminderLabel = null,
+    Object? recommendationType = null,
     Object? group = null,
     Object? prayerCollection = null,
     Object? defaultSnoozeDays = null,
@@ -183,10 +183,10 @@ class __$$ReminderImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? snoozeUntil = freezed,
   }) {
-    return _then(_$ReminderImpl(
-      reminderLabel: null == reminderLabel
-          ? _value.reminderLabel
-          : reminderLabel // ignore: cast_nullable_to_non_nullable
+    return _then(_$RecommendationImpl(
+      recommendationType: null == recommendationType
+          ? _value.recommendationType
+          : recommendationType // ignore: cast_nullable_to_non_nullable
               as String,
       group: null == group
           ? _value.group
@@ -218,9 +218,11 @@ class __$$ReminderImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
-  const _$ReminderImpl(
-      {@JsonKey(name: "reminder_label") required this.reminderLabel,
+class _$RecommendationImpl
+    with DiagnosticableTreeMixin
+    implements _Recommendation {
+  const _$RecommendationImpl(
+      {@JsonKey(name: "recommendation_type") required this.recommendationType,
       required this.group,
       @JsonKey(name: "prayer_collection") required this.prayerCollection,
       @JsonKey(name: "default_snooze_days") required this.defaultSnoozeDays,
@@ -228,12 +230,12 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
       @JsonKey(name: "updated_at") this.updatedAt,
       @JsonKey(name: "snooze_until") this.snoozeUntil});
 
-  factory _$ReminderImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ReminderImplFromJson(json);
+  factory _$RecommendationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RecommendationImplFromJson(json);
 
   @override
-  @JsonKey(name: "reminder_label")
-  final String reminderLabel;
+  @JsonKey(name: "recommendation_type")
+  final String recommendationType;
   @override
   final Group group;
   @override
@@ -254,7 +256,7 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Recommendation(reminderLabel: $reminderLabel, group: $group, prayerCollection: $prayerCollection, defaultSnoozeDays: $defaultSnoozeDays, isSnoozed: $isSnoozed, updatedAt: $updatedAt, snoozeUntil: $snoozeUntil)';
+    return 'Recommendation(recommendationType: $recommendationType, group: $group, prayerCollection: $prayerCollection, defaultSnoozeDays: $defaultSnoozeDays, isSnoozed: $isSnoozed, updatedAt: $updatedAt, snoozeUntil: $snoozeUntil)';
   }
 
   @override
@@ -262,7 +264,7 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Recommendation'))
-      ..add(DiagnosticsProperty('reminderLabel', reminderLabel))
+      ..add(DiagnosticsProperty('recommendationType', recommendationType))
       ..add(DiagnosticsProperty('group', group))
       ..add(DiagnosticsProperty('prayerCollection', prayerCollection))
       ..add(DiagnosticsProperty('defaultSnoozeDays', defaultSnoozeDays))
@@ -275,9 +277,9 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ReminderImpl &&
-            (identical(other.reminderLabel, reminderLabel) ||
-                other.reminderLabel == reminderLabel) &&
+            other is _$RecommendationImpl &&
+            (identical(other.recommendationType, recommendationType) ||
+                other.recommendationType == recommendationType) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.prayerCollection, prayerCollection) ||
                 other.prayerCollection == prayerCollection) &&
@@ -293,7 +295,7 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, reminderLabel, group,
+  int get hashCode => Object.hash(runtimeType, recommendationType, group,
       prayerCollection, defaultSnoozeDays, isSnoozed, updatedAt, snoozeUntil);
 
   /// Create a copy of Recommendation
@@ -301,20 +303,22 @@ class _$ReminderImpl with DiagnosticableTreeMixin implements _Reminder {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ReminderImplCopyWith<_$ReminderImpl> get copyWith =>
-      __$$ReminderImplCopyWithImpl<_$ReminderImpl>(this, _$identity);
+  _$$RecommendationImplCopyWith<_$RecommendationImpl> get copyWith =>
+      __$$RecommendationImplCopyWithImpl<_$RecommendationImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ReminderImplToJson(
+    return _$$RecommendationImplToJson(
       this,
     );
   }
 }
 
-abstract class _Reminder implements Recommendation {
-  const factory _Reminder(
-          {@JsonKey(name: "reminder_label") required final String reminderLabel,
+abstract class _Recommendation implements Recommendation {
+  const factory _Recommendation(
+          {@JsonKey(name: "recommendation_type")
+          required final String recommendationType,
           required final Group group,
           @JsonKey(name: "prayer_collection")
           required final Collection prayerCollection,
@@ -323,14 +327,14 @@ abstract class _Reminder implements Recommendation {
           @JsonKey(name: "is_snoozed") required final bool isSnoozed,
           @JsonKey(name: "updated_at") final DateTime? updatedAt,
           @JsonKey(name: "snooze_until") final DateTime? snoozeUntil}) =
-      _$ReminderImpl;
+      _$RecommendationImpl;
 
-  factory _Reminder.fromJson(Map<String, dynamic> json) =
-      _$ReminderImpl.fromJson;
+  factory _Recommendation.fromJson(Map<String, dynamic> json) =
+      _$RecommendationImpl.fromJson;
 
   @override
-  @JsonKey(name: "reminder_label")
-  String get reminderLabel;
+  @JsonKey(name: "recommendation_type")
+  String get recommendationType;
   @override
   Group get group;
   @override
@@ -353,6 +357,6 @@ abstract class _Reminder implements Recommendation {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ReminderImplCopyWith<_$ReminderImpl> get copyWith =>
+  _$$RecommendationImplCopyWith<_$RecommendationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
