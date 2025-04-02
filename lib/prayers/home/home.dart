@@ -126,7 +126,7 @@ class PrayerCard extends ConsumerWidget {
           }
         },
         buttonStyle: transparentButtonStyle,  
-        childOverride: const Icon(Icons.mark_as_unread, color: Colors.green, size: 20),
+        childOverride: const Icon(Icons.snooze, color: Colors.green, size: 25),
       )
     ];
     // If snoozed and was updated today, then hide actions
@@ -194,9 +194,9 @@ Widget _collectionDateInformation(Recommendation recommendation) {
     children: [
       Row(
         children: [
-          const Icon(Icons.edit_calendar),
+          const Icon(Icons.book_outlined),
           const SizedBox(width: 4),
-          Text("Last updated ${dateToTextualDate(prayerCollection.updatedAt)}"),
+          Text("Updated ${dateToTextualDate(prayerCollection.updatedAt)}"),
         ],
       ),
       Row(
