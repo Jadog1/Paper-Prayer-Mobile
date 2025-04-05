@@ -21,7 +21,7 @@ CursorPagination _$CursorPaginationFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CursorPagination {
   int get limit => throw _privateConstructorUsedError;
-  int? get cursor => throw _privateConstructorUsedError;
+  String? get cursor => throw _privateConstructorUsedError;
 
   /// Serializes this CursorPagination to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +39,7 @@ abstract class $CursorPaginationCopyWith<$Res> {
           CursorPagination value, $Res Function(CursorPagination) then) =
       _$CursorPaginationCopyWithImpl<$Res, CursorPagination>;
   @useResult
-  $Res call({int limit, int? cursor});
+  $Res call({int limit, String? cursor});
 }
 
 /// @nodoc
@@ -68,7 +68,7 @@ class _$CursorPaginationCopyWithImpl<$Res, $Val extends CursorPagination>
       cursor: freezed == cursor
           ? _value.cursor
           : cursor // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String?,
     ) as $Val);
   }
 }
@@ -81,7 +81,7 @@ abstract class _$$CursorPaginationImplCopyWith<$Res>
       __$$CursorPaginationImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int limit, int? cursor});
+  $Res call({int limit, String? cursor});
 }
 
 /// @nodoc
@@ -108,7 +108,7 @@ class __$$CursorPaginationImplCopyWithImpl<$Res>
       cursor: freezed == cursor
           ? _value.cursor
           : cursor // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String?,
     ));
   }
 }
@@ -126,7 +126,7 @@ class _$CursorPaginationImpl
   @override
   final int limit;
   @override
-  final int? cursor;
+  final String? cursor;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -175,7 +175,7 @@ class _$CursorPaginationImpl
 abstract class _CursorPagination implements CursorPagination {
   const factory _CursorPagination(
       {required final int limit,
-      required final int? cursor}) = _$CursorPaginationImpl;
+      required final String? cursor}) = _$CursorPaginationImpl;
 
   factory _CursorPagination.fromJson(Map<String, dynamic> json) =
       _$CursorPaginationImpl.fromJson;
@@ -183,7 +183,7 @@ abstract class _CursorPagination implements CursorPagination {
   @override
   int get limit;
   @override
-  int? get cursor;
+  String? get cursor;
 
   /// Create a copy of CursorPagination
   /// with the given fields replaced by the non-null parameter values.

@@ -336,5 +336,181 @@ class _FetchNotebookCollectionsAtProviderElement
   @override
   int get groupId => (origin as FetchNotebookCollectionsAtProvider).groupId;
 }
+
+String _$paginatedPrayerRequestsNotifierHash() =>
+    r'f9b83987611f7b850de940e96ca679f91562b910';
+
+abstract class _$PaginatedPrayerRequestsNotifier
+    extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<PrayerRequest>> {
+  late final int limit;
+  late final int groupId;
+
+  FutureOr<CursorPagingData<PrayerRequest>> build(
+    int limit,
+    int groupId,
+  );
+}
+
+/// See also [PaginatedPrayerRequestsNotifier].
+@ProviderFor(PaginatedPrayerRequestsNotifier)
+const paginatedPrayerRequestsNotifierProvider =
+    PaginatedPrayerRequestsNotifierFamily();
+
+/// See also [PaginatedPrayerRequestsNotifier].
+class PaginatedPrayerRequestsNotifierFamily
+    extends Family<AsyncValue<CursorPagingData<PrayerRequest>>> {
+  /// See also [PaginatedPrayerRequestsNotifier].
+  const PaginatedPrayerRequestsNotifierFamily();
+
+  /// See also [PaginatedPrayerRequestsNotifier].
+  PaginatedPrayerRequestsNotifierProvider call(
+    int limit,
+    int groupId,
+  ) {
+    return PaginatedPrayerRequestsNotifierProvider(
+      limit,
+      groupId,
+    );
+  }
+
+  @override
+  PaginatedPrayerRequestsNotifierProvider getProviderOverride(
+    covariant PaginatedPrayerRequestsNotifierProvider provider,
+  ) {
+    return call(
+      provider.limit,
+      provider.groupId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'paginatedPrayerRequestsNotifierProvider';
+}
+
+/// See also [PaginatedPrayerRequestsNotifier].
+class PaginatedPrayerRequestsNotifierProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<
+        PaginatedPrayerRequestsNotifier, CursorPagingData<PrayerRequest>> {
+  /// See also [PaginatedPrayerRequestsNotifier].
+  PaginatedPrayerRequestsNotifierProvider(
+    int limit,
+    int groupId,
+  ) : this._internal(
+          () => PaginatedPrayerRequestsNotifier()
+            ..limit = limit
+            ..groupId = groupId,
+          from: paginatedPrayerRequestsNotifierProvider,
+          name: r'paginatedPrayerRequestsNotifierProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$paginatedPrayerRequestsNotifierHash,
+          dependencies: PaginatedPrayerRequestsNotifierFamily._dependencies,
+          allTransitiveDependencies:
+              PaginatedPrayerRequestsNotifierFamily._allTransitiveDependencies,
+          limit: limit,
+          groupId: groupId,
+        );
+
+  PaginatedPrayerRequestsNotifierProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.limit,
+    required this.groupId,
+  }) : super.internal();
+
+  final int limit;
+  final int groupId;
+
+  @override
+  FutureOr<CursorPagingData<PrayerRequest>> runNotifierBuild(
+    covariant PaginatedPrayerRequestsNotifier notifier,
+  ) {
+    return notifier.build(
+      limit,
+      groupId,
+    );
+  }
+
+  @override
+  Override overrideWith(PaginatedPrayerRequestsNotifier Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: PaginatedPrayerRequestsNotifierProvider._internal(
+        () => create()
+          ..limit = limit
+          ..groupId = groupId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        limit: limit,
+        groupId: groupId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<PaginatedPrayerRequestsNotifier,
+      CursorPagingData<PrayerRequest>> createElement() {
+    return _PaginatedPrayerRequestsNotifierProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PaginatedPrayerRequestsNotifierProvider &&
+        other.limit == limit &&
+        other.groupId == groupId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
+    hash = _SystemHash.combine(hash, groupId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin PaginatedPrayerRequestsNotifierRef
+    on AutoDisposeAsyncNotifierProviderRef<CursorPagingData<PrayerRequest>> {
+  /// The parameter `limit` of this provider.
+  int get limit;
+
+  /// The parameter `groupId` of this provider.
+  int get groupId;
+}
+
+class _PaginatedPrayerRequestsNotifierProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<
+        PaginatedPrayerRequestsNotifier, CursorPagingData<PrayerRequest>>
+    with PaginatedPrayerRequestsNotifierRef {
+  _PaginatedPrayerRequestsNotifierProviderElement(super.provider);
+
+  @override
+  int get limit => (origin as PaginatedPrayerRequestsNotifierProvider).limit;
+  @override
+  int get groupId =>
+      (origin as PaginatedPrayerRequestsNotifierProvider).groupId;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

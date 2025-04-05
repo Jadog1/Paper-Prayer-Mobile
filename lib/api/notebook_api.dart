@@ -14,7 +14,7 @@ class NotebookApiClient {
     final response = await authClient.get(config.uri("/notebook/",
         {
           "limit": pagination.limit.toString(),
-          "cursor": pagination.cursor.toString(),
+          "cursor": pagination.cursor?.toString(),
           "group_id": groupId.toString(),
         }));
 
@@ -29,7 +29,7 @@ class NotebookApiClient {
     final response = await authClient.get(config.uri("/notebook/collections",
         {
           "limit": pagination.limit.toString(),
-          "cursor": pagination.cursor.toString(),
+          "cursor": pagination.cursor?.toString(),
           "group_id": groupId.toString(),
         }));
 

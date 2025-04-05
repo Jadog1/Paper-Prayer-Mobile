@@ -7,8 +7,10 @@ import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
+import 'package:prayer_ml/prayers/groups/repos/notebook_repo.dart';
 import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/widgets.dart';
+import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 
 class PaperMode extends ConsumerWidget {
   const PaperMode({super.key, required this.groupContacts});
@@ -29,7 +31,8 @@ class PaperMode extends ConsumerWidget {
             child: const QueuedPrayerRequests(),
           ),
           const SelectedUserTitle(),
-          OpenPaper(users: groupContacts.members),
+          // OpenPaper(users: groupContacts.members),
+          Expanded(child: Paper(group: groupContacts.group)),
           const Expanded(
             child: RecommendedPrayerRequestsLoader(),
           ),
@@ -38,6 +41,42 @@ class PaperMode extends ConsumerWidget {
     );
   }
 } 
+
+class Paper extends ConsumerStatefulWidget {
+  const Paper({super.key, required this.group});
+  final Group group;
+
+  @override
+  ConsumerState<Paper> createState() => _PaperState();
+}
+class _PaperState extends ConsumerState<Paper> {
+
+  @override
+  Widget build(BuildContext context) {
+    return PagingHelperView(
+        provider: paginatedPrayerRequestsNotifierProvider(10, widget.group.id),
+        futureRefreshable: paginatedPrayerRequestsNotifierProvider(10, widget.group.id).future,
+        notifierRefreshable: paginatedPrayerRequestsNotifierProvider(10, widget.group.id).notifier,
+        contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
+          itemCount: widgetCount,
+          reverse: true,
+          itemBuilder: (context, index) {
+            // if the index is last, then
+            // return the end item view.
+            if (index == widgetCount - 1) {
+              return endItemView;
+            }
+
+            // Otherwise, build a list tile for each sample item.
+            return Text("* ${data.items[index].description}",
+              textAlign: TextAlign.left,
+              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+            );
+          },
+        ),
+    );
+  }
+}
 
 class SelectedUserTitle extends ConsumerWidget {
   const SelectedUserTitle({super.key});

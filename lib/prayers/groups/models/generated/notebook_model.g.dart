@@ -10,7 +10,7 @@ _$CursorPaginationImpl _$$CursorPaginationImplFromJson(
         Map<String, dynamic> json) =>
     _$CursorPaginationImpl(
       limit: (json['limit'] as num).toInt(),
-      cursor: (json['cursor'] as num?)?.toInt(),
+      cursor: json['cursor'] as String?,
     );
 
 Map<String, dynamic> _$$CursorPaginationImplToJson(

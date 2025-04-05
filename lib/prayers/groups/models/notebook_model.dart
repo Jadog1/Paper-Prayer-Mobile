@@ -10,7 +10,7 @@ part 'generated/notebook_model.g.dart';
 class CursorPagination with _$CursorPagination {
   const factory CursorPagination({
     required int limit,
-    required int? cursor,
+    required String? cursor,
   }) = _CursorPagination;
 
   factory CursorPagination.fromJson(Map<String, dynamic> json) => _$CursorPaginationFromJson(json);
