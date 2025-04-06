@@ -138,3 +138,17 @@ Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) as
   var prayerApi = config.prayerRequestApiClient;
   return prayerApi.fetchSimilarRequests(requestId);
 }
+
+@riverpod
+Future<void> saveNewRequest(Ref ref, PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  await prayerApi.saveRequest(request);
+}
+
+@riverpod
+Future<void> updateRequest(Ref ref, PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  await prayerApi.updateRequest(request);
+}

@@ -320,6 +320,266 @@ class _FetchSimilarRequestsProviderElement
   int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
+String _$saveNewRequestHash() => r'edaef1e0b2536c3f3dd0c22e3f1e77a740de48f5';
+
+/// See also [saveNewRequest].
+@ProviderFor(saveNewRequest)
+const saveNewRequestProvider = SaveNewRequestFamily();
+
+/// See also [saveNewRequest].
+class SaveNewRequestFamily extends Family<AsyncValue<void>> {
+  /// See also [saveNewRequest].
+  const SaveNewRequestFamily();
+
+  /// See also [saveNewRequest].
+  SaveNewRequestProvider call(
+    PrayerRequest request,
+  ) {
+    return SaveNewRequestProvider(
+      request,
+    );
+  }
+
+  @override
+  SaveNewRequestProvider getProviderOverride(
+    covariant SaveNewRequestProvider provider,
+  ) {
+    return call(
+      provider.request,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'saveNewRequestProvider';
+}
+
+/// See also [saveNewRequest].
+class SaveNewRequestProvider extends AutoDisposeFutureProvider<void> {
+  /// See also [saveNewRequest].
+  SaveNewRequestProvider(
+    PrayerRequest request,
+  ) : this._internal(
+          (ref) => saveNewRequest(
+            ref as SaveNewRequestRef,
+            request,
+          ),
+          from: saveNewRequestProvider,
+          name: r'saveNewRequestProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$saveNewRequestHash,
+          dependencies: SaveNewRequestFamily._dependencies,
+          allTransitiveDependencies:
+              SaveNewRequestFamily._allTransitiveDependencies,
+          request: request,
+        );
+
+  SaveNewRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.request,
+  }) : super.internal();
+
+  final PrayerRequest request;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(SaveNewRequestRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SaveNewRequestProvider._internal(
+        (ref) => create(ref as SaveNewRequestRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        request: request,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _SaveNewRequestProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SaveNewRequestProvider && other.request == request;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, request.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin SaveNewRequestRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `request` of this provider.
+  PrayerRequest get request;
+}
+
+class _SaveNewRequestProviderElement
+    extends AutoDisposeFutureProviderElement<void> with SaveNewRequestRef {
+  _SaveNewRequestProviderElement(super.provider);
+
+  @override
+  PrayerRequest get request => (origin as SaveNewRequestProvider).request;
+}
+
+String _$updateRequestHash() => r'eb5cd3d6cb203965bdbbbdedfe86d18b893e3fe7';
+
+/// See also [updateRequest].
+@ProviderFor(updateRequest)
+const updateRequestProvider = UpdateRequestFamily();
+
+/// See also [updateRequest].
+class UpdateRequestFamily extends Family<AsyncValue<void>> {
+  /// See also [updateRequest].
+  const UpdateRequestFamily();
+
+  /// See also [updateRequest].
+  UpdateRequestProvider call(
+    PrayerRequest request,
+  ) {
+    return UpdateRequestProvider(
+      request,
+    );
+  }
+
+  @override
+  UpdateRequestProvider getProviderOverride(
+    covariant UpdateRequestProvider provider,
+  ) {
+    return call(
+      provider.request,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'updateRequestProvider';
+}
+
+/// See also [updateRequest].
+class UpdateRequestProvider extends AutoDisposeFutureProvider<void> {
+  /// See also [updateRequest].
+  UpdateRequestProvider(
+    PrayerRequest request,
+  ) : this._internal(
+          (ref) => updateRequest(
+            ref as UpdateRequestRef,
+            request,
+          ),
+          from: updateRequestProvider,
+          name: r'updateRequestProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateRequestHash,
+          dependencies: UpdateRequestFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateRequestFamily._allTransitiveDependencies,
+          request: request,
+        );
+
+  UpdateRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.request,
+  }) : super.internal();
+
+  final PrayerRequest request;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(UpdateRequestRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateRequestProvider._internal(
+        (ref) => create(ref as UpdateRequestRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        request: request,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _UpdateRequestProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UpdateRequestProvider && other.request == request;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, request.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UpdateRequestRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `request` of this provider.
+  PrayerRequest get request;
+}
+
+class _UpdateRequestProviderElement
+    extends AutoDisposeFutureProviderElement<void> with UpdateRequestRef {
+  _UpdateRequestProviderElement(super.provider);
+
+  @override
+  PrayerRequest get request => (origin as UpdateRequestProvider).request;
+}
+
 String _$groupContactsRepoHash() => r'e0f98f33627d056be7d91fcd5e2f65a55ac989d2';
 
 /// See also [GroupContactsRepo].

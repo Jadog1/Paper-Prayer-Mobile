@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
-import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
@@ -21,28 +20,69 @@ class PaperMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-      child: Column(
+    return Column(
         children: [
-          AppBar(
-            title: const Text("Paper Mode"),
+          const OptionsHeader(),
+          Expanded(
+            child:Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child:  Paper(group: groupContacts.group),
+            ),
           ),
-          // ConstrainedBox(
-          //   constraints: const BoxConstraints(maxHeight: 200),
-          //   child: const QueuedPrayerRequests(),
-          // ),
-          // const SelectedUserTitle(),
-          // OpenPaper(users: groupContacts.members),
-          Expanded(child: Paper(group: groupContacts.group)),
-          // const Expanded(
-          //   child: RecommendedPrayerRequestsLoader(),
-          // ),
         ],
-      ),
-    );
+      );
   }
 } 
+
+class OptionsHeader extends ConsumerWidget {
+  const OptionsHeader({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    return Column(
+      children: [
+        Container(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Create a back button
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              Row(
+                children: [
+                  const Text("Summary"),
+                  Switch(
+                    value: state.aiMode,
+                    onChanged: (val) {
+                      state.setAiMode(val);
+                    },
+                  ),
+                ],
+              ),
+              TextButton.icon(
+                icon: const Icon(Icons.auto_awesome),
+                label: const Text("Follow up"),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (_) => const RecommendedPrayerRequestsLoader(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class Paper extends ConsumerStatefulWidget {
   const Paper({super.key, required this.group});
@@ -120,233 +160,19 @@ class EditableRequest extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var state = ref.watch(paperModeSharedStateProvider);
     var text = prayerRequest?.description ?? '';
-    return Text("• $text",
+    var summary = prayerRequest?.title ?? '';
+    var isAiModeCompatible = state.aiMode && summary.isNotEmpty;
+    return Text("• ${isAiModeCompatible ? summary : text}",
       textAlign: TextAlign.left,
-      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal),
-    );
-  }
-}
 
-class SelectedUserTitle extends ConsumerWidget {
-  const SelectedUserTitle({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var state = ref.watch(paperModeSharedStateProvider);
-    return Text(
-      state.selectedUser != null ? state.selectedUser!.name : 'No user selected',
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-      textAlign: TextAlign.center,
-    );
-  }
-}
-
-
-class OpenPaper extends ConsumerStatefulWidget {
-  const OpenPaper({super.key, required this.users});
-  final List<Contact> users;
-
-  @override
-  ConsumerState<OpenPaper> createState() => _OpenPaperState();
-}
-
-class _OpenPaperState extends ConsumerState<OpenPaper>{
-  final TextEditingController _controller = TextEditingController();
-  OverlayEntry? _overlayEntry;
-  String _searchQuery = '';
-  int _triggerPosition = -1;
-  Contact? _selectedUser;
-  late TextField _textField;
-  final GlobalKey _textFieldKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Start listening to changes.
-    _controller.addListener(_onTextChanged);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _onTextChanged() {
-    String text = _controller.text;
-    int cursorPos = _controller.selection.baseOffset;
-    var state = ref.read(paperModeSharedStateProvider);
-
-    // TODO: Show error text if _selectedUser is null
-    if (text.contains('\n\n') && _selectedUser != null) {
-      state.addRequest(AsyncSavedPrayerRequest(request: text.trim(), user: _selectedUser!));
-      _controller.clear();
-      return;
-    }
-
-    // Detect "@" and store the position
-    if (cursorPos <= 0) {
-      _hideSuggestions();
-      return;
-    }
-    int lastTrigger = text.lastIndexOf('@', cursorPos - 1);
-    if (lastTrigger != -1) {
-      _triggerPosition = lastTrigger;
-      _searchQuery = text.substring(lastTrigger + 1, cursorPos);
-      _showSuggestions();
-    } else {
-      _hideSuggestions();
-    }
-    if (text.lastIndexOf("@") < cursorPos) {
-      setState(() => _searchQuery = text.substring(text.lastIndexOf("@") + 1, cursorPos));
-    }
-  }
-
-  void _showSuggestions() {
-    if (_overlayEntry != null) {
-      _overlayEntry!.remove();
-    }
-    
-    _overlayEntry = _createOverlayEntry();
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  void _hideSuggestions() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
-  OverlayEntry _createOverlayEntry() {
-    Offset caretOffset = _getCaretPosition();
-    
-    return OverlayEntry(
-      builder: (context) => Positioned(
-        left: caretOffset.dx,
-        top: caretOffset.dy + 15, // Position below the caret
-        width: 200,
-        child: Material(
-          elevation: 4.0,
-          color: Colors.white,
-          child: Scrollbar(
-            child: SizedBox(
-              height: 200,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                children: widget.users
-                    .where((user) => user.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-                    .map((user) => ListTile(
-                          title: Text(user.name),
-                          subtitle: Text(user.description ?? ''),
-                          onTap: () => _selectSuggestion(user),
-                        ))
-                    .toList(),
-              ),
-            ),
-          ),
-        ),
+      style: TextStyle(
+        fontSize: 16.0, 
+        fontWeight: FontWeight.normal,
+        fontStyle: isAiModeCompatible ? FontStyle.italic : FontStyle.normal,
       ),
     );
-  }
-
-  Offset _getCaretPosition() {
-    TextPainter painter = TextPainter(
-      textDirection: TextDirection.ltr,
-      text: TextSpan(text: _controller.text, style: const TextStyle(fontSize: 16.0)),
-    );
-    painter.layout();
-
-    TextPosition cursorTextPosition = _controller.selection.base;
-    RenderBox box = _textFieldKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = box.localToGlobal(Offset.zero);
-    Rect caretPrototype = Rect.fromLTWH(
-        0.0, 0.0, _textField.cursorWidth, _textField.cursorHeight ?? 0);
-    Offset caretOffset =
-        painter.getOffsetForCaret(cursorTextPosition, caretPrototype);
-    caretOffset = Offset(caretOffset.dx, caretOffset.dy + position.dy);
-    
-    return caretOffset;
-  }
-
-  void _selectSuggestion(Contact user) {
-    var state = ref.read(paperModeSharedStateProvider);
-    String text = _controller.text;
-    _controller.text = text.replaceRange(_triggerPosition, _controller.selection.baseOffset, '');
-    _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-    setState(() => _selectedUser = user);
-    state.addContact(user);
-    state.setContact(user);
-
-    _hideSuggestions();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _textField = TextField(
-      controller: _controller,
-      minLines: 4,
-      maxLines: 6,
-      key: _textFieldKey,
-      decoration: const InputDecoration(
-        hintText: 'Use @ to set the current user',
-        border: null,
-        // constraints: BoxConstraints(maxHeight: 50),
-      ),
-    );
-    return _textField;
-  }
-}
-
-class QueuedPrayerRequests extends ConsumerWidget {
-  const QueuedPrayerRequests({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var state = ref.watch(paperModeSharedStateProvider);
-    return Scrollbar(
-      thumbVisibility: true,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: state.requests.length,
-        itemBuilder: (context, index) {
-          var prayerRequest = state.requests[index];
-          var currentUser = prayerRequest.user;
-          Contact? lastUser; 
-          if (index > 0) {
-            lastUser = state.requests[index - 1].user;
-          }
-          Widget elem = QueuedPrayerRequest(asyncPrayerRequest: prayerRequest);
-          if (lastUser == null || lastUser.id != currentUser.id) {
-            elem = Column(
-              textDirection: TextDirection.ltr,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                (lastUser != null) ? const Divider() : const SizedBox.shrink(),
-                Text(currentUser.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                elem,
-              ],
-            );
-          }
-          return elem;
-        },
-      ),
-    );
-  }
-}
-
-class QueuedPrayerRequest extends ConsumerWidget {
-  const QueuedPrayerRequest({super.key, required this.asyncPrayerRequest});
-
-  final AsyncSavedPrayerRequest asyncPrayerRequest;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Text(
-      "- ${asyncPrayerRequest.request}", 
-      textAlign: TextAlign.left,
-      );
   }
 }
 
