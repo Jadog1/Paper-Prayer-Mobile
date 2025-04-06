@@ -96,6 +96,12 @@ Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(Ref ref, Contact 
 }
 
 @riverpod
+Future<List<RelatedContact>> fetchRelatedContacts(Ref ref, int contactId) async {
+  var contactApi = config.contactApiClient;
+  return await contactApi.fetchRelatedContacts(contactId);
+}
+
+@riverpod
 class PrayerRequestRepo extends _$PrayerRequestRepo {
   late Config config;
 
@@ -139,15 +145,13 @@ Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) as
   return prayerApi.fetchSimilarRequests(requestId);
 }
 
-@riverpod
-Future<void> saveNewRequest(Ref ref, PrayerRequest request) async {
+Future<void> saveNewRequest(PrayerRequest request) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   await prayerApi.saveRequest(request);
 }
 
-@riverpod
-Future<void> updateRequest(Ref ref, PrayerRequest request) async {
+Future<void> updateRequest(PrayerRequest request) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   await prayerApi.updateRequest(request);

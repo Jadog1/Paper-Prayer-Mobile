@@ -224,4 +224,18 @@ class CollectionsApiClient {
       throw Exception("Error removing collection: ${response.statusCode} - ${response.body}");
     }
   }
+
+  Future<Collection?> fetchCollectionFromRequest(int requestId) async {
+    final response = await authClient.get(config.uri("/collections/request/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting collection from request: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    if (json == null) {
+      return null;
+    }
+    return Collection.fromJson(json);
+  }
 }
