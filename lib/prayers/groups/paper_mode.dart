@@ -94,15 +94,14 @@ class _PaperState extends ConsumerState<Paper> {
                 children: [endItemView, dateBreak(data.items[index-1]), usernameBreak(data.items[index-1])]);
             }
             List<Widget> widgets = [];
-            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) > 1) {
-              widgets.add(dateBreak(data.items[index]));
-            }
-            
-            if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
-              widgets.add(usernameBreak(data.items[index]));
-            }
-            
             widgets.add(EditableRequest(prayerRequest: data.items[index]));
+
+            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) > 1) {
+              widgets.add(dateBreak(data.items[index-1]));
+              widgets.add(usernameBreak(data.items[index-1]));
+            } else if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
+              widgets.add(usernameBreak(data.items[index-1]));
+            }
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +121,7 @@ class EditableRequest extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var text = prayerRequest?.description ?? '';
-    return Text("- $text",
+    return Text("• $text",
       textAlign: TextAlign.left,
       style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal),
     );
