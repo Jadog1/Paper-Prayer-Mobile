@@ -5,7 +5,7 @@ import 'package:prayer_ml/api/prayer_api.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
 
 class Config {
-  String apiUrl = '10.0.2.2:8000'; //10.0.0.46:8000
+  String apiUrl = '10.0.0.46:8000'; // From phone: 10.0.0.46:8000 -- Emulator: 10.0.2.2:8000
   late ContactsApiClient contactApiClient;
   late PrayerRequestApiClient prayerRequestApiClient;
   late CollectionsApiClient collectionsApiClient;

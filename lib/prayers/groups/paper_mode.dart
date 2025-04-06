@@ -5,10 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/notebook_repo.dart';
 import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
+import 'package:prayer_ml/shared/utility.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 
@@ -26,16 +28,16 @@ class PaperMode extends ConsumerWidget {
           AppBar(
             title: const Text("Paper Mode"),
           ),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: const QueuedPrayerRequests(),
-          ),
-          const SelectedUserTitle(),
+          // ConstrainedBox(
+          //   constraints: const BoxConstraints(maxHeight: 200),
+          //   child: const QueuedPrayerRequests(),
+          // ),
+          // const SelectedUserTitle(),
           // OpenPaper(users: groupContacts.members),
           Expanded(child: Paper(group: groupContacts.group)),
-          const Expanded(
-            child: RecommendedPrayerRequestsLoader(),
-          ),
+          // const Expanded(
+          //   child: RecommendedPrayerRequestsLoader(),
+          // ),
         ],
       ),
     );
@@ -51,12 +53,35 @@ class Paper extends ConsumerStatefulWidget {
 }
 class _PaperState extends ConsumerState<Paper> {
 
+  Widget usernameBreak(PrayerRequest prayerRequest) {
+    return Text(
+      prayerRequest.user.name, 
+      textAlign: TextAlign.left,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    );
+  }
+
+  Widget dateBreak(PrayerRequest prayerRequest) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const Divider(),
+        Text(formatTimestamp(prayerRequest.createdAt),
+          textAlign: TextAlign.left,
+          style: const TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.group.id);
     return PagingHelperView(
-        provider: paginatedPrayerRequestsNotifierProvider(10, widget.group.id),
-        futureRefreshable: paginatedPrayerRequestsNotifierProvider(10, widget.group.id).future,
-        notifierRefreshable: paginatedPrayerRequestsNotifierProvider(10, widget.group.id).notifier,
+        provider: provider,
+        futureRefreshable: provider.future,
+        notifierRefreshable: provider.notifier,
         contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
           itemCount: widgetCount,
           reverse: true,
@@ -64,16 +89,42 @@ class _PaperState extends ConsumerState<Paper> {
             // if the index is last, then
             // return the end item view.
             if (index == widgetCount - 1) {
-              return endItemView;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [endItemView, dateBreak(data.items[index-1]), usernameBreak(data.items[index-1])]);
             }
+            List<Widget> widgets = [];
+            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) > 1) {
+              widgets.add(dateBreak(data.items[index]));
+            }
+            
+            if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
+              widgets.add(usernameBreak(data.items[index]));
+            }
+            
+            widgets.add(EditableRequest(prayerRequest: data.items[index]));
 
-            // Otherwise, build a list tile for each sample item.
-            return Text("* ${data.items[index].description}",
-              textAlign: TextAlign.left,
-              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widgets,
             );
           },
         ),
+    );
+  }
+}
+
+class EditableRequest extends ConsumerWidget {
+  const EditableRequest({super.key, this.prayerRequest});
+
+  final PrayerRequest? prayerRequest;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var text = prayerRequest?.description ?? '';
+    return Text("- $text",
+      textAlign: TextAlign.left,
+      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal),
     );
   }
 }
@@ -89,7 +140,7 @@ class SelectedUserTitle extends ConsumerWidget {
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
       textAlign: TextAlign.center,
     );
-}
+  }
 }
 
 

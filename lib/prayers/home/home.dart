@@ -138,26 +138,35 @@ class PrayerCard extends ConsumerWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        title: RichText(
-          text: TextSpan(
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black, // Ensure text is visible
-              fontSize: 16, // Adjust as needed
-            ),
-            children: [
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle, // Aligns icon with text
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 4), // Space between icon and text
-                  child: _getUrgencyIcon(urgencyLabel), // Your urgency icon
+        title: Row(
+          children: [
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Ensure text is visible
+                    fontSize: 16, // Adjust as needed
+                  ),
+                  children: [
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle, // Aligns icon with text
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4), // Space between icon and text
+                        child: _getUrgencyIcon(urgencyLabel), // Your urgency icon
+                      ),
+                    ),
+                    TextSpan(
+                      text: prayerCollection.title ?? "",
+                    ),
+                  ],
                 ),
               ),
-              TextSpan(
-                text: prayerCollection.title ?? "",
-              ),
+            ),
+            if (actions != null) ...[
+              actions,
             ],
-          ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +175,7 @@ class PrayerCard extends ConsumerWidget {
             _collectionDateInformation(recommendation),
           ],
         ),
-        trailing: actions,
+        // trailing: actions,
       ),
     );
   }
@@ -180,18 +189,18 @@ Widget _collectionDateInformation(Recommendation recommendation) {
   if (todayIsBetween(prayerCollection.startRangeOfEventDate, prayerCollection.endRangeOfEventDate)) {
     dateRangeState.add(const Icon(Icons.today));
     dateRangeState.add(const SizedBox(width: 4));
-    dateRangeState.add(Text("Happening now until ${dateToTextualDate(prayerCollection.endRangeOfEventDate!)}"));
+    dateRangeState.add(Expanded(child: Text("Happening now until ${dateToTextualDate(prayerCollection.endRangeOfEventDate!)}")));
   } else if (prayerCollection.startRangeOfEventDate != null) {
     dateRangeState.add(const Icon(Icons.hourglass_top));
     dateRangeState.add(const SizedBox(width: 4));
-    dateRangeState.add(Text("Happening ${dateToTextualDate(prayerCollection.startRangeOfEventDate!)}"));
+    dateRangeState.add(Expanded(child: Text("Happening ${dateToTextualDate(prayerCollection.startRangeOfEventDate!)}")));
   }
 
   List<Widget> snoozeState = [];
   if (recommendation.isSnoozed && recommendation.updatedAt != null) {
     snoozeState.add(const Icon(Icons.snooze));
     snoozeState.add(const SizedBox(width: 4));
-    snoozeState.add(Text("Snoozed until ${dateToTextualDate(recommendation.snoozeUntil!.toIso8601String())}"));
+    snoozeState.add(Expanded(child: Text("Snoozed until ${dateToTextualDate(recommendation.snoozeUntil!.toIso8601String())}")));
   }
 
   return Column(
