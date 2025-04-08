@@ -278,6 +278,8 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
   late TextEditingController _controller;
   Timer? _debounce;
   SaveState _saveState = SaveState.saved;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -285,6 +287,7 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
     _controller = TextEditingController(
       text: widget.prayerRequest.description,
     );
+    _focusNode.addListener(_onFocusChange);
   }
 
   void _onChanged(String text) {
@@ -310,7 +313,15 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
   void dispose() {
     _debounce?.cancel();
     _controller.dispose();
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
   }
 
   @override
@@ -333,9 +344,10 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
         Expanded(
           child: TextField(
             controller: _controller,
+            focusNode: _focusNode,
             onChanged: _onChanged,
             maxLines: null,
-            decoration: const InputDecoration(border: InputBorder.none),
+            decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
           ),
         ),
       ],
