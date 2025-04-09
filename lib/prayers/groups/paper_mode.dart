@@ -98,24 +98,31 @@ class Paper extends ConsumerStatefulWidget {
 class _PaperState extends ConsumerState<Paper> {
 
   Widget usernameBreak(PrayerRequest prayerRequest) {
-    return Text(
-      prayerRequest.user.name, 
-      textAlign: TextAlign.left,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    return PaperMarginSpace(
+      paperLine: Text(
+        prayerRequest.user.name, 
+        textAlign: TextAlign.left,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+      ),
     );
   }
 
   Widget dateBreak(PrayerRequest prayerRequest) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        const Divider(),
-        Text(formatTimestamp(prayerRequest.createdAt),
-          textAlign: TextAlign.left,
-          style: const TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
+    return PaperMarginSpace(
+      paperLine: Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            const ScribbleDivider(color: Colors.black),
+            const SizedBox(height: 3),
+            Text(formatTimestamp(prayerRequest.createdAt),
+              textAlign: TextAlign.left,
+              style: const TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -170,6 +177,62 @@ class _PaperState extends ConsumerState<Paper> {
   }
 }
 
+class ScribbleDivider extends StatelessWidget {
+  const ScribbleDivider({
+    super.key,
+    this.color = Colors.grey,
+    this.height = 1,
+  });
+
+  final Color color;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: CustomPaint(
+        painter: _ScribblePainter(color: color),
+      ),
+    );
+  }
+}
+
+class _ScribblePainter extends CustomPainter {
+  _ScribblePainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+
+    // Start scribbly path from left to right
+    const wiggleHeight = 2.0;
+    final waveLength = 8.0;
+
+    path.moveTo(0, size.height / 2);
+
+    for (double x = 0; x <= size.width; x += waveLength) {
+      final y = (x ~/ waveLength) % 2 == 0
+          ? size.height / 2 - wiggleHeight
+          : size.height / 2 + wiggleHeight;
+      path.lineTo(x, y);
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+
 class ViewableRequest extends ConsumerWidget {
   const ViewableRequest({
     super.key,
@@ -215,23 +278,20 @@ class ViewableRequest extends ConsumerWidget {
 
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.info_outline, size: 16, color: Colors.grey),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              "$summary",
-              textAlign: TextAlign.left,
-              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
-            ),
+      child: PaperMarginSpace(
+        icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+        paperLine: Expanded(
+          child: Text(
+            "• $summary",
+            textAlign: TextAlign.left,
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 class LoadableRelatedContacts extends ConsumerWidget {
   const LoadableRelatedContacts({super.key, required this.contactId});
@@ -284,7 +344,7 @@ class EditableRequest extends ConsumerStatefulWidget {
 class _EditableRequestState extends ConsumerState<EditableRequest> {
   late TextEditingController _controller;
   Timer? _debounce;
-  SaveState _saveState = SaveState.saved;
+  SaveState _saveState = SaveState.noAction;
   bool _isFocused = false;
   final FocusNode _focusNode = FocusNode();
 
@@ -328,12 +388,17 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
   void _onFocusChange() {
     setState(() {
       _isFocused = _focusNode.hasFocus;
+      if (_saveState == SaveState.noAction && _isFocused) {
+        _saveState = SaveState.editing;
+      } else if (_saveState == SaveState.editing && !_isFocused) {
+        _saveState = SaveState.noAction;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Icon icon;
+    Icon? icon;
     switch (_saveState) {
       case SaveState.saving:
         icon = const Icon(Icons.sync, size: 16);
@@ -341,28 +406,73 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       case SaveState.failed:
         icon = const Icon(Icons.error, size: 16, color: Colors.red);
         break;
-      default:
+      case SaveState.saved:
         icon = const Icon(Icons.check, size: 16, color: Colors.green);
+        break;
+      case SaveState.editing:
+        icon = const Icon(Icons.edit, size: 16, color: Colors.grey);
+        break;
+      case SaveState.noAction:
+        icon = null;
+        break;
     }
 
-    return Row(
-      children: [
-        SizedBox(width: 16, child: icon),
-        Expanded(
-          child: TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            onChanged: _onChanged,
-            maxLines: null,
-            decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
+    return PaperMarginSpace(
+      icon: icon,
+      paperLine: Expanded(
+          child: Row(
+            children: [
+              const Text("• "),
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  onChanged: _onChanged,
+                  maxLines: null,
+                  decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
     );
   }
 }
 
-enum SaveState { saving, saved, failed }
+enum SaveState { saving, saved, failed, editing, noAction }
+
+class PaperMarginSpace extends StatelessWidget {
+  const PaperMarginSpace({super.key, this.icon, required this.paperLine});
+
+  final Widget? icon;
+  final Widget paperLine;
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    border: Border(right: BorderSide(color: Colors.grey)),
+                  ),
+                  child: Align(
+                    child: icon ?? const SizedBox(width: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 4),
+          paperLine,
+        ],
+      ),
+    );
+  }
+}
 
 class RecommendedPrayerRequestsLoader extends ConsumerWidget {
   const RecommendedPrayerRequestsLoader({super.key});
