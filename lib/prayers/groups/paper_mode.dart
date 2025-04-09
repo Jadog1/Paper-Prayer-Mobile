@@ -153,6 +153,13 @@ class _PaperState extends ConsumerState<Paper> {
               widgets.add(usernameBreak(data.items[index-1]));
             }
 
+            
+            if (index == 0) {
+              var newPrayerRequest = defaultPrayerRequest(request.user, request.group);
+              widgets.add(dateBreak(newPrayerRequest));
+              widgets.add(EditableRequest(prayerRequest: newPrayerRequest)); // New unsaved entry
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: widgets,

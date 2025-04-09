@@ -56,3 +56,18 @@ PrayerRequest prayerRequestScoreToPrayerRequest(PrayerRequestScore score) {
     relatedContactIds: score.relatedContactIds,
   );
 }
+
+PrayerRequest defaultPrayerRequest(Contact contact, ContactGroupPairs group) {
+  return PrayerRequest(
+    id: 0,
+    description: "",
+    title: "",
+    user: contact,
+    group: group,
+    sentiment: "",
+    emotion: "",
+    prayerType: "",
+    createdAt: DateTime.now().toIso8601String(),
+    relatedContactIds: [],
+  );
+}
