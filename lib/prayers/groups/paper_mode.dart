@@ -90,13 +90,13 @@ class OptionsHeader extends ConsumerWidget {
 
 class Paper extends ConsumerStatefulWidget {
   const Paper({super.key, required this.group});
+
   final Group group;
 
   @override
   ConsumerState<Paper> createState() => _PaperState();
 }
 class _PaperState extends ConsumerState<Paper> {
-
   Widget usernameBreak(PrayerRequest prayerRequest) {
     return PaperMarginSpace(
       paperLine: Text(
@@ -201,6 +201,7 @@ class ScribbleDivider extends StatelessWidget {
 
 class _ScribblePainter extends CustomPainter {
   _ScribblePainter({required this.color});
+
   final Color color;
 
   @override
@@ -214,7 +215,7 @@ class _ScribblePainter extends CustomPainter {
 
     // Start scribbly path from left to right
     const wiggleHeight = 2.0;
-    final waveLength = 8.0;
+    const waveLength = 8.0;
 
     path.moveTo(0, size.height / 2);
 
@@ -312,8 +313,8 @@ class LoadableRelatedContacts extends ConsumerWidget {
 class LoadableCollection extends ConsumerWidget {
   const LoadableCollection({super.key, required this.requestId, required this.contactId});
 
-  final int requestId;
   final int contactId;
+  final int requestId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -344,9 +345,18 @@ class EditableRequest extends ConsumerStatefulWidget {
 class _EditableRequestState extends ConsumerState<EditableRequest> {
   late TextEditingController _controller;
   Timer? _debounce;
-  SaveState _saveState = SaveState.noAction;
-  bool _isFocused = false;
   final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+  SaveState _saveState = SaveState.noAction;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -374,15 +384,6 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
         setState(() => _saveState = SaveState.failed);
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    _controller.dispose();
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
-    super.dispose();
   }
 
   void _onFocusChange() {
