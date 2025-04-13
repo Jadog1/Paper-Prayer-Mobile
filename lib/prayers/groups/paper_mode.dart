@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
@@ -457,6 +458,24 @@ class NewRequestsManager extends ConsumerStatefulWidget {
 
 class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
   List<PrayerRequest> _newRequests = [];
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+      var user = ref.read(paperModeSharedStateProvider).selectedUser;
+      if (user == null) {
+        return;
+      }
+      contactGroup = ContactGroupPairs(contactId: user.id, groupId: widget.currentGroup.group.id);
+      var newRequest = defaultPrayerRequest(ref.read(paperModeSharedStateProvider).selectedUser!, widget.currentGroup);
+      newRequest.description = _controller.text;
+      setState(() {
+        _newRequests.add(newRequest);
+        _controller.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -469,14 +488,27 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
           );
         },
         suggestionsCallback: (String suggestion) {
-          
+          if (suggestion.isEmpty) {
+            return Future.value(<Contact>[]);
+          }
+          var filteredGroupContacts = widget.allGroupContacts.where((groupContact) => 
+            groupContact.members.any((contact) => contact.name.toLowerCase().contains(suggestion.toLowerCase()))).toList();
+          return Future.value(filteredGroupContacts.map((groupContact) => groupContact.members).expand((x) => x).toList());
         },
         onSelected:(value) => state.setContact(value),
       );
     }
     return Column(
       children: [
-        
+        for (var request in _newRequests) ...[
+          EditableRequest(prayerRequest: request),
+          const SizedBox(height: 8),
+        ],
+        KeyboardListener(
+          focusNode: _focusNode,
+          onKeyEvent: _handleKeyEvent,
+          child: EditableRequest(prayerRequest: prayerRequest),
+        ),
       ],
     );
   }
