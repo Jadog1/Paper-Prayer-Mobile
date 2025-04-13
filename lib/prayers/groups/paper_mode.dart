@@ -4,7 +4,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
@@ -441,6 +443,44 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
 }
 
 enum SaveState { saving, saved, failed, editing, noAction }
+
+// NewRequestsManager is a widget that manages new requests created by the user at the bottom of the page.
+// It handles the state of who the current request is for and displaying all the newly created requests.
+class NewRequestsManager extends ConsumerStatefulWidget {
+  const NewRequestsManager({super.key, required this.currentGroup, required this.allGroupContacts});
+  final GroupContacts currentGroup;
+  final List<GroupContacts> allGroupContacts;
+
+  @override
+  ConsumerState<NewRequestsManager> createState() => _NewRequestsManagerState();
+}
+
+class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
+  List<PrayerRequest> _newRequests = [];
+
+  @override
+  Widget build(BuildContext context) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    if (state.selectedUser == null) {
+      return TypeAheadField<Contact>(
+        itemBuilder: (context, Contact suggestion) {
+          return ListTile(
+            title: Text(suggestion.name),
+          );
+        },
+        suggestionsCallback: (String suggestion) {
+          
+        },
+        onSelected:(value) => state.setContact(value),
+      );
+    }
+    return Column(
+      children: [
+        
+      ],
+    );
+  }
+}
 
 class PaperMarginSpace extends StatelessWidget {
   const PaperMarginSpace({super.key, this.icon, required this.paperLine});
