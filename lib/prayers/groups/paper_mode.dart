@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
-import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
@@ -21,9 +20,10 @@ import 'package:prayer_ml/shared/widgets.dart';
 import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 
 class PaperMode extends ConsumerWidget {
-  const PaperMode({super.key, required this.groupContacts});
+  const PaperMode({super.key, required this.currentGroup});
 
-  final GroupContacts groupContacts;
+  final GroupContacts currentGroup;
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +33,7 @@ class PaperMode extends ConsumerWidget {
           Expanded(
             child:Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child:  Paper(group: groupContacts.group),
+              child:  Paper(groupContacts: currentGroup),
             ),
           ),
         ],
@@ -92,9 +92,9 @@ class OptionsHeader extends ConsumerWidget {
 }
 
 class Paper extends ConsumerStatefulWidget {
-  const Paper({super.key, required this.group});
+  const Paper({super.key, required this.groupContacts});
 
-  final Group group;
+  final GroupContacts groupContacts;
 
   @override
   ConsumerState<Paper> createState() => _PaperState();
@@ -110,7 +110,7 @@ class _PaperState extends ConsumerState<Paper> {
     );
   }
 
-  Widget dateBreak(PrayerRequest prayerRequest) {
+  Widget dateBreak(String timestamp) {
     return PaperMarginSpace(
       paperLine: Expanded(
         child: Column(
@@ -119,7 +119,7 @@ class _PaperState extends ConsumerState<Paper> {
             const SizedBox(height: 16),
             const ScribbleDivider(color: Colors.black),
             const SizedBox(height: 3),
-            Text(formatTimestamp(prayerRequest.createdAt),
+            Text(formatTimestamp(timestamp),
               textAlign: TextAlign.left,
               style: const TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic),
             ),
@@ -131,7 +131,7 @@ class _PaperState extends ConsumerState<Paper> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.group.id);
+    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.groupContacts.group.id);
     var state = ref.watch(paperModeSharedStateProvider);
     return PagingHelperView(
         provider: provider,
@@ -146,7 +146,7 @@ class _PaperState extends ConsumerState<Paper> {
             if (index == widgetCount - 1) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [endItemView, dateBreak(data.items[index-1]), usernameBreak(data.items[index-1])]);
+                children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(data.items[index-1])]);
             }
             var request = data.items[index];
             List<Widget> widgets = [];
@@ -157,7 +157,7 @@ class _PaperState extends ConsumerState<Paper> {
             }
 
             if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) > 1) {
-              widgets.add(dateBreak(data.items[index-1]));
+              widgets.add(dateBreak(data.items[index-1].createdAt));
               widgets.add(usernameBreak(data.items[index-1]));
             } else if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
               widgets.add(usernameBreak(data.items[index-1]));
@@ -165,9 +165,10 @@ class _PaperState extends ConsumerState<Paper> {
 
             
             if (index == 0) {
-              var newPrayerRequest = defaultPrayerRequest(request.user, request.group);
-              widgets.add(dateBreak(newPrayerRequest));
-              widgets.add(EditableRequest(prayerRequest: newPrayerRequest)); // New unsaved entry
+              widgets.add(dateBreak(DateTime.now().toIso8601String()));
+              widgets.add(NewRequestsManager(
+                currentGroup: widget.groupContacts,
+              )); // New unsaved entry
             }
 
             return Column(
@@ -448,67 +449,82 @@ enum SaveState { saving, saved, failed, editing, noAction }
 // NewRequestsManager is a widget that manages new requests created by the user at the bottom of the page.
 // It handles the state of who the current request is for and displaying all the newly created requests.
 class NewRequestsManager extends ConsumerStatefulWidget {
-  const NewRequestsManager({super.key, required this.currentGroup, required this.allGroupContacts});
+  const NewRequestsManager({super.key, required this.currentGroup});
   final GroupContacts currentGroup;
-  final List<GroupContacts> allGroupContacts;
+  // final List<GroupContacts> allGroupContacts;
 
   @override
   ConsumerState<NewRequestsManager> createState() => _NewRequestsManagerState();
 }
 
 class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
-  List<PrayerRequest> _newRequests = [];
+  final List<PrayerRequest> _newRequests = [];
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
 
   void _handleKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
-      var user = ref.read(paperModeSharedStateProvider).selectedUser;
-      if (user == null) {
-        return;
-      }
-      contactGroup = ContactGroupPairs(contactId: user.id, groupId: widget.currentGroup.group.id);
-      var newRequest = defaultPrayerRequest(ref.read(paperModeSharedStateProvider).selectedUser!, widget.currentGroup);
-      newRequest.description = _controller.text;
-      setState(() {
-        _newRequests.add(newRequest);
-        _controller.clear();
-      });
+      _addDefaultRequest();
+      _focusNode.requestFocus();
     }
+  }
+
+  void _addDefaultRequest() {
+    var user = ref.read(paperModeSharedStateProvider).selectedUser;
+    if (user == null) {
+      return;
+    }
+    var newRequest = defaultPrayerRequest(user.contact, user.groupPair);
+    setState(() {
+      _newRequests.add(newRequest);
+      _controller.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
     if (state.selectedUser == null) {
-      return TypeAheadField<Contact>(
-        itemBuilder: (context, Contact suggestion) {
-          return ListTile(
-            title: Text(suggestion.name),
-          );
-        },
-        suggestionsCallback: (String suggestion) {
-          if (suggestion.isEmpty) {
-            return Future.value(<Contact>[]);
-          }
-          var filteredGroupContacts = widget.allGroupContacts.where((groupContact) => 
-            groupContact.members.any((contact) => contact.name.toLowerCase().contains(suggestion.toLowerCase()))).toList();
-          return Future.value(filteredGroupContacts.map((groupContact) => groupContact.members).expand((x) => x).toList());
-        },
-        onSelected:(value) => state.setContact(value),
+      return PaperMarginSpace(
+        paperLine: Expanded(
+          child: TypeAheadField<ContactAndGroupPair>(
+            autoFlipDirection: true,
+            itemBuilder: (context, ContactAndGroupPair suggestion) {
+              return ListTile(
+                title: Text(suggestion.contact.name),
+                subtitle: Text(suggestion.contact.description ?? ""),
+              );
+            },
+            suggestionsCallback: (String suggestion) {
+              if (suggestion.isEmpty) {
+                return Future.value(<ContactAndGroupPair>[]);
+              }
+              var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
+                return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
+              }).toList();
+              return Future.value(filteredContacts);
+            },
+            onSelected:(value) { 
+              state.setContact(value);
+              _addDefaultRequest();
+              _focusNode.requestFocus();
+            },
+          ),
+        ),
       );
     }
     return Column(
       children: [
-        for (var request in _newRequests) ...[
-          EditableRequest(prayerRequest: request),
-          const SizedBox(height: 8),
+        for (var i = 0; i < _newRequests.length; i++) ...[
+          if (i < _newRequests.length - 1)
+            EditableRequest(prayerRequest: _newRequests[i]),
+          if (i == _newRequests.length - 1)
+            KeyboardListener(
+              focusNode: _focusNode,
+              onKeyEvent: _handleKeyEvent,
+              child: EditableRequest(prayerRequest: _newRequests[i]),
+            ),
         ],
-        KeyboardListener(
-          focusNode: _focusNode,
-          onKeyEvent: _handleKeyEvent,
-          child: EditableRequest(prayerRequest: prayerRequest),
-        ),
       ],
     );
   }
@@ -556,7 +572,7 @@ class RecommendedPrayerRequestsLoader extends ConsumerWidget {
     if (state.selectedUser == null) {
       return const Text("No recommended requests");
     }
-    var recommendedRequests = ref.watch(fetchRecommendationsProvider(state.selectedUser!.id));
+    var recommendedRequests = ref.watch(fetchRecommendationsProvider(state.selectedUser!.contact.id));
     return switch(recommendedRequests) {
       AsyncData(:final value) => RecommendedPrayerRequestsView(collections: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),

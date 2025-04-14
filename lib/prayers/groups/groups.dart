@@ -155,7 +155,7 @@ class GroupNotebook extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PaperMode(groupContacts: groupContacts),
+                        builder: (context) => PaperMode(currentGroup: groupContacts),
                       ),
                     ),
                     child: Container(
@@ -280,7 +280,6 @@ class SearchState extends ChangeNotifier {
 
   List<GroupContacts> _groupContacts = [];
   List<GroupContacts> _filteredGroupContacts = [];
-  bool isGroupFilter = true;
   String searchText = "";
 
   List<GroupContacts> get groupContacts => _filteredGroupContacts;
@@ -289,26 +288,12 @@ class SearchState extends ChangeNotifier {
     searchText = text;
     if (text.isEmpty) {
       _filteredGroupContacts = _groupContacts;
-    } else if (isGroupFilter) {
+    } else {
       _filteredGroupContacts = _groupContacts.where((groupContact) {
         return groupContact.group.name.toLowerCase().contains(text.toLowerCase());
       }).toList();
-    } else {
-      _filteredGroupContacts = _groupContacts.where((group) {
-        return group.members.any((member) => member.name.toLowerCase().contains(text.toLowerCase()));
-      }).map((groupContact) {
-        return GroupContacts(
-          group: groupContact.group,
-          members: groupContact.members.where((member) => member.name.toLowerCase().contains(text.toLowerCase())).toList(),
-        );
-      }).toList();
     }
     notifyListeners();
-  }
-
-  void toggleSearchMode() {
-    isGroupFilter = !isGroupFilter;
-    filter(searchText);
   }
 }
 final searchStateProvider = ChangeNotifierProvider.autoDispose.family<SearchState, List<GroupContacts>>((ref, groupContacts) {

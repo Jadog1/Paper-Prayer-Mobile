@@ -16,12 +16,23 @@ class Group with _$Group {
   factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }
 
+class ContactAndGroupPair {
+  const ContactAndGroupPair({
+    required this.contact,
+    required this.groupPair,
+  });
+  final Contact contact;
+  final ContactGroupPairs groupPair;
+}
+
 class GroupContacts {
   const GroupContacts({
     required this.group,
     required this.members,
+    required this.memberWithContactGroupPairs,
   });
 
   final Group group;
   final List<Contact> members;
+  final List<ContactAndGroupPair> memberWithContactGroupPairs;
 }

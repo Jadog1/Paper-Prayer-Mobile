@@ -21,12 +21,16 @@ class GroupContactsRepo extends _$GroupContactsRepo {
   Future<List<GroupContacts>> build() async {
     var contactApi = config.contactApiClient;
     final groups = await contactApi.fetchGroups();
-    final contactResults = await contactApi.fetchContacts();
+    final contactResults = await contactApi.fetchContacts(); 
     final contactGroupPairs = await contactApi.fetchContactGroupPairs();
     var groupContacts = groups.map((group) {
       var members = contactGroupPairs.where((contact) => contact.groupId == group.id).toList();
       var contacts = members.map((member) => contactResults.firstWhere((contact) => contact.id == member.contactId)).toList();
-      return GroupContacts(group: group, members: contacts);
+      var memberWithContactGroupPairs = members.map((member) {
+        var contact = contactResults.firstWhere((contact) => contact.id == member.contactId);
+        return ContactAndGroupPair(contact: contact, groupPair: member);
+      }).toList();
+      return GroupContacts(group: group, members: contacts, memberWithContactGroupPairs: memberWithContactGroupPairs);
     }).toList();
     
     return groupContacts;
