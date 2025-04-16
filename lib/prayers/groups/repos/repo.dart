@@ -71,9 +71,16 @@ class GroupContactsRepo extends _$GroupContactsRepo {
     ref.invalidateSelf();
   }
 
-  Future<void> saveContact(Contact contact) async {
+  Future<void> saveContact(Contact contact, Group group) async {
     var contactApi = config.contactApiClient;
-    await contactApi.saveContact(contact);
+    await contactApi.saveContact(contact, group);
+
+    ref.invalidateSelf();
+  }
+
+  Future<void> updateContact(Contact contact) async {
+    var contactApi = config.contactApiClient;
+    await contactApi.updateContact(contact);
 
     ref.invalidateSelf();
   }

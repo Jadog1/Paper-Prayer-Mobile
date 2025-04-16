@@ -76,7 +76,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: groupContacts.members
-                  .map((member) => EditUserForGroup(user: member, groupId: groupContacts.group.id))
+                  .map((member) => EditUserForGroup(user: member, group: groupContacts.group))
                   .toList(),
             ),
           ),
@@ -124,10 +124,10 @@ class DeleteGroupButton extends ConsumerWidget {
 }
 
 class EditUserForGroup extends ConsumerWidget {
-  const EditUserForGroup({super.key, required this.user, required this.groupId});
+  const EditUserForGroup({super.key, required this.user, required this.group});
 
   final Contact user;
-  final int groupId;
+  final Group group;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,7 +139,7 @@ class EditUserForGroup extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user)),
+            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user, group: group)),
           ),
         ),
         trailing: const Icon(Icons.delete),
@@ -154,7 +154,7 @@ class EditUserForGroup extends ConsumerWidget {
                   child: const Text('Cancel'),
                 ),
                 InteractiveLoadButton(
-                  customProvider: () => ref.read(groupContactsRepoProvider.notifier).removeContactFromGroup(groupId, user.id),
+                  customProvider: () => ref.read(groupContactsRepoProvider.notifier).removeContactFromGroup(group.id, user.id),
                   buttonText: 'Delete',
                   buttonStyle: deleteButtonStyle,
                 ),

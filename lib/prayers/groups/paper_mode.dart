@@ -3,10 +3,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
@@ -23,7 +25,6 @@ class PaperMode extends ConsumerWidget {
   const PaperMode({super.key, required this.currentGroup});
 
   final GroupContacts currentGroup;
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -340,6 +341,7 @@ class LoadableCollection extends ConsumerWidget {
 
 class EditableRequest extends ConsumerStatefulWidget {
   const EditableRequest({super.key, required this.prayerRequest});
+
   final PrayerRequest prayerRequest;
 
   @override
@@ -450,7 +452,9 @@ enum SaveState { saving, saved, failed, editing, noAction }
 // It handles the state of who the current request is for and displaying all the newly created requests.
 class NewRequestsManager extends ConsumerStatefulWidget {
   const NewRequestsManager({super.key, required this.currentGroup});
+
   final GroupContacts currentGroup;
+
   // final List<GroupContacts> allGroupContacts;
 
   @override
@@ -458,15 +462,34 @@ class NewRequestsManager extends ConsumerStatefulWidget {
 }
 
 class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
-  final List<PrayerRequest> _newRequests = [];
-  final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final FocusNode _userSelectionFocusNode = FocusNode();
+  final TextEditingController _userSelectionController = TextEditingController();
+  final List<PrayerRequest> _newRequests = [];
 
   void _handleKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
       _addDefaultRequest();
       _focusNode.requestFocus();
     }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    _userSelectionFocusNode.dispose();
+    _userSelectionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _userSelectionFocusNode.requestFocus();
+    });
   }
 
   void _addDefaultRequest() {
@@ -481,14 +504,29 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var state = ref.watch(paperModeSharedStateProvider);
-    if (state.selectedUser == null) {
-      return PaperMarginSpace(
-        paperLine: Expanded(
-          child: TypeAheadField<ContactAndGroupPair>(
+  Widget userSelection(PaperModeSharedState state) {
+    return Column(
+      children: [
+        InteractiveLoadButton(
+          customProvider: () async {
+            var newContact = Contact(id: 0, name: _userSelectionController.text, description: "", createdAt: DateTime.now().toIso8601String()); 
+            return ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.currentGroup.group);
+          },
+          buttonText: "Create new contact",
+          buttonStyle: saveButtonStyle,
+        ),
+        TypeAheadField<ContactAndGroupPair>(
+            focusNode: _userSelectionFocusNode,
             autoFlipDirection: true,
+            builder:(context, controller, focusNode) => TextField(
+              controller: controller,
+              focusNode: focusNode,
+              decoration: const InputDecoration(
+                hintText: "Who are you praying for?",
+                border: UnderlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+              ),
+            ),
             itemBuilder: (context, ContactAndGroupPair suggestion) {
               return ListTile(
                 title: Text(suggestion.contact.name),
@@ -497,7 +535,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
             },
             suggestionsCallback: (String suggestion) {
               if (suggestion.isEmpty) {
-                return Future.value(<ContactAndGroupPair>[]);
+                return Future.value(null);
               }
               var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
                 return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
@@ -507,25 +545,35 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
             onSelected:(value) { 
               state.setContact(value);
               _addDefaultRequest();
-              _focusNode.requestFocus();
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                _focusNode.requestFocus();
+              });
             },
           ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    if (state.selectedUser == null) {
+      return PaperMarginSpace(
+        paperLine: Expanded(
+          child: userSelection(state),
         ),
       );
     }
-    return Column(
-      children: [
-        for (var i = 0; i < _newRequests.length; i++) ...[
-          if (i < _newRequests.length - 1)
+    return KeyboardListener(
+      focusNode: _focusNode,
+      onKeyEvent: _handleKeyEvent,
+      child: Column(
+        children: [
+          for (var i = 0; i < _newRequests.length; i++) ...[
             EditableRequest(prayerRequest: _newRequests[i]),
-          if (i == _newRequests.length - 1)
-            KeyboardListener(
-              focusNode: _focusNode,
-              onKeyEvent: _handleKeyEvent,
-              child: EditableRequest(prayerRequest: _newRequests[i]),
-            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

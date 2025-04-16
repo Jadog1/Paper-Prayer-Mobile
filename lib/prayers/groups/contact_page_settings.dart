@@ -2,13 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class ContactPageSettings extends ConsumerStatefulWidget {
-  const ContactPageSettings({super.key, required this.contact});
+  const ContactPageSettings({super.key, required this.contact, required this.group});
 
   final Contact contact;
+  final Group group;
 
   @override
   ConsumerState<ContactPageSettings> createState() => _ContactPageSettingsState();
@@ -56,7 +58,13 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
             DeleteContactButton(contactId: contact.id),
             const Spacer(),
             InteractiveLoadButton(
-              customProvider: () => ref.read(groupContactsRepoProvider.notifier).saveContact(newContact),
+              customProvider: () async {
+                if (contact.id == 0) {
+                  return ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
+                } else {
+                  return ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
+                }
+              },
               buttonText: 'Save',
               buttonStyle: saveButtonStyle,
               successCallback: () => Navigator.of(context).pop(),

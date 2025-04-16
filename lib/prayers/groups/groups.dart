@@ -253,7 +253,7 @@ class GroupNotebook extends StatelessWidget {
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ContactPageSettings(contact: groupContacts.members[index]),
+                            builder: (context) => ContactPageSettings(contact: groupContacts.members[index], group: groupContacts.group),
                           ),
                         ),
                       ),

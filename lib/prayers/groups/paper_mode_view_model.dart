@@ -26,7 +26,7 @@ class PaperModeSharedState extends ChangeNotifier {
     notifyListeners();
   }
 }
-final paperModeSharedStateProvider = ChangeNotifierProvider<PaperModeSharedState>((ref) {
+final paperModeSharedStateProvider = ChangeNotifierProvider.autoDispose<PaperModeSharedState>((ref) {
   return PaperModeSharedState();
 });
 
