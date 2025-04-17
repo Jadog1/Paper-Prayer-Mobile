@@ -60,9 +60,9 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
             InteractiveLoadButton(
               customProvider: () async {
                 if (contact.id == 0) {
-                  return ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
+                  ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
                 } else {
-                  return ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
+                  ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
                 }
               },
               buttonText: 'Save',

@@ -71,19 +71,27 @@ class GroupContactsRepo extends _$GroupContactsRepo {
     ref.invalidateSelf();
   }
 
-  Future<void> saveContact(Contact contact, Group group) async {
+  Future<Contact> saveContact(Contact contact, Group group) async {
     var contactApi = config.contactApiClient;
-    await contactApi.saveContact(contact, group);
+    var newContact = await contactApi.saveContact(contact, group);
 
     ref.invalidateSelf();
+    return newContact;
   }
 
-  Future<void> updateContact(Contact contact) async {
+  Future<Contact> updateContact(Contact contact) async {
     var contactApi = config.contactApiClient;
-    await contactApi.updateContact(contact);
+    var updatedContact = await contactApi.updateContact(contact);
 
     ref.invalidateSelf();
+    return updatedContact;
   }
+}
+
+@riverpod
+Future<ContactGroupPairs> fetchContactGroup(Ref ref, int contactId, int groupId) async {
+  var contactApi = config.contactApiClient;
+  return await contactApi.fetchContactGroup(contactId, groupId);
 }
 
 class UserCollectionsAndContacts {

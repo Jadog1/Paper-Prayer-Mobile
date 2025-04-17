@@ -6,8 +6,7 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchCollectionsAndContactsHash() =>
-    r'5b34428a929183ffc2e722e09db7101ff1ab78ee';
+String _$fetchContactGroupHash() => r'fe20ca5ac939236b67ddc28139eba5c3323ec748';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,6 +28,156 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [fetchContactGroup].
+@ProviderFor(fetchContactGroup)
+const fetchContactGroupProvider = FetchContactGroupFamily();
+
+/// See also [fetchContactGroup].
+class FetchContactGroupFamily extends Family<AsyncValue<ContactGroupPairs>> {
+  /// See also [fetchContactGroup].
+  const FetchContactGroupFamily();
+
+  /// See also [fetchContactGroup].
+  FetchContactGroupProvider call(
+    int contactId,
+    int groupId,
+  ) {
+    return FetchContactGroupProvider(
+      contactId,
+      groupId,
+    );
+  }
+
+  @override
+  FetchContactGroupProvider getProviderOverride(
+    covariant FetchContactGroupProvider provider,
+  ) {
+    return call(
+      provider.contactId,
+      provider.groupId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchContactGroupProvider';
+}
+
+/// See also [fetchContactGroup].
+class FetchContactGroupProvider
+    extends AutoDisposeFutureProvider<ContactGroupPairs> {
+  /// See also [fetchContactGroup].
+  FetchContactGroupProvider(
+    int contactId,
+    int groupId,
+  ) : this._internal(
+          (ref) => fetchContactGroup(
+            ref as FetchContactGroupRef,
+            contactId,
+            groupId,
+          ),
+          from: fetchContactGroupProvider,
+          name: r'fetchContactGroupProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchContactGroupHash,
+          dependencies: FetchContactGroupFamily._dependencies,
+          allTransitiveDependencies:
+              FetchContactGroupFamily._allTransitiveDependencies,
+          contactId: contactId,
+          groupId: groupId,
+        );
+
+  FetchContactGroupProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.contactId,
+    required this.groupId,
+  }) : super.internal();
+
+  final int contactId;
+  final int groupId;
+
+  @override
+  Override overrideWith(
+    FutureOr<ContactGroupPairs> Function(FetchContactGroupRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchContactGroupProvider._internal(
+        (ref) => create(ref as FetchContactGroupRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        contactId: contactId,
+        groupId: groupId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<ContactGroupPairs> createElement() {
+    return _FetchContactGroupProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchContactGroupProvider &&
+        other.contactId == contactId &&
+        other.groupId == groupId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, groupId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchContactGroupRef on AutoDisposeFutureProviderRef<ContactGroupPairs> {
+  /// The parameter `contactId` of this provider.
+  int get contactId;
+
+  /// The parameter `groupId` of this provider.
+  int get groupId;
+}
+
+class _FetchContactGroupProviderElement
+    extends AutoDisposeFutureProviderElement<ContactGroupPairs>
+    with FetchContactGroupRef {
+  _FetchContactGroupProviderElement(super.provider);
+
+  @override
+  int get contactId => (origin as FetchContactGroupProvider).contactId;
+  @override
+  int get groupId => (origin as FetchContactGroupProvider).groupId;
+}
+
+String _$fetchCollectionsAndContactsHash() =>
+    r'5b34428a929183ffc2e722e09db7101ff1ab78ee';
 
 /// See also [fetchCollectionsAndContacts].
 @ProviderFor(fetchCollectionsAndContacts)
@@ -457,7 +606,7 @@ class _FetchSimilarRequestsProviderElement
   int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'f9fc1ad8cf4592185b69bb6d93b49c08d1433ed7';
+String _$groupContactsRepoHash() => r'5bd39288acbb9785049805abcc080a15e5dc7c31';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)

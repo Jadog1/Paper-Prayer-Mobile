@@ -101,15 +101,6 @@ class Paper extends ConsumerStatefulWidget {
   ConsumerState<Paper> createState() => _PaperState();
 }
 class _PaperState extends ConsumerState<Paper> {
-  Widget usernameBreak(PrayerRequest prayerRequest) {
-    return PaperMarginSpace(
-      paperLine: Text(
-        prayerRequest.user.name, 
-        textAlign: TextAlign.left,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-      ),
-    );
-  }
 
   Widget dateBreak(String timestamp) {
     return PaperMarginSpace(
@@ -180,6 +171,16 @@ class _PaperState extends ConsumerState<Paper> {
         ),
     );
   }
+}
+
+Widget usernameBreak(PrayerRequest prayerRequest) {
+  return PaperMarginSpace(
+    paperLine: Text(
+      prayerRequest.user.name, 
+      textAlign: TextAlign.left,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    ),
+  );
 }
 
 class ScribbleDivider extends StatelessWidget {
@@ -505,52 +506,56 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
   }
 
   Widget userSelection(PaperModeSharedState state) {
-    return Column(
-      children: [
-        InteractiveLoadButton(
-          customProvider: () async {
-            var newContact = Contact(id: 0, name: _userSelectionController.text, description: "", createdAt: DateTime.now().toIso8601String()); 
-            return ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.currentGroup.group);
-          },
-          buttonText: "Create new contact",
-          buttonStyle: saveButtonStyle,
+    return TypeAheadField<ContactAndGroupPair>(
+      focusNode: _userSelectionFocusNode,
+      autoFlipDirection: true,
+      builder:(context, controller, focusNode) => TextField(
+        controller: controller,
+        focusNode: focusNode,
+        decoration: const InputDecoration(
+          hintText: "Who are you praying for?",
+          border: UnderlineInputBorder(),
+          hintStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
         ),
-        TypeAheadField<ContactAndGroupPair>(
-            focusNode: _userSelectionFocusNode,
-            autoFlipDirection: true,
-            builder:(context, controller, focusNode) => TextField(
-              controller: controller,
-              focusNode: focusNode,
-              decoration: const InputDecoration(
-                hintText: "Who are you praying for?",
-                border: UnderlineInputBorder(),
-                labelStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
-              ),
-            ),
-            itemBuilder: (context, ContactAndGroupPair suggestion) {
-              return ListTile(
-                title: Text(suggestion.contact.name),
-                subtitle: Text(suggestion.contact.description ?? ""),
-              );
-            },
-            suggestionsCallback: (String suggestion) {
-              if (suggestion.isEmpty) {
-                return Future.value(null);
-              }
-              var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
-                return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
-              }).toList();
-              return Future.value(filteredContacts);
-            },
-            onSelected:(value) { 
-              state.setContact(value);
-              _addDefaultRequest();
-              SchedulerBinding.instance.addPostFrameCallback((_) {
-                _focusNode.requestFocus();
-              });
-            },
-          ),
-      ],
+      ),
+      itemBuilder: (context, ContactAndGroupPair suggestion) {
+        if (suggestion.contact.id == 0 && suggestion.contact.name == "Create new contact") {
+          return ListTile(
+            title: Text(suggestion.contact.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            // subtitle: const Icon(Icons.add_circle, color: Colors.green),
+          );
+        }
+        return ListTile(
+          title: Text(suggestion.contact.name),
+          subtitle: Text(suggestion.contact.description ?? ""),
+        );
+      },
+      suggestionsCallback: (String suggestion) {
+        if (suggestion.isEmpty) {
+          return Future.value(null);
+        }
+        var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
+          return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
+        }).toList();
+        filteredContacts.add(ContactAndGroupPair(
+          contact: Contact(id: 0, name: "Create new contact", description: "", createdAt: DateTime.now().toIso8601String()),
+          groupPair: ContactGroupPairs(id: 0, groupId: widget.currentGroup.group.id, contactId: 0, createdAt: DateTime.now().toIso8601String()),
+        ));
+        return Future.value(filteredContacts);
+      },
+      onSelected:(value) async { 
+        if (value.contact.id == 0 && value.contact.name == "Create new contact") {
+          var newContact = Contact(id: 0, name: _userSelectionController.text, description: "", createdAt: DateTime.now().toIso8601String());
+          newContact = await ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.currentGroup.group);
+          var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);
+          value = ContactAndGroupPair(contact: newContact, groupPair: contactGroupPair);
+        }
+        state.setContact(value);
+        _addDefaultRequest();
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          _focusNode.requestFocus();
+        });
+      },
     );
   }
 
@@ -570,6 +575,8 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
       child: Column(
         children: [
           for (var i = 0; i < _newRequests.length; i++) ...[
+            if (i == 0 || _newRequests[i].user.id != _newRequests[i - 1].user.id) 
+              usernameBreak(_newRequests[i]),
             EditableRequest(prayerRequest: _newRequests[i]),
           ],
         ],
