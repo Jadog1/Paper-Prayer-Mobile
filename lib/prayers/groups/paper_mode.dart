@@ -148,7 +148,7 @@ class _PaperState extends ConsumerState<Paper> {
               widgets.add(EditableRequest(prayerRequest: data.items[index]));
             }
 
-            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) > 1) {
+            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) >= 1) {
               widgets.add(dateBreak(data.items[index-1].createdAt));
               widgets.add(usernameBreak(data.items[index-1]));
             } else if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
@@ -157,8 +157,11 @@ class _PaperState extends ConsumerState<Paper> {
 
             
             if (index == 0) {
-              widgets.add(dateBreak(DateTime.now().toIso8601String()));
+              if (daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.now()) >= 1) {
+                widgets.add(dateBreak(data.items[index].createdAt));
+              }
               widgets.add(NewRequestsManager(
+                previousRequest: data.items[index],
                 currentGroup: widget.groupContacts,
               )); // New unsaved entry
             }
@@ -452,11 +455,10 @@ enum SaveState { saving, saved, failed, editing, noAction }
 // NewRequestsManager is a widget that manages new requests created by the user at the bottom of the page.
 // It handles the state of who the current request is for and displaying all the newly created requests.
 class NewRequestsManager extends ConsumerStatefulWidget {
-  const NewRequestsManager({super.key, required this.currentGroup});
+  const NewRequestsManager({super.key, required this.currentGroup, required this.previousRequest});
 
   final GroupContacts currentGroup;
-
-  // final List<GroupContacts> allGroupContacts;
+  final PrayerRequest? previousRequest;
 
   @override
   ConsumerState<NewRequestsManager> createState() => _NewRequestsManagerState();
@@ -575,7 +577,8 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
       child: Column(
         children: [
           for (var i = 0; i < _newRequests.length; i++) ...[
-            if (i == 0 || _newRequests[i].user.id != _newRequests[i - 1].user.id) 
+            if ((i == 0 && (widget.previousRequest == null || _newRequests[i].user.id != widget.previousRequest!.user.id))
+              || ( i > 0 && _newRequests[i].user.id != _newRequests[i - 1].user.id))
               usernameBreak(_newRequests[i]),
             EditableRequest(prayerRequest: _newRequests[i]),
           ],
