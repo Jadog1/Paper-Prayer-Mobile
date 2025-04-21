@@ -138,6 +138,12 @@ class _PaperState extends ConsumerState<Paper> {
             // if the index is last, then
             // return the end item view.
             if (index == widgetCount - 1) {
+              if (data.items.isEmpty) {
+                return NewRequestsManager(
+                  previousRequest: null,
+                  currentGroup: widget.groupContacts,
+                );
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(data.items[index-1])]);
@@ -145,7 +151,7 @@ class _PaperState extends ConsumerState<Paper> {
             var request = data.items[index];
 
             List<Widget> widgets = [];
-            if (!state.hiddenPrayerRequests.containsKey(request.id)) {
+            if (state.hiddenPrayerRequests.containsKey(request.id) == false) {
               widgets.add(PaperBlock(
                 prayerRequest: request,
                 currentGroup: widget.groupContacts,

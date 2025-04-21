@@ -66,6 +66,17 @@ class GroupView extends ConsumerWidget {
               },
             ),
           ),
+          // Add a button to create a new group
+          ElevatedButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const GroupSettings(),
+              ),
+            ),
+            icon: const Icon(Icons.add),
+            label: const Text("Create New Group"),
+            style: saveButtonStyle,
+          ),
         ],
       ),
     );
