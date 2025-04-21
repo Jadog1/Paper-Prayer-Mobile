@@ -67,3 +67,52 @@ Map<String, dynamic> _$$PrayerRequestScoreImplToJson(
       'created_at': instance.createdAt,
       'related_contact_ids': instance.relatedContactIds,
     };
+
+_$BibleReferenceImpl _$$BibleReferenceImplFromJson(Map<String, dynamic> json) =>
+    _$BibleReferenceImpl(
+      bookOfTheBible: json['book_of_the_bible'] as String,
+      chapter: (json['chapter'] as num).toInt(),
+      verseStart: (json['verse_start'] as num).toInt(),
+      verseEnd: (json['verse_end'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$$BibleReferenceImplToJson(
+        _$BibleReferenceImpl instance) =>
+    <String, dynamic>{
+      'book_of_the_bible': instance.bookOfTheBible,
+      'chapter': instance.chapter,
+      'verse_start': instance.verseStart,
+      'verse_end': instance.verseEnd,
+    };
+
+_$RelatedBibleVerseImpl _$$RelatedBibleVerseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RelatedBibleVerseImpl(
+      reference:
+          BibleReference.fromJson(json['reference'] as Map<String, dynamic>),
+      reasonForRecommendation: json['reasonForRecommendation'] as String,
+      referenceType: json['referenceType'] as String,
+    );
+
+Map<String, dynamic> _$$RelatedBibleVerseImplToJson(
+        _$RelatedBibleVerseImpl instance) =>
+    <String, dynamic>{
+      'reference': instance.reference,
+      'reasonForRecommendation': instance.reasonForRecommendation,
+      'referenceType': instance.referenceType,
+    };
+
+_$BibleReferenceAndTextImpl _$$BibleReferenceAndTextImplFromJson(
+        Map<String, dynamic> json) =>
+    _$BibleReferenceAndTextImpl(
+      modelOutput: RelatedBibleVerse.fromJson(
+          json['modelOutput'] as Map<String, dynamic>),
+      text: json['text'] as String,
+    );
+
+Map<String, dynamic> _$$BibleReferenceAndTextImplToJson(
+        _$BibleReferenceAndTextImpl instance) =>
+    <String, dynamic>{
+      'modelOutput': instance.modelOutput,
+      'text': instance.text,
+    };

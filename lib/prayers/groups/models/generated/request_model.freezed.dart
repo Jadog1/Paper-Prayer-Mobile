@@ -21,13 +21,20 @@ PrayerRequest _$PrayerRequestFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$PrayerRequest {
   int get id => throw _privateConstructorUsedError;
+  set id(int value) => throw _privateConstructorUsedError;
   @JsonKey(name: 'request')
   String get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'request')
+  set description(String value) => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact')
+  set user(Contact value) => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_group')
   ContactGroupPairs get group => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contact_group')
+  set group(ContactGroupPairs value) => throw _privateConstructorUsedError;
   String? get sentiment => throw _privateConstructorUsedError;
   String? get emotion => throw _privateConstructorUsedError;
   @JsonKey(name: 'prayer_type')
@@ -248,7 +255,7 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String,
       relatedContactIds: null == relatedContactIds
-          ? _value._relatedContactIds
+          ? _value.relatedContactIds
           : relatedContactIds // ignore: cast_nullable_to_non_nullable
               as List<int>,
     ));
@@ -260,7 +267,7 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
 class _$PrayerRequestImpl
     with DiagnosticableTreeMixin
     implements _PrayerRequest {
-  const _$PrayerRequestImpl(
+  _$PrayerRequestImpl(
       {required this.id,
       @JsonKey(name: 'request') required this.description,
       this.title,
@@ -270,26 +277,24 @@ class _$PrayerRequestImpl
       this.emotion = "",
       @JsonKey(name: 'prayer_type') this.prayerType,
       @JsonKey(name: 'created_at') this.createdAt = "",
-      @JsonKey(name: 'related_contact_ids')
-      required final List<int> relatedContactIds})
-      : _relatedContactIds = relatedContactIds;
+      @JsonKey(name: 'related_contact_ids') required this.relatedContactIds});
 
   factory _$PrayerRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrayerRequestImplFromJson(json);
 
   @override
-  final int id;
+  int id;
   @override
   @JsonKey(name: 'request')
-  final String description;
+  String description;
   @override
   final String? title;
   @override
   @JsonKey(name: 'contact')
-  final Contact user;
+  Contact user;
   @override
   @JsonKey(name: 'contact_group')
-  final ContactGroupPairs group;
+  ContactGroupPairs group;
   @override
   @JsonKey()
   final String? sentiment;
@@ -302,15 +307,9 @@ class _$PrayerRequestImpl
   @override
   @JsonKey(name: 'created_at')
   final String createdAt;
-  final List<int> _relatedContactIds;
   @override
   @JsonKey(name: 'related_contact_ids')
-  List<int> get relatedContactIds {
-    if (_relatedContactIds is EqualUnmodifiableListView)
-      return _relatedContactIds;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_relatedContactIds);
-  }
+  final List<int> relatedContactIds;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -334,43 +333,6 @@ class _$PrayerRequestImpl
       ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds));
   }
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PrayerRequestImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.group, group) || other.group == group) &&
-            (identical(other.sentiment, sentiment) ||
-                other.sentiment == sentiment) &&
-            (identical(other.emotion, emotion) || other.emotion == emotion) &&
-            (identical(other.prayerType, prayerType) ||
-                other.prayerType == prayerType) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            const DeepCollectionEquality()
-                .equals(other._relatedContactIds, _relatedContactIds));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      description,
-      title,
-      user,
-      group,
-      sentiment,
-      emotion,
-      prayerType,
-      createdAt,
-      const DeepCollectionEquality().hash(_relatedContactIds));
-
   /// Create a copy of PrayerRequest
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -388,12 +350,12 @@ class _$PrayerRequestImpl
 }
 
 abstract class _PrayerRequest implements PrayerRequest {
-  const factory _PrayerRequest(
-      {required final int id,
-      @JsonKey(name: 'request') required final String description,
+  factory _PrayerRequest(
+      {required int id,
+      @JsonKey(name: 'request') required String description,
       final String? title,
-      @JsonKey(name: 'contact') required final Contact user,
-      @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
+      @JsonKey(name: 'contact') required Contact user,
+      @JsonKey(name: 'contact_group') required ContactGroupPairs group,
       final String? sentiment,
       final String? emotion,
       @JsonKey(name: 'prayer_type') final String? prayerType,
@@ -406,17 +368,24 @@ abstract class _PrayerRequest implements PrayerRequest {
 
   @override
   int get id;
+  set id(int value);
   @override
   @JsonKey(name: 'request')
   String get description;
+  @JsonKey(name: 'request')
+  set description(String value);
   @override
   String? get title;
   @override
   @JsonKey(name: 'contact')
   Contact get user;
+  @JsonKey(name: 'contact')
+  set user(Contact value);
   @override
   @JsonKey(name: 'contact_group')
   ContactGroupPairs get group;
+  @JsonKey(name: 'contact_group')
+  set group(ContactGroupPairs value);
   @override
   String? get sentiment;
   @override
@@ -832,4 +801,672 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PrayerRequestScoreImplCopyWith<_$PrayerRequestScoreImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+BibleReference _$BibleReferenceFromJson(Map<String, dynamic> json) {
+  return _BibleReference.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BibleReference {
+  @JsonKey(name: 'book_of_the_bible')
+  String get bookOfTheBible => throw _privateConstructorUsedError;
+  int get chapter => throw _privateConstructorUsedError;
+  @JsonKey(name: 'verse_start')
+  int get verseStart => throw _privateConstructorUsedError;
+  @JsonKey(name: 'verse_end')
+  int get verseEnd => throw _privateConstructorUsedError;
+
+  /// Serializes this BibleReference to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of BibleReference
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $BibleReferenceCopyWith<BibleReference> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BibleReferenceCopyWith<$Res> {
+  factory $BibleReferenceCopyWith(
+          BibleReference value, $Res Function(BibleReference) then) =
+      _$BibleReferenceCopyWithImpl<$Res, BibleReference>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'book_of_the_bible') String bookOfTheBible,
+      int chapter,
+      @JsonKey(name: 'verse_start') int verseStart,
+      @JsonKey(name: 'verse_end') int verseEnd});
+}
+
+/// @nodoc
+class _$BibleReferenceCopyWithImpl<$Res, $Val extends BibleReference>
+    implements $BibleReferenceCopyWith<$Res> {
+  _$BibleReferenceCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of BibleReference
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bookOfTheBible = null,
+    Object? chapter = null,
+    Object? verseStart = null,
+    Object? verseEnd = null,
+  }) {
+    return _then(_value.copyWith(
+      bookOfTheBible: null == bookOfTheBible
+          ? _value.bookOfTheBible
+          : bookOfTheBible // ignore: cast_nullable_to_non_nullable
+              as String,
+      chapter: null == chapter
+          ? _value.chapter
+          : chapter // ignore: cast_nullable_to_non_nullable
+              as int,
+      verseStart: null == verseStart
+          ? _value.verseStart
+          : verseStart // ignore: cast_nullable_to_non_nullable
+              as int,
+      verseEnd: null == verseEnd
+          ? _value.verseEnd
+          : verseEnd // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BibleReferenceImplCopyWith<$Res>
+    implements $BibleReferenceCopyWith<$Res> {
+  factory _$$BibleReferenceImplCopyWith(_$BibleReferenceImpl value,
+          $Res Function(_$BibleReferenceImpl) then) =
+      __$$BibleReferenceImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'book_of_the_bible') String bookOfTheBible,
+      int chapter,
+      @JsonKey(name: 'verse_start') int verseStart,
+      @JsonKey(name: 'verse_end') int verseEnd});
+}
+
+/// @nodoc
+class __$$BibleReferenceImplCopyWithImpl<$Res>
+    extends _$BibleReferenceCopyWithImpl<$Res, _$BibleReferenceImpl>
+    implements _$$BibleReferenceImplCopyWith<$Res> {
+  __$$BibleReferenceImplCopyWithImpl(
+      _$BibleReferenceImpl _value, $Res Function(_$BibleReferenceImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of BibleReference
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? bookOfTheBible = null,
+    Object? chapter = null,
+    Object? verseStart = null,
+    Object? verseEnd = null,
+  }) {
+    return _then(_$BibleReferenceImpl(
+      bookOfTheBible: null == bookOfTheBible
+          ? _value.bookOfTheBible
+          : bookOfTheBible // ignore: cast_nullable_to_non_nullable
+              as String,
+      chapter: null == chapter
+          ? _value.chapter
+          : chapter // ignore: cast_nullable_to_non_nullable
+              as int,
+      verseStart: null == verseStart
+          ? _value.verseStart
+          : verseStart // ignore: cast_nullable_to_non_nullable
+              as int,
+      verseEnd: null == verseEnd
+          ? _value.verseEnd
+          : verseEnd // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BibleReferenceImpl
+    with DiagnosticableTreeMixin
+    implements _BibleReference {
+  const _$BibleReferenceImpl(
+      {@JsonKey(name: 'book_of_the_bible') required this.bookOfTheBible,
+      required this.chapter,
+      @JsonKey(name: 'verse_start') required this.verseStart,
+      @JsonKey(name: 'verse_end') required this.verseEnd});
+
+  factory _$BibleReferenceImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BibleReferenceImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'book_of_the_bible')
+  final String bookOfTheBible;
+  @override
+  final int chapter;
+  @override
+  @JsonKey(name: 'verse_start')
+  final int verseStart;
+  @override
+  @JsonKey(name: 'verse_end')
+  final int verseEnd;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'BibleReference(bookOfTheBible: $bookOfTheBible, chapter: $chapter, verseStart: $verseStart, verseEnd: $verseEnd)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BibleReference'))
+      ..add(DiagnosticsProperty('bookOfTheBible', bookOfTheBible))
+      ..add(DiagnosticsProperty('chapter', chapter))
+      ..add(DiagnosticsProperty('verseStart', verseStart))
+      ..add(DiagnosticsProperty('verseEnd', verseEnd));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BibleReferenceImpl &&
+            (identical(other.bookOfTheBible, bookOfTheBible) ||
+                other.bookOfTheBible == bookOfTheBible) &&
+            (identical(other.chapter, chapter) || other.chapter == chapter) &&
+            (identical(other.verseStart, verseStart) ||
+                other.verseStart == verseStart) &&
+            (identical(other.verseEnd, verseEnd) ||
+                other.verseEnd == verseEnd));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, bookOfTheBible, chapter, verseStart, verseEnd);
+
+  /// Create a copy of BibleReference
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BibleReferenceImplCopyWith<_$BibleReferenceImpl> get copyWith =>
+      __$$BibleReferenceImplCopyWithImpl<_$BibleReferenceImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BibleReferenceImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BibleReference implements BibleReference {
+  const factory _BibleReference(
+      {@JsonKey(name: 'book_of_the_bible') required final String bookOfTheBible,
+      required final int chapter,
+      @JsonKey(name: 'verse_start') required final int verseStart,
+      @JsonKey(name: 'verse_end')
+      required final int verseEnd}) = _$BibleReferenceImpl;
+
+  factory _BibleReference.fromJson(Map<String, dynamic> json) =
+      _$BibleReferenceImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'book_of_the_bible')
+  String get bookOfTheBible;
+  @override
+  int get chapter;
+  @override
+  @JsonKey(name: 'verse_start')
+  int get verseStart;
+  @override
+  @JsonKey(name: 'verse_end')
+  int get verseEnd;
+
+  /// Create a copy of BibleReference
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BibleReferenceImplCopyWith<_$BibleReferenceImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RelatedBibleVerse _$RelatedBibleVerseFromJson(Map<String, dynamic> json) {
+  return _RelatedBibleVerse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RelatedBibleVerse {
+  BibleReference get reference => throw _privateConstructorUsedError;
+  String get reasonForRecommendation => throw _privateConstructorUsedError;
+  String get referenceType => throw _privateConstructorUsedError;
+
+  /// Serializes this RelatedBibleVerse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RelatedBibleVerseCopyWith<RelatedBibleVerse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RelatedBibleVerseCopyWith<$Res> {
+  factory $RelatedBibleVerseCopyWith(
+          RelatedBibleVerse value, $Res Function(RelatedBibleVerse) then) =
+      _$RelatedBibleVerseCopyWithImpl<$Res, RelatedBibleVerse>;
+  @useResult
+  $Res call(
+      {BibleReference reference,
+      String reasonForRecommendation,
+      String referenceType});
+
+  $BibleReferenceCopyWith<$Res> get reference;
+}
+
+/// @nodoc
+class _$RelatedBibleVerseCopyWithImpl<$Res, $Val extends RelatedBibleVerse>
+    implements $RelatedBibleVerseCopyWith<$Res> {
+  _$RelatedBibleVerseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reference = null,
+    Object? reasonForRecommendation = null,
+    Object? referenceType = null,
+  }) {
+    return _then(_value.copyWith(
+      reference: null == reference
+          ? _value.reference
+          : reference // ignore: cast_nullable_to_non_nullable
+              as BibleReference,
+      reasonForRecommendation: null == reasonForRecommendation
+          ? _value.reasonForRecommendation
+          : reasonForRecommendation // ignore: cast_nullable_to_non_nullable
+              as String,
+      referenceType: null == referenceType
+          ? _value.referenceType
+          : referenceType // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BibleReferenceCopyWith<$Res> get reference {
+    return $BibleReferenceCopyWith<$Res>(_value.reference, (value) {
+      return _then(_value.copyWith(reference: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$RelatedBibleVerseImplCopyWith<$Res>
+    implements $RelatedBibleVerseCopyWith<$Res> {
+  factory _$$RelatedBibleVerseImplCopyWith(_$RelatedBibleVerseImpl value,
+          $Res Function(_$RelatedBibleVerseImpl) then) =
+      __$$RelatedBibleVerseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {BibleReference reference,
+      String reasonForRecommendation,
+      String referenceType});
+
+  @override
+  $BibleReferenceCopyWith<$Res> get reference;
+}
+
+/// @nodoc
+class __$$RelatedBibleVerseImplCopyWithImpl<$Res>
+    extends _$RelatedBibleVerseCopyWithImpl<$Res, _$RelatedBibleVerseImpl>
+    implements _$$RelatedBibleVerseImplCopyWith<$Res> {
+  __$$RelatedBibleVerseImplCopyWithImpl(_$RelatedBibleVerseImpl _value,
+      $Res Function(_$RelatedBibleVerseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reference = null,
+    Object? reasonForRecommendation = null,
+    Object? referenceType = null,
+  }) {
+    return _then(_$RelatedBibleVerseImpl(
+      reference: null == reference
+          ? _value.reference
+          : reference // ignore: cast_nullable_to_non_nullable
+              as BibleReference,
+      reasonForRecommendation: null == reasonForRecommendation
+          ? _value.reasonForRecommendation
+          : reasonForRecommendation // ignore: cast_nullable_to_non_nullable
+              as String,
+      referenceType: null == referenceType
+          ? _value.referenceType
+          : referenceType // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RelatedBibleVerseImpl
+    with DiagnosticableTreeMixin
+    implements _RelatedBibleVerse {
+  const _$RelatedBibleVerseImpl(
+      {required this.reference,
+      required this.reasonForRecommendation,
+      required this.referenceType});
+
+  factory _$RelatedBibleVerseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RelatedBibleVerseImplFromJson(json);
+
+  @override
+  final BibleReference reference;
+  @override
+  final String reasonForRecommendation;
+  @override
+  final String referenceType;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RelatedBibleVerse(reference: $reference, reasonForRecommendation: $reasonForRecommendation, referenceType: $referenceType)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'RelatedBibleVerse'))
+      ..add(DiagnosticsProperty('reference', reference))
+      ..add(DiagnosticsProperty(
+          'reasonForRecommendation', reasonForRecommendation))
+      ..add(DiagnosticsProperty('referenceType', referenceType));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RelatedBibleVerseImpl &&
+            (identical(other.reference, reference) ||
+                other.reference == reference) &&
+            (identical(
+                    other.reasonForRecommendation, reasonForRecommendation) ||
+                other.reasonForRecommendation == reasonForRecommendation) &&
+            (identical(other.referenceType, referenceType) ||
+                other.referenceType == referenceType));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, reference, reasonForRecommendation, referenceType);
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RelatedBibleVerseImplCopyWith<_$RelatedBibleVerseImpl> get copyWith =>
+      __$$RelatedBibleVerseImplCopyWithImpl<_$RelatedBibleVerseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RelatedBibleVerseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RelatedBibleVerse implements RelatedBibleVerse {
+  const factory _RelatedBibleVerse(
+      {required final BibleReference reference,
+      required final String reasonForRecommendation,
+      required final String referenceType}) = _$RelatedBibleVerseImpl;
+
+  factory _RelatedBibleVerse.fromJson(Map<String, dynamic> json) =
+      _$RelatedBibleVerseImpl.fromJson;
+
+  @override
+  BibleReference get reference;
+  @override
+  String get reasonForRecommendation;
+  @override
+  String get referenceType;
+
+  /// Create a copy of RelatedBibleVerse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RelatedBibleVerseImplCopyWith<_$RelatedBibleVerseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BibleReferenceAndText _$BibleReferenceAndTextFromJson(
+    Map<String, dynamic> json) {
+  return _BibleReferenceAndText.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BibleReferenceAndText {
+  RelatedBibleVerse get modelOutput => throw _privateConstructorUsedError;
+  String get text => throw _privateConstructorUsedError;
+
+  /// Serializes this BibleReferenceAndText to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $BibleReferenceAndTextCopyWith<BibleReferenceAndText> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BibleReferenceAndTextCopyWith<$Res> {
+  factory $BibleReferenceAndTextCopyWith(BibleReferenceAndText value,
+          $Res Function(BibleReferenceAndText) then) =
+      _$BibleReferenceAndTextCopyWithImpl<$Res, BibleReferenceAndText>;
+  @useResult
+  $Res call({RelatedBibleVerse modelOutput, String text});
+
+  $RelatedBibleVerseCopyWith<$Res> get modelOutput;
+}
+
+/// @nodoc
+class _$BibleReferenceAndTextCopyWithImpl<$Res,
+        $Val extends BibleReferenceAndText>
+    implements $BibleReferenceAndTextCopyWith<$Res> {
+  _$BibleReferenceAndTextCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? modelOutput = null,
+    Object? text = null,
+  }) {
+    return _then(_value.copyWith(
+      modelOutput: null == modelOutput
+          ? _value.modelOutput
+          : modelOutput // ignore: cast_nullable_to_non_nullable
+              as RelatedBibleVerse,
+      text: null == text
+          ? _value.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $RelatedBibleVerseCopyWith<$Res> get modelOutput {
+    return $RelatedBibleVerseCopyWith<$Res>(_value.modelOutput, (value) {
+      return _then(_value.copyWith(modelOutput: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$BibleReferenceAndTextImplCopyWith<$Res>
+    implements $BibleReferenceAndTextCopyWith<$Res> {
+  factory _$$BibleReferenceAndTextImplCopyWith(
+          _$BibleReferenceAndTextImpl value,
+          $Res Function(_$BibleReferenceAndTextImpl) then) =
+      __$$BibleReferenceAndTextImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({RelatedBibleVerse modelOutput, String text});
+
+  @override
+  $RelatedBibleVerseCopyWith<$Res> get modelOutput;
+}
+
+/// @nodoc
+class __$$BibleReferenceAndTextImplCopyWithImpl<$Res>
+    extends _$BibleReferenceAndTextCopyWithImpl<$Res,
+        _$BibleReferenceAndTextImpl>
+    implements _$$BibleReferenceAndTextImplCopyWith<$Res> {
+  __$$BibleReferenceAndTextImplCopyWithImpl(_$BibleReferenceAndTextImpl _value,
+      $Res Function(_$BibleReferenceAndTextImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? modelOutput = null,
+    Object? text = null,
+  }) {
+    return _then(_$BibleReferenceAndTextImpl(
+      modelOutput: null == modelOutput
+          ? _value.modelOutput
+          : modelOutput // ignore: cast_nullable_to_non_nullable
+              as RelatedBibleVerse,
+      text: null == text
+          ? _value.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BibleReferenceAndTextImpl
+    with DiagnosticableTreeMixin
+    implements _BibleReferenceAndText {
+  const _$BibleReferenceAndTextImpl(
+      {required this.modelOutput, required this.text});
+
+  factory _$BibleReferenceAndTextImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BibleReferenceAndTextImplFromJson(json);
+
+  @override
+  final RelatedBibleVerse modelOutput;
+  @override
+  final String text;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'BibleReferenceAndText(modelOutput: $modelOutput, text: $text)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BibleReferenceAndText'))
+      ..add(DiagnosticsProperty('modelOutput', modelOutput))
+      ..add(DiagnosticsProperty('text', text));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BibleReferenceAndTextImpl &&
+            (identical(other.modelOutput, modelOutput) ||
+                other.modelOutput == modelOutput) &&
+            (identical(other.text, text) || other.text == text));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, modelOutput, text);
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BibleReferenceAndTextImplCopyWith<_$BibleReferenceAndTextImpl>
+      get copyWith => __$$BibleReferenceAndTextImplCopyWithImpl<
+          _$BibleReferenceAndTextImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BibleReferenceAndTextImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BibleReferenceAndText implements BibleReferenceAndText {
+  const factory _BibleReferenceAndText(
+      {required final RelatedBibleVerse modelOutput,
+      required final String text}) = _$BibleReferenceAndTextImpl;
+
+  factory _BibleReferenceAndText.fromJson(Map<String, dynamic> json) =
+      _$BibleReferenceAndTextImpl.fromJson;
+
+  @override
+  RelatedBibleVerse get modelOutput;
+  @override
+  String get text;
+
+  /// Create a copy of BibleReferenceAndText
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BibleReferenceAndTextImplCopyWith<_$BibleReferenceAndTextImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

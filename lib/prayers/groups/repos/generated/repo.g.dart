@@ -606,6 +606,147 @@ class _FetchSimilarRequestsProviderElement
   int get requestId => (origin as FetchSimilarRequestsProvider).requestId;
 }
 
+String _$fetchBibleVersesForPrayerRequestHash() =>
+    r'4022786c5915752aca9b5fd95a9e852dbe487b36';
+
+/// See also [fetchBibleVersesForPrayerRequest].
+@ProviderFor(fetchBibleVersesForPrayerRequest)
+const fetchBibleVersesForPrayerRequestProvider =
+    FetchBibleVersesForPrayerRequestFamily();
+
+/// See also [fetchBibleVersesForPrayerRequest].
+class FetchBibleVersesForPrayerRequestFamily
+    extends Family<AsyncValue<List<BibleReferenceAndText>>> {
+  /// See also [fetchBibleVersesForPrayerRequest].
+  const FetchBibleVersesForPrayerRequestFamily();
+
+  /// See also [fetchBibleVersesForPrayerRequest].
+  FetchBibleVersesForPrayerRequestProvider call(
+    int requestId,
+  ) {
+    return FetchBibleVersesForPrayerRequestProvider(
+      requestId,
+    );
+  }
+
+  @override
+  FetchBibleVersesForPrayerRequestProvider getProviderOverride(
+    covariant FetchBibleVersesForPrayerRequestProvider provider,
+  ) {
+    return call(
+      provider.requestId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchBibleVersesForPrayerRequestProvider';
+}
+
+/// See also [fetchBibleVersesForPrayerRequest].
+class FetchBibleVersesForPrayerRequestProvider
+    extends AutoDisposeFutureProvider<List<BibleReferenceAndText>> {
+  /// See also [fetchBibleVersesForPrayerRequest].
+  FetchBibleVersesForPrayerRequestProvider(
+    int requestId,
+  ) : this._internal(
+          (ref) => fetchBibleVersesForPrayerRequest(
+            ref as FetchBibleVersesForPrayerRequestRef,
+            requestId,
+          ),
+          from: fetchBibleVersesForPrayerRequestProvider,
+          name: r'fetchBibleVersesForPrayerRequestProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchBibleVersesForPrayerRequestHash,
+          dependencies: FetchBibleVersesForPrayerRequestFamily._dependencies,
+          allTransitiveDependencies:
+              FetchBibleVersesForPrayerRequestFamily._allTransitiveDependencies,
+          requestId: requestId,
+        );
+
+  FetchBibleVersesForPrayerRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.requestId,
+  }) : super.internal();
+
+  final int requestId;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<BibleReferenceAndText>> Function(
+            FetchBibleVersesForPrayerRequestRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchBibleVersesForPrayerRequestProvider._internal(
+        (ref) => create(ref as FetchBibleVersesForPrayerRequestRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        requestId: requestId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<BibleReferenceAndText>>
+      createElement() {
+    return _FetchBibleVersesForPrayerRequestProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchBibleVersesForPrayerRequestProvider &&
+        other.requestId == requestId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, requestId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchBibleVersesForPrayerRequestRef
+    on AutoDisposeFutureProviderRef<List<BibleReferenceAndText>> {
+  /// The parameter `requestId` of this provider.
+  int get requestId;
+}
+
+class _FetchBibleVersesForPrayerRequestProviderElement
+    extends AutoDisposeFutureProviderElement<List<BibleReferenceAndText>>
+    with FetchBibleVersesForPrayerRequestRef {
+  _FetchBibleVersesForPrayerRequestProviderElement(super.provider);
+
+  @override
+  int get requestId =>
+      (origin as FetchBibleVersesForPrayerRequestProvider).requestId;
+}
+
 String _$groupContactsRepoHash() => r'5bd39288acbb9785049805abcc080a15e5dc7c31';
 
 /// See also [GroupContactsRepo].
@@ -622,7 +763,7 @@ final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
-String _$prayerRequestRepoHash() => r'4713972dcf60a10b8422b7adaeebaf969aa01101';
+String _$prayerRequestRepoHash() => r'9da34ed39f54faaa95bb132da621e4bbea4b7294';
 
 abstract class _$PrayerRequestRepo
     extends BuildlessAutoDisposeAsyncNotifier<List<PrayerRequest>> {

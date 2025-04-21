@@ -5,6 +5,7 @@ import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
+import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/repo.g.dart';
@@ -134,15 +135,17 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
     return prayerApi.fetchPrayerRequests(contactId);
   }
 
-  Future<void> saveRequest(PrayerRequest request) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
     var prayerApi = config.prayerRequestApiClient;
+    PrayerRequest newRequest;
     if (request.id == 0) {
-      await prayerApi.saveRequest(request);
+      newRequest = await prayerApi.saveRequest(request);
     } else {
-      await prayerApi.updateRequest(request);
+      newRequest = await prayerApi.updateRequest(request);
     }
 
     ref.invalidateSelf();
+    return newRequest;
   }
 
   Future<void> removeRequest(PrayerRequest request) async {
@@ -164,14 +167,27 @@ Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) as
   return prayerApi.fetchSimilarRequests(requestId);
 }
 
-Future<void> saveNewRequest(PrayerRequest request) async {
+Future<PrayerRequest> saveNewRequest(PrayerRequest request) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
-  await prayerApi.saveRequest(request);
+  return await prayerApi.saveRequest(request);
 }
 
-Future<void> updateRequest(PrayerRequest request) async {
+Future<PrayerRequest> updateRequest(PrayerRequest request) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
-  await prayerApi.updateRequest(request);
+  return await prayerApi.updateRequest(request);
+}
+
+Future<void> removeRequest(PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  await prayerApi.removeRequest(request.id);
+}
+
+@riverpod
+Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(Ref ref, int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.fetchBibleVersesForPrayerRequest(requestId);
 }

@@ -165,22 +165,28 @@ class PrayerRequestApiClient {
     }
   }
 
-  Future<void> saveRequest(PrayerRequest request) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
     final response = await authClient.post(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
       throw Exception("Error saving prayer request: ${response.statusCode} - ${response.body}");
     }
+
+    final json = jsonDecode(response.body);
+    return PrayerRequest.fromJson(json);
   }
 
-  Future<void> updateRequest(PrayerRequest request) async {
+  Future<PrayerRequest> updateRequest(PrayerRequest request) async {
     final response = await authClient.put(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
       throw Exception("Error updating prayer request: ${response.statusCode} - ${response.body}");
     }
+
+    final json = jsonDecode(response.body);
+    return PrayerRequest.fromJson(json);
   }
 
   
@@ -193,6 +199,17 @@ class PrayerRequestApiClient {
 
     final json = jsonDecode(response.body) as List;
     return json.map((request) => PrayerRequestScore.fromJson(request)).toList();
+  }
+
+  Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(int requestId) async {
+    final response = await authClient.get(config.uri("/prayer_requests/similar/bible/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting bible verses: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((verse) => BibleReferenceAndText.fromJson(verse)).toList();
   }
 }
 

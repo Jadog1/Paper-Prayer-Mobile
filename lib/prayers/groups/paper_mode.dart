@@ -28,6 +28,7 @@ class PaperMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ref.read(paperModeSharedStateProvider).init();
     return Column(
         children: [
           const OptionsHeader(),
@@ -129,6 +130,7 @@ class _PaperState extends ConsumerState<Paper> {
         provider: provider,
         futureRefreshable: provider.future,
         notifierRefreshable: provider.notifier,
+        // TODO: How do we want to handle no items?
         contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
           itemCount: widgetCount,
           reverse: true,
@@ -141,11 +143,14 @@ class _PaperState extends ConsumerState<Paper> {
                 children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(data.items[index-1])]);
             }
             var request = data.items[index];
+
             List<Widget> widgets = [];
-            if (state.aiMode) {
-              widgets.add(ViewableRequest(request: request));
-            } else {
-              widgets.add(EditableRequest(prayerRequest: data.items[index]));
+            if (!state.hiddenPrayerRequests.containsKey(request.id)) {
+              widgets.add(PaperBlock(
+                prayerRequest: request,
+                currentGroup: widget.groupContacts,
+                allowsAIMode: true,
+              ));
             }
 
             if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) >= 1) {
@@ -157,11 +162,14 @@ class _PaperState extends ConsumerState<Paper> {
 
             
             if (index == 0) {
+              PrayerRequest? previousRequest;
               if (daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.now()) >= 1) {
-                widgets.add(dateBreak(data.items[index].createdAt));
+                widgets.add(dateBreak(DateTime.now().toIso8601String()));
+                previousRequest = data.items[index];
               }
+
               widgets.add(NewRequestsManager(
-                previousRequest: data.items[index],
+                previousRequest: previousRequest,
                 currentGroup: widget.groupContacts,
               )); // New unsaved entry
             }
@@ -176,10 +184,108 @@ class _PaperState extends ConsumerState<Paper> {
   }
 }
 
+// PaperBlock is a widget that represents a block of text in the paper mode view.
+// This can be a ViewableRequest, EditableRequest, or UserSearch.
+// It manages state between swapping modes.
+// It should accept a property "prayerRequest".
+// It will rely on the PaperModeSharedState for determining whether view/edit mode is active or not. 
+// It will rely on the shared state to determine whether a current user is selected or not. If not, it will use a UserSearch widget.
+// Additionally, if a user taps and holds on a block, it should animate to swap between view/edit mode.
+class PaperBlock extends ConsumerStatefulWidget {
+  const PaperBlock({super.key, 
+    required this.prayerRequest, required this.currentGroup,
+    this.allowsAIMode = false, this.newRequest = false,
+  });
+
+  final PrayerRequest prayerRequest;
+  final GroupContacts currentGroup;
+  final bool allowsAIMode;
+  final bool newRequest;
+
+  @override
+  ConsumerState<PaperBlock> createState() => _PaperBlockState();
+}
+class _PaperBlockState extends ConsumerState<PaperBlock> {
+  final FocusNode _editFocusNode = FocusNode();
+  final FocusNode _userSelectionFocusNode = FocusNode();
+  TextEditingController _controller = TextEditingController();
+  bool _changingUser = false;
+
+  void onChange(String text) {
+    var changingUser = text.startsWith("@");
+    if (changingUser != _changingUser) {
+      setState(() {
+        _changingUser = changingUser;
+      });
+    }
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: widget.prayerRequest.description,
+    );
+    _controller.addListener(() {
+      onChange(_controller.text);
+    });
+    if (widget.prayerRequest.id == 0) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _editFocusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _editFocusNode.dispose();
+    _userSelectionFocusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    var useViewableRequest = state.aiMode && widget.allowsAIMode;
+    var requiresUserSelection = state.selectedUser == null && widget.newRequest;
+    if (requiresUserSelection || _changingUser) {
+      return UserSelection(
+        currentGroup: widget.currentGroup,
+        controller: _controller,
+        changeCallback: (ContactAndGroupPair contactAndGroupPair) {
+          state.setContact(contactAndGroupPair);
+          setState(() {
+            widget.prayerRequest.user = contactAndGroupPair.contact;
+            widget.prayerRequest.group = contactAndGroupPair.groupPair;
+          });
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            _editFocusNode.requestFocus();
+          });
+        },
+        focusNode: _userSelectionFocusNode,
+      );
+    }
+    if (useViewableRequest) {
+      return ViewableRequest(request: widget.prayerRequest);
+    }
+    return EditableRequest(
+      prayerRequest: widget.prayerRequest, 
+      focusNode: _editFocusNode, 
+      newRequest: widget.newRequest,
+      controller: _controller,
+    );
+  }
+}
+
 Widget usernameBreak(PrayerRequest prayerRequest) {
+  var name = prayerRequest.user.name;
+  if (name.isEmpty) {
+    name = "No name";
+  }
   return PaperMarginSpace(
     paperLine: Text(
-      prayerRequest.user.name, 
+      name, 
       textAlign: TextAlign.left,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
     ),
@@ -275,6 +381,7 @@ class ViewableRequest extends ConsumerWidget {
               const SizedBox(height: 4),
               LoadableRelatedContacts(contactId: request.user.id),
               LoadableCollection(requestId: request.id, contactId: request.user.id),
+              LoadableBibleVerses(requestId: request.id),
             ],
           ),
         );
@@ -289,7 +396,7 @@ class ViewableRequest extends ConsumerWidget {
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
       child: PaperMarginSpace(
-        icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+        // icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
         paperLine: Expanded(
           child: Text(
             "• $summary",
@@ -298,6 +405,69 @@ class ViewableRequest extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class LoadableBibleVerses extends ConsumerWidget {
+  const LoadableBibleVerses({super.key, required this.requestId});
+
+  final int requestId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var bibleVerses = ref.watch(fetchBibleVersesForPrayerRequestProvider(requestId));
+    
+    return switch(bibleVerses) {
+      AsyncData(:final value) => BibleVerseList(verses: value),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "LoadableBibleVerses", error: error, stackTrace: stackTrace),
+      _ => const Text("Loading Bible verses..."),
+    };
+  }
+}
+
+class BibleVerseList extends StatelessWidget {
+  final List<BibleReferenceAndText> verses;
+
+  const BibleVerseList({
+    super.key,
+    required this.verses,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Limit to the first couple of verses
+    final displayedVerses = verses.take(2).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: displayedVerses.map((verse) {
+        final ref = verse.modelOutput.reference;
+        final referenceLabel = "${ref.bookOfTheBible} ${ref.chapter}:${ref.verseStart}${ref.verseEnd != ref.verseStart ? "-${ref.verseEnd}" : ""}";
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "$referenceLabel ",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              Expanded(
+                child: Text(
+                  verse.text,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -314,7 +484,7 @@ class LoadableRelatedContacts extends ConsumerWidget {
     return switch(relatedContacts) {
       AsyncData(:final value) => Text(relatedContactsFullDescription(value)),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "LoadableRelatedContacts", error: error, stackTrace: stackTrace),
-      _ => const CircularProgressIndicator(),
+      _ => const Text("Loading related contacts..."),
     };
   }
 }
@@ -337,58 +507,64 @@ class LoadableCollection extends ConsumerWidget {
             // child: CompactRequestButtonGroup(request: value, allRelatedContacts: prayerRequestContact.relatedContacts),
           ) : const Text("No collection"),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "LoadableCollection", error: error, stackTrace: stackTrace),
-      _ => const CircularProgressIndicator(),
+      _ => const Text("Loading collection..."),
     };
   }
 }
 
 
 class EditableRequest extends ConsumerStatefulWidget {
-  const EditableRequest({super.key, required this.prayerRequest});
+  const EditableRequest({super.key, 
+    required this.prayerRequest, required this.focusNode,
+    required this.controller,
+    this.newRequest = false,  
+  });
 
   final PrayerRequest prayerRequest;
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  final bool newRequest;
 
   @override
   ConsumerState<EditableRequest> createState() => _EditableRequestState();
 }
 
 class _EditableRequestState extends ConsumerState<EditableRequest> {
-  late TextEditingController _controller;
   Timer? _debounce;
-  final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
   SaveState _saveState = SaveState.noAction;
 
   @override
   void dispose() {
     _debounce?.cancel();
-    _controller.dispose();
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
+    widget.focusNode.removeListener(_onFocusChange);
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(
-      text: widget.prayerRequest.description,
-    );
-    _focusNode.addListener(_onFocusChange);
+    widget.focusNode.addListener(_onFocusChange);
   }
 
   void _onChanged(String text) {
     setState(() => _saveState = SaveState.saving);
 
     _debounce?.cancel();
+    if (text.startsWith("@") || (text.isEmpty && widget.prayerRequest.id == 0)) {
+      setState(() => _saveState = SaveState.noAction);
+      return;
+    }
     _debounce = Timer(const Duration(seconds: 1), () async {
       try {
         var newRequest = widget.prayerRequest.copyWith(description: text);
         if (widget.prayerRequest.id == 0) {
-          await saveNewRequest(newRequest);
+          newRequest = await saveNewRequest(newRequest);
+          widget.prayerRequest.id = newRequest.id;
         } else {
-          await updateRequest(newRequest);
+          newRequest = await updateRequest(newRequest);
         }
+        widget.prayerRequest.description = newRequest.description;
         setState(() => _saveState = SaveState.saved);
       } catch (_) {
         setState(() => _saveState = SaveState.failed);
@@ -396,15 +572,49 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
     });
   }
 
+  void _handleDelete() async {
+    if (widget.prayerRequest.id == 0) {
+      return;
+    }
+    var state = ref.read(paperModeSharedStateProvider);
+    setState(() => _saveState = SaveState.saving);
+    try {
+      await removeRequest(widget.prayerRequest);
+      state.hidePrayerRequest(widget.prayerRequest.id);
+    } catch (_) {
+      setState(() => _saveState = SaveState.failed);
+    }
+  }
+
   void _onFocusChange() {
     setState(() {
-      _isFocused = _focusNode.hasFocus;
+      _isFocused = widget.focusNode.hasFocus;
       if (_saveState == SaveState.noAction && _isFocused) {
         _saveState = SaveState.editing;
       } else if (_saveState == SaveState.editing && !_isFocused) {
         _saveState = SaveState.noAction;
       }
     });
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter && widget.newRequest) {
+      var state = ref.read(paperModeSharedStateProvider);
+      var user = state.selectedUser;
+      if (user == null) {
+        return KeyEventResult.ignored;
+      }
+      if (widget.controller.text.isEmpty) {
+        return KeyEventResult.handled;
+      }
+      state.addDefaultPrayerRequest(user);
+      return KeyEventResult.handled;
+    }
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace && widget.prayerRequest.description.isEmpty) {
+      _handleDelete();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   @override
@@ -428,29 +638,124 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
         break;
     }
 
-    return PaperMarginSpace(
-      icon: icon,
-      paperLine: Expanded(
-          child: Row(
-            children: [
-              const Text("• "),
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  onChanged: _onChanged,
-                  maxLines: null,
-                  decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
+    return Focus(
+      onKeyEvent: _handleKeyEvent,
+      child: PaperMarginSpace(
+        icon: icon,
+        paperLine: Expanded(
+            child: Row(
+              children: [
+                const Text("• "),
+                Expanded(
+                  child: TextField(
+                    controller: widget.controller,
+                    focusNode: widget.focusNode,
+                    onChanged: _onChanged,
+                    maxLines: null,
+                    decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+      ),
     );
   }
 }
 
 enum SaveState { saving, saved, failed, editing, noAction }
+
+class UserSelection extends ConsumerStatefulWidget {
+  const UserSelection({super.key, 
+    required this.currentGroup, required this.focusNode,
+    required this.controller,
+    this.changeCallback,
+  });
+
+  final GroupContacts currentGroup;
+  final void Function(ContactAndGroupPair)? changeCallback;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  ConsumerState<UserSelection> createState() => _UserSelectionState();
+}
+
+class _UserSelectionState extends ConsumerState<UserSelection> {
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      widget.focusNode.requestFocus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var state = ref.watch(paperModeSharedStateProvider);
+    return PaperMarginSpace(
+      paperLine: Expanded(
+        child: TypeAheadField<ContactAndGroupPair>(
+          focusNode: widget.focusNode,
+          autoFlipDirection: true,
+          builder:(context, controller, focusNode) => TextField(
+            controller: controller,
+            focusNode: focusNode,
+            decoration: const InputDecoration(
+              hintText: "Who are you praying for?",
+              border: UnderlineInputBorder(),
+              hintStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+            ),
+          ),
+          itemBuilder: (context, ContactAndGroupPair suggestion) {
+            if (suggestion.contact.id == 0 && suggestion.contact.name == "Create new contact") {
+              return ListTile(
+                title: Text(suggestion.contact.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+              );
+            }
+            return ListTile(
+              title: Text(suggestion.contact.name),
+              subtitle: Text(suggestion.contact.description ?? ""),
+            );
+          },
+          suggestionsCallback: (String suggestion) {
+            if (suggestion.startsWith("@")) {
+              suggestion = suggestion.substring(1);
+            }
+            if (suggestion.isEmpty) {
+              return Future.value(null);
+            }
+            var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
+              return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
+            }).toList();
+            filteredContacts.add(ContactAndGroupPair(
+              contact: Contact(id: 0, name: "Create new contact", description: "", createdAt: DateTime.now().toIso8601String()),
+              groupPair: ContactGroupPairs(id: 0, groupId: widget.currentGroup.group.id, contactId: 0, createdAt: DateTime.now().toIso8601String()),
+            ));
+            return Future.value(filteredContacts);
+          },
+          onSelected:(value) async { 
+            if (value.contact.id == 0 && value.contact.name == "Create new contact") {
+              var newContact = Contact(id: 0, name: widget.controller.text, description: "", createdAt: DateTime.now().toIso8601String());
+              newContact = await ref.read(groupContactsRepoProvider.notifier)
+                .saveContact(newContact, widget.currentGroup.group);
+              var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);
+              value = ContactAndGroupPair(contact: newContact, groupPair: contactGroupPair);
+            }
+            state.setContact(value);
+            setState(() {
+              widget.controller.clear();
+            });
+            if (widget.changeCallback != null) {
+              widget.changeCallback!(value);
+            }
+          }
+        ),
+      ),
+    );
+  }
+}
 
 // NewRequestsManager is a widget that manages new requests created by the user at the bottom of the page.
 // It handles the state of who the current request is for and displaying all the newly created requests.
@@ -465,22 +770,12 @@ class NewRequestsManager extends ConsumerStatefulWidget {
 }
 
 class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
-  final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final FocusNode _userSelectionFocusNode = FocusNode();
   final TextEditingController _userSelectionController = TextEditingController();
-  final List<PrayerRequest> _newRequests = [];
-
-  void _handleKeyEvent(KeyEvent event) {
-    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
-      _addDefaultRequest();
-      _focusNode.requestFocus();
-    }
-  }
 
   @override
   void dispose() {
-    _controller.dispose();
     _focusNode.dispose();
     _userSelectionFocusNode.dispose();
     _userSelectionController.dispose();
@@ -495,98 +790,34 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
     });
   }
 
-  void _addDefaultRequest() {
-    var user = ref.read(paperModeSharedStateProvider).selectedUser;
-    if (user == null) {
-      return;
-    }
-    var newRequest = defaultPrayerRequest(user.contact, user.groupPair);
-    setState(() {
-      _newRequests.add(newRequest);
-      _controller.clear();
-    });
-  }
-
-  Widget userSelection(PaperModeSharedState state) {
-    return TypeAheadField<ContactAndGroupPair>(
-      focusNode: _userSelectionFocusNode,
-      autoFlipDirection: true,
-      builder:(context, controller, focusNode) => TextField(
-        controller: controller,
-        focusNode: focusNode,
-        decoration: const InputDecoration(
-          hintText: "Who are you praying for?",
-          border: UnderlineInputBorder(),
-          hintStyle: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      ),
-      itemBuilder: (context, ContactAndGroupPair suggestion) {
-        if (suggestion.contact.id == 0 && suggestion.contact.name == "Create new contact") {
-          return ListTile(
-            title: Text(suggestion.contact.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-            // subtitle: const Icon(Icons.add_circle, color: Colors.green),
-          );
-        }
-        return ListTile(
-          title: Text(suggestion.contact.name),
-          subtitle: Text(suggestion.contact.description ?? ""),
-        );
-      },
-      suggestionsCallback: (String suggestion) {
-        if (suggestion.isEmpty) {
-          return Future.value(null);
-        }
-        var filteredContacts = widget.currentGroup.memberWithContactGroupPairs.where((member) {
-          return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
-        }).toList();
-        filteredContacts.add(ContactAndGroupPair(
-          contact: Contact(id: 0, name: "Create new contact", description: "", createdAt: DateTime.now().toIso8601String()),
-          groupPair: ContactGroupPairs(id: 0, groupId: widget.currentGroup.group.id, contactId: 0, createdAt: DateTime.now().toIso8601String()),
-        ));
-        return Future.value(filteredContacts);
-      },
-      onSelected:(value) async { 
-        if (value.contact.id == 0 && value.contact.name == "Create new contact") {
-          var newContact = Contact(id: 0, name: _userSelectionController.text, description: "", createdAt: DateTime.now().toIso8601String());
-          newContact = await ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.currentGroup.group);
-          var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);
-          value = ContactAndGroupPair(contact: newContact, groupPair: contactGroupPair);
-        }
-        state.setContact(value);
-        _addDefaultRequest();
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          _focusNode.requestFocus();
-        });
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
-    if (state.selectedUser == null) {
-      return PaperMarginSpace(
-        paperLine: Expanded(
-          child: userSelection(state),
-        ),
-      );
-    }
-    return KeyboardListener(
-      focusNode: _focusNode,
-      onKeyEvent: _handleKeyEvent,
-      child: Column(
-        children: [
-          for (var i = 0; i < _newRequests.length; i++) ...[
-            if ((i == 0 && (widget.previousRequest == null || _newRequests[i].user.id != widget.previousRequest!.user.id))
-              || ( i > 0 && _newRequests[i].user.id != _newRequests[i - 1].user.id))
-              usernameBreak(_newRequests[i]),
-            EditableRequest(prayerRequest: _newRequests[i]),
-          ],
+    var newRequests = state.newRequests;
+    return Column(
+      children: [
+        for (var i = 0; i < newRequests.length; i++) ...[
+          if (
+              (
+                (i == 0 && (widget.previousRequest == null || newRequests[i].user.id != widget.previousRequest!.user.id))
+                || 
+                ( i > 0 && newRequests[i].user.id != newRequests[i - 1].user.id)
+              )
+              &&
+              state.selectedUser != null
+            )
+            usernameBreak(newRequests[i]),
+          PaperBlock(
+            prayerRequest: newRequests[i], 
+            currentGroup: widget.currentGroup, 
+            newRequest: true,
+          ),
         ],
-      ),
+      ],
     );
   }
 }
+
 
 class PaperMarginSpace extends StatelessWidget {
   const PaperMarginSpace({super.key, this.icon, required this.paperLine});
