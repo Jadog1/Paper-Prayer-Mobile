@@ -8,9 +8,9 @@ import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class GroupSettings extends ConsumerStatefulWidget {
-  const GroupSettings({super.key, required this.groupContacts});
+  const GroupSettings({super.key, this.groupContacts});
 
-  final GroupContacts groupContacts;
+  final GroupContacts? groupContacts;
 
   @override
   ConsumerState<GroupSettings> createState() => _GroupSettingsState();
@@ -22,15 +22,24 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
   @override
   void initState() {
     super.initState();
-    _name = widget.groupContacts.group.name;
-    _description = widget.groupContacts.group.description ?? "";
+    if (widget.groupContacts == null) {
+      return;
+    }
+    setState(() {
+      _name = widget.groupContacts!.group.name;
+      _description = widget.groupContacts!.group.description ?? "";
+    });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    var groupContacts = widget.groupContacts;
-    var newGroup = Group(id: groupContacts.group.id, name: _name, description: _description);
+    var groupContacts = widget.groupContacts ?? 
+      const GroupContacts(
+        group: Group(id: 0, name: "", description: ""),
+        members: [],
+        memberWithContactGroupPairs: [],
+      );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
@@ -63,7 +72,13 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
                 child: const Text('Cancel'),
               ),
               InteractiveLoadButton(
-                customProvider: () => ref.read(groupContactsRepoProvider.notifier).saveGroup(newGroup),
+                customProvider: () async {
+                  var newGroup = groupContacts.group.copyWith(
+                    name: _name,
+                    description: _description,
+                  );
+                  await ref.read(groupContactsRepoProvider.notifier).saveGroup(newGroup);
+                },
                 buttonText: 'Save',
                 buttonStyle: saveButtonStyle,
                 successCallback: () {
@@ -76,7 +91,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: groupContacts.members
-                  .map((member) => EditUserForGroup(user: member, groupId: groupContacts.group.id))
+                  .map((member) => EditUserForGroup(user: member, group: groupContacts.group))
                   .toList(),
             ),
           ),
@@ -124,10 +139,10 @@ class DeleteGroupButton extends ConsumerWidget {
 }
 
 class EditUserForGroup extends ConsumerWidget {
-  const EditUserForGroup({super.key, required this.user, required this.groupId});
+  const EditUserForGroup({super.key, required this.user, required this.group});
 
   final Contact user;
-  final int groupId;
+  final Group group;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,7 +154,7 @@ class EditUserForGroup extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user)),
+            MaterialPageRoute(builder: (context) => ContactPageSettings(contact: user, group: group)),
           ),
         ),
         trailing: const Icon(Icons.delete),
@@ -154,7 +169,7 @@ class EditUserForGroup extends ConsumerWidget {
                   child: const Text('Cancel'),
                 ),
                 InteractiveLoadButton(
-                  customProvider: () => ref.read(groupContactsRepoProvider.notifier).removeContactFromGroup(groupId, user.id),
+                  customProvider: () => ref.read(groupContactsRepoProvider.notifier).removeContactFromGroup(group.id, user.id),
                   buttonText: 'Delete',
                   buttonStyle: deleteButtonStyle,
                 ),

@@ -30,9 +30,10 @@ class GroupConsumer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(groupContactsRepoProvider);
 
-    return switch(viewModel) {
+    return switch (viewModel) {
       AsyncData(:final value) => GroupView(groupContacts: value),
-      AsyncError(:final error, :final stackTrace) => PrintError(caller: "GroupConsumer", error: error, stackTrace: stackTrace),
+      AsyncError(:final error, :final stackTrace) => PrintError(
+          caller: "GroupConsumer", error: error, stackTrace: stackTrace),
       _ => const Center(child: CircularProgressIndicator()),
     };
   }
@@ -51,7 +52,7 @@ class GroupView extends ConsumerWidget {
       child: Column(
         children: [
           SearchBarWidget(searchState: searchState),
-          const SizedBox(height: 10 ),
+          const SizedBox(height: 10),
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -62,9 +63,21 @@ class GroupView extends ConsumerWidget {
               ),
               itemCount: searchState.groupContacts.length,
               itemBuilder: (context, index) {
-                return GroupNotebook(groupContacts: searchState.groupContacts[index]);
+                return GroupNotebook(
+                    groupContacts: searchState.groupContacts[index]);
               },
             ),
+          ),
+          // Add a button to create a new group
+          ElevatedButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const GroupSettings(),
+              ),
+            ),
+            icon: const Icon(Icons.add),
+            label: const Text("Create New Group"),
+            style: saveButtonStyle,
           ),
         ],
       ),
@@ -115,14 +128,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   }
 }
 
-
-class GroupNotebook extends StatelessWidget {
+class GroupNotebook extends ConsumerWidget {
   const GroupNotebook({super.key, required this.groupContacts});
 
   final GroupContacts groupContacts;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 6,
       // color: const Color.fromARGB(255, 206, 206, 206),
@@ -155,7 +167,8 @@ class GroupNotebook extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PaperMode(groupContacts: groupContacts),
+                        builder: (context) =>
+                            PaperMode(currentGroup: groupContacts),
                       ),
                     ),
                     child: Container(
@@ -197,7 +210,8 @@ class GroupNotebook extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => GroupSettings(groupContacts: groupContacts),
+                          builder: (context) =>
+                              GroupSettings(groupContacts: groupContacts),
                         ),
                       ),
                     ),
@@ -205,7 +219,8 @@ class GroupNotebook extends StatelessWidget {
                       icon: const Icon(Icons.people),
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       visualDensity: VisualDensity.compact,
-                      onPressed: () => _showMembersModal(context, groupContacts),
+                      onPressed: () =>
+                          _showMembersModal(context, groupContacts),
                     ),
                   ],
                 ),
@@ -217,52 +232,64 @@ class GroupNotebook extends StatelessWidget {
     );
   }
 
-  void _showMembersModal(BuildContext context, GroupContacts groupContacts) {
+  void _showMembersModal(
+      BuildContext context, GroupContacts groupContacts) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Members of ${groupContacts.group.name}",
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 250,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: groupContacts.members.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PrayerRequestConsumer(user: groupContacts.members[index], group: groupContacts.group),
-                        ),
-                      ),
-                      leading: const CircleAvatar(child: Icon(Icons.person)),
-                      title: Text(groupContacts.members[index].name),
-                      subtitle: Text(groupContacts.members[index].description ?? ""),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ContactPageSettings(contact: groupContacts.members[index]),
+        return Consumer(
+          builder: (context, ref, child) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Members of ${groupContacts.group.name}",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: groupContacts.members.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PrayerRequestConsumer(
+                                  user: groupContacts.members[index],
+                                  group: groupContacts.group),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          leading:
+                              const CircleAvatar(child: Icon(Icons.person)),
+                          title: Text(groupContacts.members[index].name),
+                          subtitle: Text(
+                              groupContacts.members[index].description ?? ""),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ContactPageSettings(
+                                    contact: groupContacts.members[index],
+                                    group: groupContacts.group),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -280,7 +307,6 @@ class SearchState extends ChangeNotifier {
 
   List<GroupContacts> _groupContacts = [];
   List<GroupContacts> _filteredGroupContacts = [];
-  bool isGroupFilter = true;
   String searchText = "";
 
   List<GroupContacts> get groupContacts => _filteredGroupContacts;
@@ -289,28 +315,18 @@ class SearchState extends ChangeNotifier {
     searchText = text;
     if (text.isEmpty) {
       _filteredGroupContacts = _groupContacts;
-    } else if (isGroupFilter) {
-      _filteredGroupContacts = _groupContacts.where((groupContact) {
-        return groupContact.group.name.toLowerCase().contains(text.toLowerCase());
-      }).toList();
     } else {
-      _filteredGroupContacts = _groupContacts.where((group) {
-        return group.members.any((member) => member.name.toLowerCase().contains(text.toLowerCase()));
-      }).map((groupContact) {
-        return GroupContacts(
-          group: groupContact.group,
-          members: groupContact.members.where((member) => member.name.toLowerCase().contains(text.toLowerCase())).toList(),
-        );
+      _filteredGroupContacts = _groupContacts.where((groupContact) {
+        return groupContact.group.name
+            .toLowerCase()
+            .contains(text.toLowerCase());
       }).toList();
     }
     notifyListeners();
   }
-
-  void toggleSearchMode() {
-    isGroupFilter = !isGroupFilter;
-    filter(searchText);
-  }
 }
-final searchStateProvider = ChangeNotifierProvider.autoDispose.family<SearchState, List<GroupContacts>>((ref, groupContacts) {
+
+final searchStateProvider = ChangeNotifierProvider.autoDispose
+    .family<SearchState, List<GroupContacts>>((ref, groupContacts) {
   return SearchState(groupContacts: groupContacts);
 });

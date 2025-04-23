@@ -302,6 +302,161 @@ class _FetchRequestsInCollectionProviderElement
       (origin as FetchRequestsInCollectionProvider).collectionId;
 }
 
+String _$fetchCollectionFromRequestHash() =>
+    r'772ae3afb53e0d71c9c0d7c21e4f6d660c8d1eb1';
+
+/// See also [fetchCollectionFromRequest].
+@ProviderFor(fetchCollectionFromRequest)
+const fetchCollectionFromRequestProvider = FetchCollectionFromRequestFamily();
+
+/// See also [fetchCollectionFromRequest].
+class FetchCollectionFromRequestFamily
+    extends Family<AsyncValue<CollectionAndRelatedContacts?>> {
+  /// See also [fetchCollectionFromRequest].
+  const FetchCollectionFromRequestFamily();
+
+  /// See also [fetchCollectionFromRequest].
+  FetchCollectionFromRequestProvider call(
+    int requestId,
+    int contactId,
+  ) {
+    return FetchCollectionFromRequestProvider(
+      requestId,
+      contactId,
+    );
+  }
+
+  @override
+  FetchCollectionFromRequestProvider getProviderOverride(
+    covariant FetchCollectionFromRequestProvider provider,
+  ) {
+    return call(
+      provider.requestId,
+      provider.contactId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchCollectionFromRequestProvider';
+}
+
+/// See also [fetchCollectionFromRequest].
+class FetchCollectionFromRequestProvider
+    extends AutoDisposeFutureProvider<CollectionAndRelatedContacts?> {
+  /// See also [fetchCollectionFromRequest].
+  FetchCollectionFromRequestProvider(
+    int requestId,
+    int contactId,
+  ) : this._internal(
+          (ref) => fetchCollectionFromRequest(
+            ref as FetchCollectionFromRequestRef,
+            requestId,
+            contactId,
+          ),
+          from: fetchCollectionFromRequestProvider,
+          name: r'fetchCollectionFromRequestProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchCollectionFromRequestHash,
+          dependencies: FetchCollectionFromRequestFamily._dependencies,
+          allTransitiveDependencies:
+              FetchCollectionFromRequestFamily._allTransitiveDependencies,
+          requestId: requestId,
+          contactId: contactId,
+        );
+
+  FetchCollectionFromRequestProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.requestId,
+    required this.contactId,
+  }) : super.internal();
+
+  final int requestId;
+  final int contactId;
+
+  @override
+  Override overrideWith(
+    FutureOr<CollectionAndRelatedContacts?> Function(
+            FetchCollectionFromRequestRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchCollectionFromRequestProvider._internal(
+        (ref) => create(ref as FetchCollectionFromRequestRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        requestId: requestId,
+        contactId: contactId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<CollectionAndRelatedContacts?>
+      createElement() {
+    return _FetchCollectionFromRequestProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchCollectionFromRequestProvider &&
+        other.requestId == requestId &&
+        other.contactId == contactId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, requestId.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchCollectionFromRequestRef
+    on AutoDisposeFutureProviderRef<CollectionAndRelatedContacts?> {
+  /// The parameter `requestId` of this provider.
+  int get requestId;
+
+  /// The parameter `contactId` of this provider.
+  int get contactId;
+}
+
+class _FetchCollectionFromRequestProviderElement
+    extends AutoDisposeFutureProviderElement<CollectionAndRelatedContacts?>
+    with FetchCollectionFromRequestRef {
+  _FetchCollectionFromRequestProviderElement(super.provider);
+
+  @override
+  int get requestId => (origin as FetchCollectionFromRequestProvider).requestId;
+  @override
+  int get contactId => (origin as FetchCollectionFromRequestProvider).contactId;
+}
+
 String _$collectionContactRepoHash() =>
     r'37fe3d96a9a7ae83e7366a58cc222eb4caf17ba4';
 

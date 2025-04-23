@@ -57,13 +57,31 @@ class ContactsApiClient {
     }
   }
 
-  Future<void> saveContact(Contact contact) async {
-    final response = await authClient.post(config.uri("/contacts"), 
-      body: jsonEncode(contact.toJson()), headers: {"Content-Type": "application/json"});
+  Future<Contact> saveContact(Contact contact, Group group) async {
+    final response = await authClient.post(config.uri("/contacts/"), 
+      body: jsonEncode({
+        "contact": contact.toJson(),
+        "group": group.toJson(),
+      }), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
       throw Exception("Error adding contact: ${response.statusCode} - ${response.body}");
     }
+
+    final json = jsonDecode(response.body);
+    return Contact.fromJson(json);
+  }
+
+  Future<Contact> updateContact(Contact contact) async {
+    final response = await authClient.put(config.uri("/contacts/"), 
+      body: jsonEncode(contact.toJson()), headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode != 200) {
+      throw Exception("Error updating contact: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return Contact.fromJson(json);
   }
 
   Future<List<Contact>> fetchContacts() async {
@@ -147,22 +165,28 @@ class PrayerRequestApiClient {
     }
   }
 
-  Future<void> saveRequest(PrayerRequest request) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
     final response = await authClient.post(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
       throw Exception("Error saving prayer request: ${response.statusCode} - ${response.body}");
     }
+
+    final json = jsonDecode(response.body);
+    return PrayerRequest.fromJson(json);
   }
 
-  Future<void> updateRequest(PrayerRequest request) async {
+  Future<PrayerRequest> updateRequest(PrayerRequest request) async {
     final response = await authClient.put(config.uri("/prayer_requests/"), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {
       throw Exception("Error updating prayer request: ${response.statusCode} - ${response.body}");
     }
+
+    final json = jsonDecode(response.body);
+    return PrayerRequest.fromJson(json);
   }
 
   
@@ -175,6 +199,17 @@ class PrayerRequestApiClient {
 
     final json = jsonDecode(response.body) as List;
     return json.map((request) => PrayerRequestScore.fromJson(request)).toList();
+  }
+
+  Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(int requestId) async {
+    final response = await authClient.get(config.uri("/prayer_requests/similar/bible/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting bible verses: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((verse) => BibleReferenceAndText.fromJson(verse)).toList();
   }
 }
 
@@ -223,5 +258,19 @@ class CollectionsApiClient {
     if (response.statusCode != 200) {
       throw Exception("Error removing collection: ${response.statusCode} - ${response.body}");
     }
+  }
+
+  Future<Collection?> fetchCollectionFromRequest(int requestId) async {
+    final response = await authClient.get(config.uri("/collections/request/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting collection from request: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    if (json == null) {
+      return null;
+    }
+    return Collection.fromJson(json);
   }
 }

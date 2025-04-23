@@ -1,39 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 
 class PaperModeSharedState extends ChangeNotifier {
-  final List<Contact> _contacts = [];
-  final List<AsyncSavedPrayerRequest> _requests = [];
-  Contact? _selectedUser;
+  ContactAndGroupPair? _selectedUser;
+  bool _aiMode = false;
+  Map<int, bool> hiddenPrayerRequests = {};
+  final List<PrayerRequest> _newRequests = [
+    defaultPrayerRequest(
+      defaultContact(),
+      const ContactGroupPairs(id: 0, groupId: 0, contactId: 0, createdAt: ""),
+    ),
+  ];
 
-  List<Contact> get contacts => _contacts;
-  Contact? get selectedUser => _selectedUser;
-  List<AsyncSavedPrayerRequest> get requests => _requests;
+  
+  ContactAndGroupPair? get selectedUser => _selectedUser;
+  bool get aiMode => _aiMode;
+  List<PrayerRequest> get newRequests => _newRequests;
 
-  void addContact(Contact contact) {
-    _contacts.add(contact);
-    notifyListeners();
-  }
-
-  void setContact(Contact contact) {
+  void setContact(ContactAndGroupPair contact) {
     _selectedUser = contact;
     notifyListeners();
   }
 
-  void addRequest(AsyncSavedPrayerRequest request) {
-    _requests.add(request);
+  void setAiMode(bool mode) {
+    _aiMode = mode;
     notifyListeners();
   }
 
-  void reset() {
-    _contacts.clear();
-    _selectedUser = null;
+  void addDefaultPrayerRequest(ContactAndGroupPair user) {
+    var newRequest = defaultPrayerRequest(user.contact, user.groupPair);
+    _newRequests.add(newRequest);
+    notifyListeners();
+  }
+
+  void hidePrayerRequest(int id) {
+    hiddenPrayerRequests[id] = true;
     notifyListeners();
   }
 }
-final paperModeSharedStateProvider = ChangeNotifierProvider<PaperModeSharedState>((ref) {
+
+final paperModeSharedStateProvider = ChangeNotifierProvider.autoDispose<PaperModeSharedState>((ref) {
   return PaperModeSharedState();
 });
 

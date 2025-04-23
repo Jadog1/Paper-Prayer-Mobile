@@ -5,6 +5,7 @@ import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
+import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/repo.g.dart';
@@ -21,12 +22,16 @@ class GroupContactsRepo extends _$GroupContactsRepo {
   Future<List<GroupContacts>> build() async {
     var contactApi = config.contactApiClient;
     final groups = await contactApi.fetchGroups();
-    final contactResults = await contactApi.fetchContacts();
+    final contactResults = await contactApi.fetchContacts(); 
     final contactGroupPairs = await contactApi.fetchContactGroupPairs();
     var groupContacts = groups.map((group) {
       var members = contactGroupPairs.where((contact) => contact.groupId == group.id).toList();
       var contacts = members.map((member) => contactResults.firstWhere((contact) => contact.id == member.contactId)).toList();
-      return GroupContacts(group: group, members: contacts);
+      var memberWithContactGroupPairs = members.map((member) {
+        var contact = contactResults.firstWhere((contact) => contact.id == member.contactId);
+        return ContactAndGroupPair(contact: contact, groupPair: member);
+      }).toList();
+      return GroupContacts(group: group, members: contacts, memberWithContactGroupPairs: memberWithContactGroupPairs);
     }).toList();
     
     return groupContacts;
@@ -67,12 +72,27 @@ class GroupContactsRepo extends _$GroupContactsRepo {
     ref.invalidateSelf();
   }
 
-  Future<void> saveContact(Contact contact) async {
+  Future<Contact> saveContact(Contact contact, Group group) async {
     var contactApi = config.contactApiClient;
-    await contactApi.saveContact(contact);
+    var newContact = await contactApi.saveContact(contact, group);
 
     ref.invalidateSelf();
+    return newContact;
   }
+
+  Future<Contact> updateContact(Contact contact) async {
+    var contactApi = config.contactApiClient;
+    var updatedContact = await contactApi.updateContact(contact);
+
+    ref.invalidateSelf();
+    return updatedContact;
+  }
+}
+
+@riverpod
+Future<ContactGroupPairs> fetchContactGroup(Ref ref, int contactId, int groupId) async {
+  var contactApi = config.contactApiClient;
+  return await contactApi.fetchContactGroup(contactId, groupId);
 }
 
 class UserCollectionsAndContacts {
@@ -96,6 +116,12 @@ Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(Ref ref, Contact 
 }
 
 @riverpod
+Future<List<RelatedContact>> fetchRelatedContacts(Ref ref, int contactId) async {
+  var contactApi = config.contactApiClient;
+  return await contactApi.fetchRelatedContacts(contactId);
+}
+
+@riverpod
 class PrayerRequestRepo extends _$PrayerRequestRepo {
   late Config config;
 
@@ -109,15 +135,17 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
     return prayerApi.fetchPrayerRequests(contactId);
   }
 
-  Future<void> saveRequest(PrayerRequest request) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
     var prayerApi = config.prayerRequestApiClient;
+    PrayerRequest newRequest;
     if (request.id == 0) {
-      await prayerApi.saveRequest(request);
+      newRequest = await prayerApi.saveRequest(request);
     } else {
-      await prayerApi.updateRequest(request);
+      newRequest = await prayerApi.updateRequest(request);
     }
 
     ref.invalidateSelf();
+    return newRequest;
   }
 
   Future<void> removeRequest(PrayerRequest request) async {
@@ -137,4 +165,29 @@ Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) as
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   return prayerApi.fetchSimilarRequests(requestId);
+}
+
+Future<PrayerRequest> saveNewRequest(PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.saveRequest(request);
+}
+
+Future<PrayerRequest> updateRequest(PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.updateRequest(request);
+}
+
+Future<void> removeRequest(PrayerRequest request) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  await prayerApi.removeRequest(request.id);
+}
+
+@riverpod
+Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(Ref ref, int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.fetchBibleVersesForPrayerRequest(requestId);
 }
