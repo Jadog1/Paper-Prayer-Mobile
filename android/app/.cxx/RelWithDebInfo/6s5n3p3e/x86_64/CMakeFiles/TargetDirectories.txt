@@ -1,0 +1,2 @@
+C:/Users/jadog/Documents/Code/prayer_ml/android/app/.cxx/RelWithDebInfo/6s5n3p3e/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/jadog/Documents/Code/prayer_ml/android/app/.cxx/RelWithDebInfo/6s5n3p3e/x86_64/CMakeFiles/rebuild_cache.dir

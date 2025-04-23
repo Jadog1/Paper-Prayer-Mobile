@@ -1,5 +1,5 @@
 name: prayer_ml
-description: "A new Flutter project."
+description: "An app dedicated to simplifying of tracking prayer requests."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -52,6 +52,7 @@ dependencies:
   riverpod_paging_utils: ^0.7.0
   flutter_typeahead: ^5.2.0
   uuid: ^4.5.1
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
