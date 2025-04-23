@@ -10,7 +10,7 @@ class PaperModeSharedState extends ChangeNotifier {
   Map<int, bool> hiddenPrayerRequests = {};
   final List<PrayerRequest> _newRequests = [
     defaultPrayerRequest(
-      const Contact(id: 0, name: "", createdAt: ""),
+      defaultContact(),
       const ContactGroupPairs(id: 0, groupId: 0, contactId: 0, createdAt: ""),
     ),
   ];

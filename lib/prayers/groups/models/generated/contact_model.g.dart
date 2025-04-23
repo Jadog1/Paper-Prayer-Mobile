@@ -10,6 +10,7 @@ _$ContactImpl _$$ContactImplFromJson(Map<String, dynamic> json) =>
     _$ContactImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
+      accountId: (json['account_id'] as num).toInt(),
       description: json['description'] as String? ?? '',
       createdAt: json['created_at'] as String,
     );
@@ -18,6 +19,7 @@ Map<String, dynamic> _$$ContactImplToJson(_$ContactImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'account_id': instance.accountId,
       'description': instance.description,
       'created_at': instance.createdAt,
     };

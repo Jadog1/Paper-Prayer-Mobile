@@ -58,7 +58,7 @@ class ContactsApiClient {
   }
 
   Future<Contact> saveContact(Contact contact, Group group) async {
-    final response = await authClient.post(config.uri("/contacts"), 
+    final response = await authClient.post(config.uri("/contacts/"), 
       body: jsonEncode({
         "contact": contact.toJson(),
         "group": group.toJson(),
@@ -73,7 +73,7 @@ class ContactsApiClient {
   }
 
   Future<Contact> updateContact(Contact contact) async {
-    final response = await authClient.put(config.uri("/contacts"), 
+    final response = await authClient.put(config.uri("/contacts/"), 
       body: jsonEncode(contact.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {

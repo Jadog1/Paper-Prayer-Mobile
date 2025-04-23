@@ -9,6 +9,7 @@ class Contact with _$Contact {
   const factory Contact({
     required int id,
     required String name,
+    @JsonKey(name: 'account_id') required int accountId,
     @JsonKey(defaultValue: '') String? description,
     @JsonKey(name: 'created_at') required String createdAt,
   }) = _Contact;
@@ -28,7 +29,9 @@ class ContactGroupPairs with _$ContactGroupPairs {
   factory ContactGroupPairs.fromJson(Map<String, dynamic> json) => _$ContactGroupPairsFromJson(json);
 } 
 
-Contact defaultContact = const Contact(id: 0, name: '', createdAt: '');
+Contact defaultContact() {
+  return const Contact(id: 0, name: '', createdAt: '', accountId: 0);
+}
 
 @freezed
 class RelatedContact with _$RelatedContact {

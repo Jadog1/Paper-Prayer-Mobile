@@ -22,6 +22,8 @@ Contact _$ContactFromJson(Map<String, dynamic> json) {
 mixin _$Contact {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'account_id')
+  int get accountId => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: '')
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -44,6 +46,7 @@ abstract class $ContactCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
+      @JsonKey(name: 'account_id') int accountId,
       @JsonKey(defaultValue: '') String? description,
       @JsonKey(name: 'created_at') String createdAt});
 }
@@ -65,6 +68,7 @@ class _$ContactCopyWithImpl<$Res, $Val extends Contact>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? accountId = null,
     Object? description = freezed,
     Object? createdAt = null,
   }) {
@@ -77,6 +81,10 @@ class _$ContactCopyWithImpl<$Res, $Val extends Contact>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      accountId: null == accountId
+          ? _value.accountId
+          : accountId // ignore: cast_nullable_to_non_nullable
+              as int,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -99,6 +107,7 @@ abstract class _$$ContactImplCopyWith<$Res> implements $ContactCopyWith<$Res> {
   $Res call(
       {int id,
       String name,
+      @JsonKey(name: 'account_id') int accountId,
       @JsonKey(defaultValue: '') String? description,
       @JsonKey(name: 'created_at') String createdAt});
 }
@@ -118,6 +127,7 @@ class __$$ContactImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? accountId = null,
     Object? description = freezed,
     Object? createdAt = null,
   }) {
@@ -130,6 +140,10 @@ class __$$ContactImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      accountId: null == accountId
+          ? _value.accountId
+          : accountId // ignore: cast_nullable_to_non_nullable
+              as int,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -148,6 +162,7 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
   const _$ContactImpl(
       {required this.id,
       required this.name,
+      @JsonKey(name: 'account_id') required this.accountId,
       @JsonKey(defaultValue: '') this.description,
       @JsonKey(name: 'created_at') required this.createdAt});
 
@@ -159,6 +174,9 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
   @override
   final String name;
   @override
+  @JsonKey(name: 'account_id')
+  final int accountId;
+  @override
   @JsonKey(defaultValue: '')
   final String? description;
   @override
@@ -167,7 +185,7 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Contact(id: $id, name: $name, description: $description, createdAt: $createdAt)';
+    return 'Contact(id: $id, name: $name, accountId: $accountId, description: $description, createdAt: $createdAt)';
   }
 
   @override
@@ -177,6 +195,7 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
       ..add(DiagnosticsProperty('type', 'Contact'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('accountId', accountId))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('createdAt', createdAt));
   }
@@ -188,6 +207,8 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
             other is _$ContactImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.accountId, accountId) ||
+                other.accountId == accountId) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.createdAt, createdAt) ||
@@ -197,7 +218,7 @@ class _$ContactImpl with DiagnosticableTreeMixin implements _Contact {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, name, description, createdAt);
+      Object.hash(runtimeType, id, name, accountId, description, createdAt);
 
   /// Create a copy of Contact
   /// with the given fields replaced by the non-null parameter values.
@@ -219,6 +240,7 @@ abstract class _Contact implements Contact {
   const factory _Contact(
           {required final int id,
           required final String name,
+          @JsonKey(name: 'account_id') required final int accountId,
           @JsonKey(defaultValue: '') final String? description,
           @JsonKey(name: 'created_at') required final String createdAt}) =
       _$ContactImpl;
@@ -229,6 +251,9 @@ abstract class _Contact implements Contact {
   int get id;
   @override
   String get name;
+  @override
+  @JsonKey(name: 'account_id')
+  int get accountId;
   @override
   @JsonKey(defaultValue: '')
   String? get description;

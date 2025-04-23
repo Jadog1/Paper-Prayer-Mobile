@@ -1,6 +1,7 @@
 
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -130,7 +131,6 @@ class _PaperState extends ConsumerState<Paper> {
         provider: provider,
         futureRefreshable: provider.future,
         notifierRefreshable: provider.notifier,
-        // TODO: How do we want to handle no items?
         contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
           itemCount: widgetCount,
           reverse: true,
@@ -705,9 +705,11 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
         child: TypeAheadField<ContactAndGroupPair>(
           focusNode: widget.focusNode,
           autoFlipDirection: true,
+          controller: widget.controller,
           builder:(context, controller, focusNode) => TextField(
             controller: controller,
             focusNode: focusNode,
+            textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(
               hintText: "Who are you praying for?",
               border: UnderlineInputBorder(),
@@ -736,18 +738,29 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
               return member.contact.name.toLowerCase().contains(suggestion.toLowerCase());
             }).toList();
             filteredContacts.add(ContactAndGroupPair(
-              contact: Contact(id: 0, name: "Create new contact", description: "", createdAt: DateTime.now().toIso8601String()),
+              contact: Contact(id: 0, name: "Create new contact", description: "", createdAt: DateTime.now().toIso8601String(), accountId: 0),
               groupPair: ContactGroupPairs(id: 0, groupId: widget.currentGroup.group.id, contactId: 0, createdAt: DateTime.now().toIso8601String()),
             ));
             return Future.value(filteredContacts);
           },
           onSelected:(value) async { 
             if (value.contact.id == 0 && value.contact.name == "Create new contact") {
-              var newContact = Contact(id: 0, name: widget.controller.text, description: "", createdAt: DateTime.now().toIso8601String());
-              newContact = await ref.read(groupContactsRepoProvider.notifier)
-                .saveContact(newContact, widget.currentGroup.group);
-              var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);
-              value = ContactAndGroupPair(contact: newContact, groupPair: contactGroupPair);
+              try {
+                var newContact = Contact(id: 0, name: widget.controller.text, description: "", createdAt: DateTime.now().toIso8601String(), accountId: 0);
+                newContact = await ref.read(groupContactsRepoProvider.notifier)
+                  .saveContact(newContact, widget.currentGroup.group);
+                var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);
+                value = ContactAndGroupPair(contact: newContact, groupPair: contactGroupPair);
+                widget.currentGroup.memberWithContactGroupPairs.add(value);
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("An error occured. Please try again.")),
+                  );
+                  log('Error in UserSelection', error: e);
+                }
+                return;
+              }
             }
             state.setContact(value);
             setState(() {
