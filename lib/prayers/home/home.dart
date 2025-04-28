@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/requests.dart';
 import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/shared/utility.dart';
@@ -13,7 +14,11 @@ class HomePageConsumer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(recommendationRepoProvider);
     return switch (viewModel) {
-      AsyncData(:final value) => RecommendationsDashboard(recommendations: value),
+      AsyncData(:final value) => Navigator(
+        onGenerateRoute: (settings) => MaterialPageRoute(
+          builder: (context) => RecommendationsDashboard(recommendations: value),
+        ),
+      ),
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "PrayerRequestConsumer",
           error: error,
@@ -138,6 +143,17 @@ class PrayerCard extends ConsumerWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
+        onLongPress: () {
+          // Add a popup that allows the user to mark the request as not relevant
+          markNotRelevant(context, ref, prayerCollection);
+        },
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => 
+            RequestDashboard(
+              prayerWithAll: PrayerRequestWithAll(collection: recommendation.prayerCollection, 
+              relatedContacts: [],
+          ))),
+        ),
         title: Row(
           children: [
             Expanded(
@@ -177,6 +193,44 @@ class PrayerCard extends ConsumerWidget {
         ),
         // trailing: actions,
       ),
+    );
+  }
+
+  Future<dynamic> markNotRelevant(BuildContext context, WidgetRef ref, Collection prayerCollection) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Mark as Not Relevant"),
+          content: const Text("Are you sure you want to mark this request as not relevant?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  // Call the API to mark as not relevant
+                  await ref.read(recommendationRepoProvider.notifier).updateAction(prayerCollection.id, CollectionRecommendationAction.notRelevant, DateTime.now().toIso8601String());
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Failed to mark as not relevant")),
+                    );
+                  }
+                }
+                if (context.mounted) {
+                  Navigator.of(context).pop(); // Close the dialog
+                }
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

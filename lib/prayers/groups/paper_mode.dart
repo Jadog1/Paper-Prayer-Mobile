@@ -272,6 +272,9 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
         focusNode: _userSelectionFocusNode,
       );
     }
+    if (state.hiddenPrayerRequests.containsKey(widget.prayerRequest.id)) {
+      return const SizedBox.shrink();
+    }
     if (useViewableRequest) {
       return ViewableRequest(request: widget.prayerRequest);
     }
@@ -379,7 +382,7 @@ class ViewableRequest extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(request.title ?? "", style: Theme.of(context).textTheme.titleLarge),
+              Text(request.features?.title ?? "", style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(request.description, style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
@@ -397,7 +400,7 @@ class ViewableRequest extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summary = request.title != "" ? request.title : request.description;
+    final summary = request.features != null ? request.features!.title : request.description;
 
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
@@ -538,6 +541,7 @@ class EditableRequest extends ConsumerStatefulWidget {
 class _EditableRequestState extends ConsumerState<EditableRequest> {
   Timer? _debounce;
   bool _isFocused = false;
+  bool _isSaving = false;
   SaveState _saveState = SaveState.noAction;
 
   @override
@@ -562,6 +566,7 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       return;
     }
     _debounce = Timer(const Duration(seconds: 1), () async {
+      _isSaving = true;
       try {
         var newRequest = widget.prayerRequest.copyWith(description: text);
         if (widget.prayerRequest.id == 0) {
@@ -575,12 +580,18 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       } catch (_) {
         setState(() => _saveState = SaveState.failed);
       }
+      _isSaving = false;
     });
   }
 
   void _handleDelete() async {
     if (widget.prayerRequest.id == 0) {
       return;
+    }
+    _debounce?.cancel();
+    // Wait until _isSaving is false before deleting
+    while (_isSaving) {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
     var state = ref.read(paperModeSharedStateProvider);
     setState(() => _saveState = SaveState.saving);
@@ -616,7 +627,8 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       state.addDefaultPrayerRequest(user);
       return KeyEventResult.handled;
     }
-    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace && widget.prayerRequest.description.isEmpty) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace && widget.controller.text.isEmpty) {
+      _debounce?.cancel();
       _handleDelete();
       return KeyEventResult.handled;
     }
@@ -656,6 +668,7 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
                   child: TextField(
                     controller: widget.controller,
                     focusNode: widget.focusNode,
+                    textCapitalization: TextCapitalization.sentences,
                     onChanged: _onChanged,
                     maxLines: null,
                     decoration: InputDecoration(border: _isFocused ? const UnderlineInputBorder() : InputBorder.none),
@@ -826,6 +839,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
               state.selectedUser != null
             )
             usernameBreak(newRequests[i]),
+            
           PaperBlock(
             prayerRequest: newRequests[i], 
             currentGroup: widget.currentGroup, 

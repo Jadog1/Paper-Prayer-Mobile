@@ -26,7 +26,6 @@ mixin _$PrayerRequest {
   String get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'request')
   set description(String value) => throw _privateConstructorUsedError;
-  String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
@@ -35,10 +34,8 @@ mixin _$PrayerRequest {
   ContactGroupPairs get group => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_group')
   set group(ContactGroupPairs value) => throw _privateConstructorUsedError;
-  String? get sentiment => throw _privateConstructorUsedError;
-  String? get emotion => throw _privateConstructorUsedError;
-  @JsonKey(name: 'prayer_type')
-  String? get prayerType => throw _privateConstructorUsedError;
+  PrayerFeatures? get features => throw _privateConstructorUsedError;
+  set features(PrayerFeatures? value) => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'related_contact_ids')
@@ -63,17 +60,15 @@ abstract class $PrayerRequestCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'request') String description,
-      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
-      String? sentiment,
-      String? emotion,
-      @JsonKey(name: 'prayer_type') String? prayerType,
+      PrayerFeatures? features,
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   $ContactCopyWith<$Res> get user;
   $ContactGroupPairsCopyWith<$Res> get group;
+  $PrayerFeaturesCopyWith<$Res>? get features;
 }
 
 /// @nodoc
@@ -93,12 +88,9 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? title = freezed,
     Object? user = null,
     Object? group = null,
-    Object? sentiment = freezed,
-    Object? emotion = freezed,
-    Object? prayerType = freezed,
+    Object? features = freezed,
     Object? createdAt = null,
     Object? relatedContactIds = null,
   }) {
@@ -111,10 +103,6 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -123,18 +111,10 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as ContactGroupPairs,
-      sentiment: freezed == sentiment
-          ? _value.sentiment
-          : sentiment // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emotion: freezed == emotion
-          ? _value.emotion
-          : emotion // ignore: cast_nullable_to_non_nullable
-              as String?,
-      prayerType: freezed == prayerType
-          ? _value.prayerType
-          : prayerType // ignore: cast_nullable_to_non_nullable
-              as String?,
+      features: freezed == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as PrayerFeatures?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -165,6 +145,20 @@ class _$PrayerRequestCopyWithImpl<$Res, $Val extends PrayerRequest>
       return _then(_value.copyWith(group: value) as $Val);
     });
   }
+
+  /// Create a copy of PrayerRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PrayerFeaturesCopyWith<$Res>? get features {
+    if (_value.features == null) {
+      return null;
+    }
+
+    return $PrayerFeaturesCopyWith<$Res>(_value.features!, (value) {
+      return _then(_value.copyWith(features: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -178,12 +172,9 @@ abstract class _$$PrayerRequestImplCopyWith<$Res>
   $Res call(
       {int id,
       @JsonKey(name: 'request') String description,
-      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
-      String? sentiment,
-      String? emotion,
-      @JsonKey(name: 'prayer_type') String? prayerType,
+      PrayerFeatures? features,
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
@@ -191,6 +182,8 @@ abstract class _$$PrayerRequestImplCopyWith<$Res>
   $ContactCopyWith<$Res> get user;
   @override
   $ContactGroupPairsCopyWith<$Res> get group;
+  @override
+  $PrayerFeaturesCopyWith<$Res>? get features;
 }
 
 /// @nodoc
@@ -208,12 +201,9 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? title = freezed,
     Object? user = null,
     Object? group = null,
-    Object? sentiment = freezed,
-    Object? emotion = freezed,
-    Object? prayerType = freezed,
+    Object? features = freezed,
     Object? createdAt = null,
     Object? relatedContactIds = null,
   }) {
@@ -226,10 +216,6 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -238,18 +224,10 @@ class __$$PrayerRequestImplCopyWithImpl<$Res>
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as ContactGroupPairs,
-      sentiment: freezed == sentiment
-          ? _value.sentiment
-          : sentiment // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emotion: freezed == emotion
-          ? _value.emotion
-          : emotion // ignore: cast_nullable_to_non_nullable
-              as String?,
-      prayerType: freezed == prayerType
-          ? _value.prayerType
-          : prayerType // ignore: cast_nullable_to_non_nullable
-              as String?,
+      features: freezed == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as PrayerFeatures?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -270,12 +248,9 @@ class _$PrayerRequestImpl
   _$PrayerRequestImpl(
       {required this.id,
       @JsonKey(name: 'request') required this.description,
-      this.title,
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
-      this.sentiment = "",
-      this.emotion = "",
-      @JsonKey(name: 'prayer_type') this.prayerType,
+      this.features,
       @JsonKey(name: 'created_at') this.createdAt = "",
       @JsonKey(name: 'related_contact_ids') required this.relatedContactIds});
 
@@ -288,22 +263,13 @@ class _$PrayerRequestImpl
   @JsonKey(name: 'request')
   String description;
   @override
-  final String? title;
-  @override
   @JsonKey(name: 'contact')
   Contact user;
   @override
   @JsonKey(name: 'contact_group')
   ContactGroupPairs group;
   @override
-  @JsonKey()
-  final String? sentiment;
-  @override
-  @JsonKey()
-  final String? emotion;
-  @override
-  @JsonKey(name: 'prayer_type')
-  final String? prayerType;
+  PrayerFeatures? features;
   @override
   @JsonKey(name: 'created_at')
   final String createdAt;
@@ -313,7 +279,7 @@ class _$PrayerRequestImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PrayerRequest(id: $id, description: $description, title: $title, user: $user, group: $group, sentiment: $sentiment, emotion: $emotion, prayerType: $prayerType, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
+    return 'PrayerRequest(id: $id, description: $description, user: $user, group: $group, features: $features, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
   }
 
   @override
@@ -323,12 +289,9 @@ class _$PrayerRequestImpl
       ..add(DiagnosticsProperty('type', 'PrayerRequest'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('description', description))
-      ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
-      ..add(DiagnosticsProperty('sentiment', sentiment))
-      ..add(DiagnosticsProperty('emotion', emotion))
-      ..add(DiagnosticsProperty('prayerType', prayerType))
+      ..add(DiagnosticsProperty('features', features))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds));
   }
@@ -353,12 +316,9 @@ abstract class _PrayerRequest implements PrayerRequest {
   factory _PrayerRequest(
       {required int id,
       @JsonKey(name: 'request') required String description,
-      final String? title,
       @JsonKey(name: 'contact') required Contact user,
       @JsonKey(name: 'contact_group') required ContactGroupPairs group,
-      final String? sentiment,
-      final String? emotion,
-      @JsonKey(name: 'prayer_type') final String? prayerType,
+      PrayerFeatures? features,
       @JsonKey(name: 'created_at') final String createdAt,
       @JsonKey(name: 'related_contact_ids')
       required final List<int> relatedContactIds}) = _$PrayerRequestImpl;
@@ -375,8 +335,6 @@ abstract class _PrayerRequest implements PrayerRequest {
   @JsonKey(name: 'request')
   set description(String value);
   @override
-  String? get title;
-  @override
   @JsonKey(name: 'contact')
   Contact get user;
   @JsonKey(name: 'contact')
@@ -387,12 +345,8 @@ abstract class _PrayerRequest implements PrayerRequest {
   @JsonKey(name: 'contact_group')
   set group(ContactGroupPairs value);
   @override
-  String? get sentiment;
-  @override
-  String? get emotion;
-  @override
-  @JsonKey(name: 'prayer_type')
-  String? get prayerType;
+  PrayerFeatures? get features;
+  set features(PrayerFeatures? value);
   @override
   @JsonKey(name: 'created_at')
   String get createdAt;
@@ -416,12 +370,11 @@ PrayerRequestScore _$PrayerRequestScoreFromJson(Map<String, dynamic> json) {
 mixin _$PrayerRequestScore {
   int get id => throw _privateConstructorUsedError;
   String get request => throw _privateConstructorUsedError;
-  String? get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact')
   Contact get user => throw _privateConstructorUsedError;
   @JsonKey(name: 'contact_group')
   ContactGroupPairs get group => throw _privateConstructorUsedError;
-  String? get sentiment => throw _privateConstructorUsedError;
+  PrayerFeatures? get features => throw _privateConstructorUsedError;
   double get score => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String get createdAt => throw _privateConstructorUsedError;
@@ -447,16 +400,16 @@ abstract class $PrayerRequestScoreCopyWith<$Res> {
   $Res call(
       {int id,
       String request,
-      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
-      String? sentiment,
+      PrayerFeatures? features,
       double score,
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
 
   $ContactCopyWith<$Res> get user;
   $ContactGroupPairsCopyWith<$Res> get group;
+  $PrayerFeaturesCopyWith<$Res>? get features;
 }
 
 /// @nodoc
@@ -476,10 +429,9 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
   $Res call({
     Object? id = null,
     Object? request = null,
-    Object? title = freezed,
     Object? user = null,
     Object? group = null,
-    Object? sentiment = freezed,
+    Object? features = freezed,
     Object? score = null,
     Object? createdAt = null,
     Object? relatedContactIds = null,
@@ -493,10 +445,6 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -505,10 +453,10 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as ContactGroupPairs,
-      sentiment: freezed == sentiment
-          ? _value.sentiment
-          : sentiment // ignore: cast_nullable_to_non_nullable
-              as String?,
+      features: freezed == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as PrayerFeatures?,
       score: null == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -543,6 +491,20 @@ class _$PrayerRequestScoreCopyWithImpl<$Res, $Val extends PrayerRequestScore>
       return _then(_value.copyWith(group: value) as $Val);
     });
   }
+
+  /// Create a copy of PrayerRequestScore
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PrayerFeaturesCopyWith<$Res>? get features {
+    if (_value.features == null) {
+      return null;
+    }
+
+    return $PrayerFeaturesCopyWith<$Res>(_value.features!, (value) {
+      return _then(_value.copyWith(features: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -556,10 +518,9 @@ abstract class _$$PrayerRequestScoreImplCopyWith<$Res>
   $Res call(
       {int id,
       String request,
-      String? title,
       @JsonKey(name: 'contact') Contact user,
       @JsonKey(name: 'contact_group') ContactGroupPairs group,
-      String? sentiment,
+      PrayerFeatures? features,
       double score,
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'related_contact_ids') List<int> relatedContactIds});
@@ -568,6 +529,8 @@ abstract class _$$PrayerRequestScoreImplCopyWith<$Res>
   $ContactCopyWith<$Res> get user;
   @override
   $ContactGroupPairsCopyWith<$Res> get group;
+  @override
+  $PrayerFeaturesCopyWith<$Res>? get features;
 }
 
 /// @nodoc
@@ -585,10 +548,9 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? request = null,
-    Object? title = freezed,
     Object? user = null,
     Object? group = null,
-    Object? sentiment = freezed,
+    Object? features = freezed,
     Object? score = null,
     Object? createdAt = null,
     Object? relatedContactIds = null,
@@ -602,10 +564,6 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
               as String,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -614,10 +572,10 @@ class __$$PrayerRequestScoreImplCopyWithImpl<$Res>
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as ContactGroupPairs,
-      sentiment: freezed == sentiment
-          ? _value.sentiment
-          : sentiment // ignore: cast_nullable_to_non_nullable
-              as String?,
+      features: freezed == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as PrayerFeatures?,
       score: null == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -642,10 +600,9 @@ class _$PrayerRequestScoreImpl
   const _$PrayerRequestScoreImpl(
       {required this.id,
       required this.request,
-      this.title,
       @JsonKey(name: 'contact') required this.user,
       @JsonKey(name: 'contact_group') required this.group,
-      this.sentiment = "",
+      this.features,
       required this.score,
       @JsonKey(name: 'created_at') this.createdAt = "",
       @JsonKey(name: 'related_contact_ids')
@@ -660,16 +617,13 @@ class _$PrayerRequestScoreImpl
   @override
   final String request;
   @override
-  final String? title;
-  @override
   @JsonKey(name: 'contact')
   final Contact user;
   @override
   @JsonKey(name: 'contact_group')
   final ContactGroupPairs group;
   @override
-  @JsonKey()
-  final String? sentiment;
+  final PrayerFeatures? features;
   @override
   final double score;
   @override
@@ -687,7 +641,7 @@ class _$PrayerRequestScoreImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PrayerRequestScore(id: $id, request: $request, title: $title, user: $user, group: $group, sentiment: $sentiment, score: $score, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
+    return 'PrayerRequestScore(id: $id, request: $request, user: $user, group: $group, features: $features, score: $score, createdAt: $createdAt, relatedContactIds: $relatedContactIds)';
   }
 
   @override
@@ -697,10 +651,9 @@ class _$PrayerRequestScoreImpl
       ..add(DiagnosticsProperty('type', 'PrayerRequestScore'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('request', request))
-      ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('user', user))
       ..add(DiagnosticsProperty('group', group))
-      ..add(DiagnosticsProperty('sentiment', sentiment))
+      ..add(DiagnosticsProperty('features', features))
       ..add(DiagnosticsProperty('score', score))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('relatedContactIds', relatedContactIds));
@@ -713,11 +666,10 @@ class _$PrayerRequestScoreImpl
             other is _$PrayerRequestScoreImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.request, request) || other.request == request) &&
-            (identical(other.title, title) || other.title == title) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.group, group) || other.group == group) &&
-            (identical(other.sentiment, sentiment) ||
-                other.sentiment == sentiment) &&
+            (identical(other.features, features) ||
+                other.features == features) &&
             (identical(other.score, score) || other.score == score) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
@@ -731,10 +683,9 @@ class _$PrayerRequestScoreImpl
       runtimeType,
       id,
       request,
-      title,
       user,
       group,
-      sentiment,
+      features,
       score,
       createdAt,
       const DeepCollectionEquality().hash(_relatedContactIds));
@@ -760,10 +711,9 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   const factory _PrayerRequestScore(
       {required final int id,
       required final String request,
-      final String? title,
       @JsonKey(name: 'contact') required final Contact user,
       @JsonKey(name: 'contact_group') required final ContactGroupPairs group,
-      final String? sentiment,
+      final PrayerFeatures? features,
       required final double score,
       @JsonKey(name: 'created_at') final String createdAt,
       @JsonKey(name: 'related_contact_ids')
@@ -777,15 +727,13 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   @override
   String get request;
   @override
-  String? get title;
-  @override
   @JsonKey(name: 'contact')
   Contact get user;
   @override
   @JsonKey(name: 'contact_group')
   ContactGroupPairs get group;
   @override
-  String? get sentiment;
+  PrayerFeatures? get features;
   @override
   double get score;
   @override
@@ -800,6 +748,227 @@ abstract class _PrayerRequestScore implements PrayerRequestScore {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PrayerRequestScoreImplCopyWith<_$PrayerRequestScoreImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+PrayerFeatures _$PrayerFeaturesFromJson(Map<String, dynamic> json) {
+  return _PrayerFeatures.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PrayerFeatures {
+  String? get sentiment => throw _privateConstructorUsedError;
+  String? get emotion => throw _privateConstructorUsedError;
+  String? get prayerType => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+
+  /// Serializes this PrayerFeatures to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PrayerFeatures
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PrayerFeaturesCopyWith<PrayerFeatures> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PrayerFeaturesCopyWith<$Res> {
+  factory $PrayerFeaturesCopyWith(
+          PrayerFeatures value, $Res Function(PrayerFeatures) then) =
+      _$PrayerFeaturesCopyWithImpl<$Res, PrayerFeatures>;
+  @useResult
+  $Res call(
+      {String? sentiment, String? emotion, String? prayerType, String title});
+}
+
+/// @nodoc
+class _$PrayerFeaturesCopyWithImpl<$Res, $Val extends PrayerFeatures>
+    implements $PrayerFeaturesCopyWith<$Res> {
+  _$PrayerFeaturesCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PrayerFeatures
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? sentiment = freezed,
+    Object? emotion = freezed,
+    Object? prayerType = freezed,
+    Object? title = null,
+  }) {
+    return _then(_value.copyWith(
+      sentiment: freezed == sentiment
+          ? _value.sentiment
+          : sentiment // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emotion: freezed == emotion
+          ? _value.emotion
+          : emotion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      prayerType: freezed == prayerType
+          ? _value.prayerType
+          : prayerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PrayerFeaturesImplCopyWith<$Res>
+    implements $PrayerFeaturesCopyWith<$Res> {
+  factory _$$PrayerFeaturesImplCopyWith(_$PrayerFeaturesImpl value,
+          $Res Function(_$PrayerFeaturesImpl) then) =
+      __$$PrayerFeaturesImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? sentiment, String? emotion, String? prayerType, String title});
+}
+
+/// @nodoc
+class __$$PrayerFeaturesImplCopyWithImpl<$Res>
+    extends _$PrayerFeaturesCopyWithImpl<$Res, _$PrayerFeaturesImpl>
+    implements _$$PrayerFeaturesImplCopyWith<$Res> {
+  __$$PrayerFeaturesImplCopyWithImpl(
+      _$PrayerFeaturesImpl _value, $Res Function(_$PrayerFeaturesImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PrayerFeatures
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? sentiment = freezed,
+    Object? emotion = freezed,
+    Object? prayerType = freezed,
+    Object? title = null,
+  }) {
+    return _then(_$PrayerFeaturesImpl(
+      sentiment: freezed == sentiment
+          ? _value.sentiment
+          : sentiment // ignore: cast_nullable_to_non_nullable
+              as String?,
+      emotion: freezed == emotion
+          ? _value.emotion
+          : emotion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      prayerType: freezed == prayerType
+          ? _value.prayerType
+          : prayerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PrayerFeaturesImpl
+    with DiagnosticableTreeMixin
+    implements _PrayerFeatures {
+  const _$PrayerFeaturesImpl(
+      {this.sentiment, this.emotion, this.prayerType, required this.title});
+
+  factory _$PrayerFeaturesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PrayerFeaturesImplFromJson(json);
+
+  @override
+  final String? sentiment;
+  @override
+  final String? emotion;
+  @override
+  final String? prayerType;
+  @override
+  final String title;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'PrayerFeatures(sentiment: $sentiment, emotion: $emotion, prayerType: $prayerType, title: $title)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'PrayerFeatures'))
+      ..add(DiagnosticsProperty('sentiment', sentiment))
+      ..add(DiagnosticsProperty('emotion', emotion))
+      ..add(DiagnosticsProperty('prayerType', prayerType))
+      ..add(DiagnosticsProperty('title', title));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PrayerFeaturesImpl &&
+            (identical(other.sentiment, sentiment) ||
+                other.sentiment == sentiment) &&
+            (identical(other.emotion, emotion) || other.emotion == emotion) &&
+            (identical(other.prayerType, prayerType) ||
+                other.prayerType == prayerType) &&
+            (identical(other.title, title) || other.title == title));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, sentiment, emotion, prayerType, title);
+
+  /// Create a copy of PrayerFeatures
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PrayerFeaturesImplCopyWith<_$PrayerFeaturesImpl> get copyWith =>
+      __$$PrayerFeaturesImplCopyWithImpl<_$PrayerFeaturesImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PrayerFeaturesImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PrayerFeatures implements PrayerFeatures {
+  const factory _PrayerFeatures(
+      {final String? sentiment,
+      final String? emotion,
+      final String? prayerType,
+      required final String title}) = _$PrayerFeaturesImpl;
+
+  factory _PrayerFeatures.fromJson(Map<String, dynamic> json) =
+      _$PrayerFeaturesImpl.fromJson;
+
+  @override
+  String? get sentiment;
+  @override
+  String? get emotion;
+  @override
+  String? get prayerType;
+  @override
+  String get title;
+
+  /// Create a copy of PrayerFeatures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PrayerFeaturesImplCopyWith<_$PrayerFeaturesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

@@ -12,12 +12,9 @@ class PrayerRequest with _$PrayerRequest {
   factory PrayerRequest({
     required int id,
     @JsonKey(name: 'request') required String description,
-    final String? title,
     @JsonKey(name: 'contact') required Contact user,
     @JsonKey(name: 'contact_group') required ContactGroupPairs group,
-    @Default("") final String? sentiment,
-    @Default("") final String? emotion,
-    @JsonKey(name: 'prayer_type') final String? prayerType,
+    PrayerFeatures? features,
     @Default("") @JsonKey(name: 'created_at') final String createdAt,
     @JsonKey(name: 'related_contact_ids') required final List<int> relatedContactIds,
   }) = _PrayerRequest;
@@ -31,10 +28,9 @@ class PrayerRequestScore with _$PrayerRequestScore {
   const factory PrayerRequestScore({
     required int id,
     required String request,
-    String? title,
     @JsonKey(name: 'contact') required Contact user,
     @JsonKey(name: 'contact_group') required ContactGroupPairs group,
-    @Default("") String? sentiment,
+    PrayerFeatures? features,
     required double score,
     @Default("") @JsonKey(name: 'created_at') String createdAt,
     @JsonKey(name: 'related_contact_ids') required List<int> relatedContactIds,
@@ -43,15 +39,26 @@ class PrayerRequestScore with _$PrayerRequestScore {
   factory PrayerRequestScore.fromJson(Map<String, dynamic> json) => _$PrayerRequestScoreFromJson(json);
 }
 
+@freezed
+class PrayerFeatures with _$PrayerFeatures {
+  const factory PrayerFeatures({
+    String? sentiment,
+    String? emotion,
+    String? prayerType,
+    required String title,
+  }) = _PrayerFeatures;
+
+  factory PrayerFeatures.fromJson(Map<String, dynamic> json) => _$PrayerFeaturesFromJson(json);
+}
+
 // Map PrayerRequestScore to PrayerRequest
 PrayerRequest prayerRequestScoreToPrayerRequest(PrayerRequestScore score) {
   return PrayerRequest(
     id: score.id,
     description: score.request,
-    title: score.title,
     user: score.user,
     group: score.group,
-    sentiment: score.sentiment,
+    features: score.features,
     createdAt: score.createdAt,
     relatedContactIds: score.relatedContactIds,
   );
@@ -61,12 +68,8 @@ PrayerRequest defaultPrayerRequest(Contact contact, ContactGroupPairs group) {
   return PrayerRequest(
     id: 0,
     description: "",
-    title: "",
     user: contact,
     group: group,
-    sentiment: "",
-    emotion: "",
-    prayerType: "",
     createdAt: DateTime.now().toIso8601String(),
     relatedContactIds: [],
   );
@@ -81,7 +84,7 @@ class BibleReference with _$BibleReference {
     @JsonKey(name: 'verse_start') required int verseStart,
     @JsonKey(name: 'verse_end') required int verseEnd,
   }) = _BibleReference;
-   
+
   factory BibleReference.fromJson(Map<String, dynamic> json) => _$BibleReferenceFromJson(json);
 }
 
@@ -92,7 +95,7 @@ class RelatedBibleVerse with _$RelatedBibleVerse {
     required String reasonForRecommendation,
     required String referenceType,
   }) = _RelatedBibleVerse;
-  
+
   factory RelatedBibleVerse.fromJson(Map<String, dynamic> json) => _$RelatedBibleVerseFromJson(json);
 }
 
@@ -102,6 +105,6 @@ class BibleReferenceAndText with _$BibleReferenceAndText {
     required RelatedBibleVerse modelOutput,
     required String text,
   }) = _BibleReferenceAndText;
-  
+
   factory BibleReferenceAndText.fromJson(Map<String, dynamic> json) => _$BibleReferenceAndTextFromJson(json);
 }

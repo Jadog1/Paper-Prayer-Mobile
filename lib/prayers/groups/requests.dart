@@ -335,7 +335,7 @@ class CompactSimplifiedPrayerRequests extends StatelessWidget {
           ],
         );
         return CompactRequestCard(
-        title: request.title,
+        title: request.features?.title,
         description: request.description,
         relatedContactIds: request.relatedContactIds,
         allRelatedContacts: prayerWithAll.relatedContacts, 
