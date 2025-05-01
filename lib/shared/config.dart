@@ -4,8 +4,10 @@ import 'package:prayer_ml/api/notebook_api.dart';
 import 'package:prayer_ml/api/prayer_api.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
 
+const backendUrl = String.fromEnvironment('backend_url', defaultValue: '10.0.0.46:8000');
 class Config {
-  String apiUrl = '10.0.0.46:8000'; // From phone: 10.0.0.46:8000 -- Emulator: 10.0.2.2:8000
+  // prod: https://paper-prayer-af73d35b1629.herokuapp.com/
+  String apiUrl = backendUrl; // From phone: 10.0.0.46:8000 -- Emulator: 10.0.2.2:8000
   late ContactsApiClient contactApiClient;
   late PrayerRequestApiClient prayerRequestApiClient;
   late CollectionsApiClient collectionsApiClient;
