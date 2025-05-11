@@ -714,6 +714,7 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
     return PaperMarginSpace(
+      icon: const Icon(Icons.person_add),
       paperLine: Expanded(
         child: TypeAheadField<ContactAndGroupPair>(
           focusNode: widget.focusNode,
@@ -759,7 +760,11 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
           onSelected:(value) async { 
             if (value.contact.id == 0 && value.contact.name == "Create new contact") {
               try {
-                var newContact = Contact(id: 0, name: widget.controller.text, description: "", createdAt: DateTime.now().toIso8601String(), accountId: 0);
+                var name = widget.controller.text;
+                if (name.startsWith("@")) {
+                  name = name.substring(1);
+                }
+                var newContact = Contact(id: 0, name: name, description: "", createdAt: DateTime.now().toIso8601String(), accountId: 0);
                 newContact = await ref.read(groupContactsRepoProvider.notifier)
                   .saveContact(newContact, widget.currentGroup.group);
                 var contactGroupPair = await ref.read(fetchContactGroupProvider(newContact.id, widget.currentGroup.group.id).future);

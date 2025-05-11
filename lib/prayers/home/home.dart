@@ -99,9 +99,7 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
 }
 
-// Prayer Request Card
-// TODO: Allow us to view the inner contents of a collection
-class PrayerCard extends ConsumerWidget {
+class PrayerCard extends ConsumerStatefulWidget {
   final Recommendation recommendation;
 
   const PrayerCard({
@@ -110,7 +108,14 @@ class PrayerCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PrayerCard> createState() => _PrayerCardState();
+}
+class _PrayerCardState extends ConsumerState<PrayerCard> {
+  bool useCollectionGranularDetails = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var recommendation = widget.recommendation;
     var prayerCollection = recommendation.prayerCollection;
     var urgencyLabel = prayerCollection.followUpRankLabel;
     var groupName = recommendation.group.name;
@@ -147,13 +152,12 @@ class PrayerCard extends ConsumerWidget {
           // Add a popup that allows the user to mark the request as not relevant
           markNotRelevant(context, ref, prayerCollection);
         },
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => 
-            RequestDashboard(
-              prayerWithAll: PrayerRequestWithAll(collection: recommendation.prayerCollection, 
-              relatedContacts: [],
-          ))),
-        ),
+        onTap: () {
+          // Toggle the visibility of granular details
+          setState(() {
+            useCollectionGranularDetails = !useCollectionGranularDetails;
+          });
+        },
         title: Row(
           children: [
             Expanded(
@@ -184,14 +188,9 @@ class PrayerCard extends ConsumerWidget {
             ],
           ],
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("$userName  |  $groupName", textAlign: TextAlign.left,),
-            _collectionDateInformation(recommendation),
-          ],
-        ),
-        // trailing: actions,
+        subtitle: useCollectionGranularDetails ? 
+          CollectionGranularDetail(prayerCollection: prayerCollection, recommendation: recommendation) :
+          CollectionHighLevelDetail(userName: userName, groupName: groupName, recommendation: recommendation),
       ),
     );
   }
@@ -231,6 +230,66 @@ class PrayerCard extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class CollectionGranularDetail extends StatelessWidget {
+  const CollectionGranularDetail({
+    super.key,
+    required this.prayerCollection,
+    required this.recommendation,
+  });
+
+  final Collection prayerCollection;
+  final Recommendation recommendation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+    children: [
+      Text(prayerCollection.description ?? ""),
+      // Use a button on the bottom that spans the full width to open more details
+      const SizedBox(height: 8),
+      ElevatedButton(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => 
+            RequestDashboard(
+              prayerWithAll: PrayerRequestWithAll(collection: recommendation.prayerCollection, 
+              relatedContacts: [],
+            )
+          )),
+        ),
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(40),
+        ),
+        child: const Text("View Details"),
+      ),
+    ],
+    );
+  }
+}
+
+class CollectionHighLevelDetail extends StatelessWidget {
+  const CollectionHighLevelDetail({
+    super.key,
+    required this.userName,
+    required this.groupName,
+    required this.recommendation,
+  });
+
+  final String userName;
+  final String groupName;
+  final Recommendation recommendation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("$userName  |  $groupName", textAlign: TextAlign.left,),
+        _collectionDateInformation(recommendation),
+      ],
     );
   }
 }
