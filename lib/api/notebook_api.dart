@@ -2,6 +2,7 @@
 import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/prayers/groups/models/notebook_model.dart';
 import 'package:prayer_ml/shared/config.dart';
+import 'package:prayer_ml/prayers/groups/models/shared.dart';
 import 'dart:convert';
 
 class NotebookApiClient {

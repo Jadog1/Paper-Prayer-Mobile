@@ -4,6 +4,7 @@ import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/shared/config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
+import 'package:prayer_ml/prayers/groups/models/shared.dart';
 
 part 'generated/notebook_repo.g.dart';
 

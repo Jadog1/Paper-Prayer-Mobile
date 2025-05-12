@@ -6,6 +6,7 @@ import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/shared/utility.dart';
 import 'package:prayer_ml/shared/widgets.dart';
+import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 
 class HomePageConsumer extends ConsumerWidget {
   const HomePageConsumer({super.key});
@@ -16,7 +17,7 @@ class HomePageConsumer extends ConsumerWidget {
     return switch (viewModel) {
       AsyncData(:final value) => Navigator(
         onGenerateRoute: (settings) => MaterialPageRoute(
-          builder: (context) => RecommendationsDashboard(recommendations: value),
+          builder: (context) => RecommendationGroups(recommendationGroups: value),
         ),
       ),
       AsyncError(:final error, :final stackTrace) => PrintError(
@@ -27,48 +28,157 @@ class HomePageConsumer extends ConsumerWidget {
     };
   }
 }
-class RecommendationsDashboard extends StatelessWidget {
-  const RecommendationsDashboard({super.key, required this.recommendations});
 
-  final List<Recommendation> recommendations;
+class RecommendationGroups extends ConsumerWidget {
+  const RecommendationGroups({super.key, required this.recommendationGroups});
+  final List<RecommendationGroup> recommendationGroups;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        const Text(
+            "Recommendations",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              letterSpacing: 1.1,
+            ),
+          ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: recommendationGroups.length,
+            itemBuilder: (context, index) {
+              var recommendationGroup = recommendationGroups[index];
+              return RecommendationGroupCard(recommendationGroup: recommendationGroup);
+            },
+          ),
+        ),
+      ]
+    );
+  }
+}
+
+// Create a new widget to display the recommendation groups. 
+// The recommendation groups should use a card layout with a title, description, and icon.
+class RecommendationGroupCard extends StatelessWidget {
+  const RecommendationGroupCard({super.key, required this.recommendationGroup});
+  final RecommendationGroup recommendationGroup;
 
   @override
   Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Recommendations(recommendationGroup: recommendationGroup),
+          ));
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
+                child: _recommendationGroupTypeIcon(recommendationGroup.icon),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      recommendationGroup.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      recommendationGroup.description,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[700],
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+Icon _recommendationGroupTypeIcon(String groupType) {
+  switch (groupType) {
+    case "priority":
+      return const Icon(Icons.notification_important, color: Colors.blue);
+    case "contact":
+      return const Icon(Icons.person, color: Colors.green);
+    default:
+      return const Icon(Icons.question_mark, color: Colors.grey);
+  }
+}
+
+
+class Recommendations extends StatelessWidget {
+  const Recommendations({super.key, required this.recommendationGroup});
+
+  final RecommendationGroup recommendationGroup;
+
+  @override
+  Widget build(BuildContext context) {
+    var provider = paginatedCollectionRecommendationNotifierProvider(10, recommendationGroup);
     return CustomScrollView(
         slivers: [
           // Sticky "Today's Focus" Section
           SliverPersistentHeader(
             pinned: true,
             floating: false,
-            delegate: _StickyHeaderDelegate(),
+            delegate: _StickyHeaderDelegate(recommendationGroup: recommendationGroup),
           ),
 
-          SliverList.builder(
-            itemCount: recommendations.length,
-            itemBuilder: (context, index) {
-              var recommendation = recommendations[index];
-              var previousRecommendation = (index > 0) ? recommendations[index - 1] : null;
-              var previousRecommendationLabel = previousRecommendation?.recommendationType ?? "";
-              var widget = PrayerCard(recommendation: recommendation);
-              if (recommendation.isSnoozed && previousRecommendation != null && !previousRecommendation.isSnoozed) {
-                return Column(
-                  children: [
-                    const Divider(thickness: 1, color: Colors.grey),
-                    const _SectionTitle(title: "Snoozed"),
-                    _SectionTitle(title: recommendation.recommendationType),
-                    widget,
-                  ],
-                );
-              } else if (recommendation.recommendationType != previousRecommendationLabel) {
-                return Column(
-                  children: [
-                    _SectionTitle(title: recommendation.recommendationType),
-                    widget,
-                  ],
-                );
-              }
-              return widget;
-            },
+          
+          SliverFillRemaining(
+            child: PagingHelperView(
+              provider: provider,
+              futureRefreshable: provider.future,
+              notifierRefreshable: provider.notifier,
+              contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
+                itemCount: widgetCount,
+                reverse: false,
+                itemBuilder: (context, index) {
+                   if (index == widgetCount - 1) {
+                    return endItemView;
+                  }
+                  var recommendation = data.items[index];
+                  var previousRecommendation = (index > 0) ? data.items[index - 1] : null;
+                  var previousRecommendationLabel = previousRecommendation?.recommendationType ?? "";
+                  var widget = Recommendation(recommendation: recommendation);
+                  if (recommendation.recommendationType != previousRecommendationLabel) {
+                    return Column(
+                      children: [
+                        _SectionTitle(title: recommendation.recommendationType),
+                        widget,
+                      ],
+                    );
+                  }
+                  return widget;
+                },
+              )
+            ),
           ),
         ],
       );
@@ -77,10 +187,13 @@ class RecommendationsDashboard extends StatelessWidget {
 
 // Sticky Header Delegate for "Today's Focus"
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _StickyHeaderDelegate({required this.recommendationGroup});
+  final RecommendationGroup recommendationGroup;
+
   @override
-  double get minExtent => 80;
+  double get minExtent => 90;
   @override
-  double get maxExtent => 120;
+  double get maxExtent => 130;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -88,9 +201,28 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
       padding: const EdgeInsets.all(16),
       color: Colors.blueAccent,
       alignment: Alignment.centerLeft,
-      child: const Text(
-        "Today's Focus",
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+      child: Column(
+        children: [
+          // Use app bar for title so that we can go back
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              Text(
+                recommendationGroup.title,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ],
+          ),
+          Text(
+            recommendationGroup.description,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 16, color: Colors.white70),
+          ),
+        ],
       ),
     );
   }
@@ -99,48 +231,26 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
 }
 
-class PrayerCard extends ConsumerStatefulWidget {
-  final Recommendation recommendation;
+class Recommendation extends ConsumerStatefulWidget {
+  final CollectionRecommendation recommendation;
 
-  const PrayerCard({
+  const Recommendation({
     super.key,
     required this.recommendation
   });
 
   @override
-  ConsumerState<PrayerCard> createState() => _PrayerCardState();
+  ConsumerState<Recommendation> createState() => _RecommendationState();
 }
-class _PrayerCardState extends ConsumerState<PrayerCard> {
+class _RecommendationState extends ConsumerState<Recommendation> {
   bool useCollectionGranularDetails = false;
 
   @override
   Widget build(BuildContext context) {
     var recommendation = widget.recommendation;
-    var prayerCollection = recommendation.prayerCollection;
+    var prayerCollection = recommendation.collection;
     var urgencyLabel = prayerCollection.followUpRankLabel;
-    var groupName = recommendation.group.name;
     var userName = prayerCollection.user.name;
-    Widget? actions = InteractiveLoadButton(
-        customProvider: () async {
-            // Get the current timestamp plus the default count of days from now
-            var utcTimestamp = DateTime.now().add(Duration(days: recommendation.defaultSnoozeDays)).toIso8601String();
-            await ref.read(recommendationRepoProvider.notifier).updateAction(prayerCollection.id, CollectionRecommendationAction.prayed, utcTimestamp);
-        },
-        successCallback: () async => {
-          if (context.mounted) {
-            // Show a success message
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Marked as prayed!")),
-            )
-          }
-        },
-        buttonStyle: transparentButtonStyle,  
-        childOverride: const Icon(Icons.snooze, color: Colors.green, size: 25),
-      );
-    // If snoozed and was updated today, then hide actions
-    if (recommendation.isSnoozed && recommendation.updatedAt != null && isSameDateAsToday(recommendation.updatedAt!)) {
-      actions = null; // Hide the action button
-    }
     return Card(
       elevation: 4, // Adjust elevation for more or less shadow
       shape: RoundedRectangleBorder(
@@ -183,14 +293,14 @@ class _PrayerCardState extends ConsumerState<PrayerCard> {
                 ),
               ),
             ),
-            if (actions != null) ...[
-              actions,
-            ],
           ],
         ),
-        subtitle: useCollectionGranularDetails ? 
-          CollectionGranularDetail(prayerCollection: prayerCollection, recommendation: recommendation) :
-          CollectionHighLevelDetail(userName: userName, groupName: groupName, recommendation: recommendation),
+        subtitle: AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: CollectionHighLevelDetail(userName: userName, recommendation: recommendation),
+          secondChild: CollectionGranularDetail(prayerCollection: prayerCollection, recommendation: recommendation),
+          crossFadeState: useCollectionGranularDetails ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        ),
       ),
     );
   }
@@ -242,7 +352,7 @@ class CollectionGranularDetail extends StatelessWidget {
   });
 
   final Collection prayerCollection;
-  final Recommendation recommendation;
+  final CollectionRecommendation recommendation;
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +365,7 @@ class CollectionGranularDetail extends StatelessWidget {
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => 
             RequestDashboard(
-              prayerWithAll: PrayerRequestWithAll(collection: recommendation.prayerCollection, 
+              prayerWithAll: PrayerRequestWithAll(collection: recommendation.collection, 
               relatedContacts: [],
             )
           )),
@@ -274,20 +384,18 @@ class CollectionHighLevelDetail extends StatelessWidget {
   const CollectionHighLevelDetail({
     super.key,
     required this.userName,
-    required this.groupName,
     required this.recommendation,
   });
 
   final String userName;
-  final String groupName;
-  final Recommendation recommendation;
+  final CollectionRecommendation recommendation;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("$userName  |  $groupName", textAlign: TextAlign.left,),
+        Text(userName, textAlign: TextAlign.left,),
         _collectionDateInformation(recommendation),
       ],
     );
@@ -295,8 +403,8 @@ class CollectionHighLevelDetail extends StatelessWidget {
 }
 
 
-Widget _collectionDateInformation(Recommendation recommendation) {
-  Collection prayerCollection = recommendation.prayerCollection;
+Widget _collectionDateInformation(CollectionRecommendation recommendation) {
+  Collection prayerCollection = recommendation.collection;
 
   List<Widget> dateRangeState = [];
   if (todayIsBetween(prayerCollection.startRangeOfEventDate, prayerCollection.endRangeOfEventDate)) {
@@ -307,13 +415,6 @@ Widget _collectionDateInformation(Recommendation recommendation) {
     dateRangeState.add(const Icon(Icons.hourglass_top));
     dateRangeState.add(const SizedBox(width: 4));
     dateRangeState.add(Expanded(child: Text("Happening ${dateToTextualDate(prayerCollection.startRangeOfEventDate!)}")));
-  }
-
-  List<Widget> snoozeState = [];
-  if (recommendation.isSnoozed && recommendation.updatedAt != null) {
-    snoozeState.add(const Icon(Icons.snooze));
-    snoozeState.add(const SizedBox(width: 4));
-    snoozeState.add(Expanded(child: Text("Snoozed until ${dateToTextualDate(recommendation.snoozeUntil!.toIso8601String())}")));
   }
 
   return Column(
@@ -327,9 +428,6 @@ Widget _collectionDateInformation(Recommendation recommendation) {
       ),
       Row(
         children: dateRangeState,
-      ),
-      Row(
-        children: snoozeState,
       ),
     ],
   );
