@@ -714,7 +714,7 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
     return PaperMarginSpace(
-      icon: const Icon(Icons.person_add),
+      icon: const Icon(Icons.person_add, size: 16),
       paperLine: Expanded(
         child: TypeAheadField<ContactAndGroupPair>(
           focusNode: widget.focusNode,

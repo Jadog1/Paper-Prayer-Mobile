@@ -50,8 +50,7 @@ class RecommendationGroups extends ConsumerWidget {
           child: ListView.builder(
             itemCount: recommendationGroups.length,
             itemBuilder: (context, index) {
-              var recommendationGroup = recommendationGroups[index];
-              return RecommendationGroupCard(recommendationGroup: recommendationGroup);
+              return RecommendationGroupCard(recommendationGroups: recommendationGroups, index: index);
             },
           ),
         ),
@@ -63,11 +62,13 @@ class RecommendationGroups extends ConsumerWidget {
 // Create a new widget to display the recommendation groups. 
 // The recommendation groups should use a card layout with a title, description, and icon.
 class RecommendationGroupCard extends StatelessWidget {
-  const RecommendationGroupCard({super.key, required this.recommendationGroup});
-  final RecommendationGroup recommendationGroup;
+  const RecommendationGroupCard({super.key, required this.recommendationGroups, required this.index});
+  final List<RecommendationGroup> recommendationGroups;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
+    var recommendationGroup = recommendationGroups[index];
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 6,
@@ -75,7 +76,10 @@ class RecommendationGroupCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Recommendations(recommendationGroup: recommendationGroup),
+            builder: (context) => Recommendations(
+              recommendationGroups: recommendationGroups,
+              groupAt: index,
+            ),
           ));
         },
         borderRadius: BorderRadius.circular(16),
@@ -133,55 +137,154 @@ Icon _recommendationGroupTypeIcon(String groupType) {
 }
 
 
-class Recommendations extends StatelessWidget {
-  const Recommendations({super.key, required this.recommendationGroup});
+class Recommendations extends StatefulWidget {
+  const Recommendations({super.key, required this.recommendationGroups, required this.groupAt});
 
-  final RecommendationGroup recommendationGroup;
+  final List<RecommendationGroup> recommendationGroups;
+  final int groupAt;
+
+  @override
+  State<Recommendations> createState() => _RecommendationsState();
+}
+class _RecommendationsState extends State<Recommendations> {
+  late int groupAt;
+
+  @override
+  void initState() {
+    super.initState();
+    groupAt = widget.groupAt;
+  }
 
   @override
   Widget build(BuildContext context) {
-    var provider = paginatedCollectionRecommendationNotifierProvider(10, recommendationGroup);
-    return CustomScrollView(
-        slivers: [
-          // Sticky "Today's Focus" Section
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-            delegate: _StickyHeaderDelegate(recommendationGroup: recommendationGroup),
-          ),
-
+    var provider = paginatedCollectionRecommendationNotifierProvider(10, widget.recommendationGroups[groupAt]);
+    return Column(
+      children: [
+        Expanded(
+          child: CustomScrollView(
+              slivers: [
+                // Sticky "Today's Focus" Section
+                SliverPersistentHeader(
+                  pinned: true,
+                  floating: false,
+                  delegate: _StickyHeaderDelegate(recommendationGroup: widget.recommendationGroups[groupAt]),
+                ),
           
-          SliverFillRemaining(
-            child: PagingHelperView(
-              provider: provider,
-              futureRefreshable: provider.future,
-              notifierRefreshable: provider.notifier,
-              contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
-                itemCount: widgetCount,
-                reverse: false,
-                itemBuilder: (context, index) {
-                   if (index == widgetCount - 1) {
-                    return endItemView;
-                  }
-                  var recommendation = data.items[index];
-                  var previousRecommendation = (index > 0) ? data.items[index - 1] : null;
-                  var previousRecommendationLabel = previousRecommendation?.recommendationType ?? "";
-                  var widget = Recommendation(recommendation: recommendation);
-                  if (recommendation.recommendationType != previousRecommendationLabel) {
-                    return Column(
-                      children: [
-                        _SectionTitle(title: recommendation.recommendationType),
-                        widget,
-                      ],
-                    );
-                  }
-                  return widget;
-                },
-              )
+                
+                SliverFillRemaining(
+                  child: PagingHelperView(
+                    provider: provider,
+                    futureRefreshable: provider.future,
+                    notifierRefreshable: provider.notifier,
+                    contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
+                      itemCount: widgetCount,
+                      reverse: false,
+                      itemBuilder: (context, index) {
+                         if (index == widgetCount - 1) {
+                          return endItemView;
+                        }
+                        var recommendation = data.items[index];
+                        var previousRecommendation = (index > 0) ? data.items[index - 1] : null;
+                        var previousRecommendationLabel = previousRecommendation?.recommendationType ?? "";
+                        var widget = Recommendation(recommendation: recommendation);
+                        if (recommendation.recommendationType != previousRecommendationLabel) {
+                          return Column(
+                            children: [
+                              _SectionTitle(title: recommendation.recommendationType),
+                              widget,
+                            ],
+                          );
+                        }
+                        return widget;
+                      },
+                    )
+                  ),
+                ),
+              ],
+            ),
+        ),
+        RecommendationGroupTraversal(
+          widget: widget, 
+          groupAt: groupAt,
+          backAction: () {
+            setState(() {
+              groupAt = (groupAt - 1) % widget.recommendationGroups.length;
+            });
+          },
+          forwardAction: () {
+            setState(() {
+              groupAt = (groupAt + 1) % widget.recommendationGroups.length;
+            });
+          },
+        )
+      ],
+    );
+  }
+}
+
+class RecommendationGroupTraversal extends StatelessWidget {
+  const RecommendationGroupTraversal({
+    super.key,
+    required this.widget,
+    required this.groupAt,
+    required this.backAction,
+    required this.forwardAction,
+  });
+
+  final Recommendations widget;
+  final int groupAt;
+  final VoidCallback backAction;
+  final VoidCallback forwardAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.blue.withValues(alpha: 0.1),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.blue),
+              onPressed: () {
+                backAction();
+              },
             ),
           ),
+          const SizedBox(height: 4),
+          Text(
+            widget.recommendationGroups[(groupAt - 1 + widget.recommendationGroups.length) % widget.recommendationGroups.length].title,
+            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
-      );
+      ),
+      Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.green.withValues(alpha: 0.1),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_forward, color: Colors.green),
+              onPressed: () {
+                forwardAction();
+              },
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            widget.recommendationGroups[(groupAt + 1) % widget.recommendationGroups.length].title,
+            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+          ),
+        ],
+      ),
+    ],
+  ),
+);
+
   }
 }
 
@@ -228,7 +331,7 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }
 
 class Recommendation extends ConsumerStatefulWidget {
