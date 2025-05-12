@@ -18,5 +18,6 @@ flutter emulators --launch Medium_Phone_API_35
 dart run build_runner watch --delete-conflicting-outputs
 
 flutter build apk --dart-define=backend_url=paper-prayer-af73d35b1629.herokuapp.com
+flutter install
 
 ```

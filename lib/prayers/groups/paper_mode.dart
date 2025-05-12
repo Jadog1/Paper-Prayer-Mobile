@@ -111,7 +111,7 @@ class _PaperState extends ConsumerState<Paper> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            const ScribbleDivider(color: Colors.black),
+            const Divider(),
             const SizedBox(height: 3),
             Text(formatTimestamp(timestamp),
               textAlign: TextAlign.left,
