@@ -529,7 +529,7 @@ mixin _$RelatedContact {
   @JsonKey(name: 'low_level_relationship')
   String? get lowLevelRelationship => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get label => throw _privateConstructorUsedError;
+  String? get label => throw _privateConstructorUsedError;
 
   /// Serializes this RelatedContact to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -556,7 +556,7 @@ abstract class $RelatedContactCopyWith<$Res> {
       @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
       @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
       String name,
-      String label});
+      String? label});
 }
 
 /// @nodoc
@@ -582,7 +582,7 @@ class _$RelatedContactCopyWithImpl<$Res, $Val extends RelatedContact>
     Object? highLevelRelationship = freezed,
     Object? lowLevelRelationship = freezed,
     Object? name = null,
-    Object? label = null,
+    Object? label = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -617,10 +617,10 @@ class _$RelatedContactCopyWithImpl<$Res, $Val extends RelatedContact>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      label: null == label
+      label: freezed == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -642,7 +642,7 @@ abstract class _$$RelatedContactImplCopyWith<$Res>
       @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
       @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
       String name,
-      String label});
+      String? label});
 }
 
 /// @nodoc
@@ -666,7 +666,7 @@ class __$$RelatedContactImplCopyWithImpl<$Res>
     Object? highLevelRelationship = freezed,
     Object? lowLevelRelationship = freezed,
     Object? name = null,
-    Object? label = null,
+    Object? label = freezed,
   }) {
     return _then(_$RelatedContactImpl(
       id: null == id
@@ -701,10 +701,10 @@ class __$$RelatedContactImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      label: null == label
+      label: freezed == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -752,7 +752,7 @@ class _$RelatedContactImpl
   @override
   final String name;
   @override
-  final String label;
+  final String? label;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -840,7 +840,7 @@ abstract class _RelatedContact implements RelatedContact {
       @JsonKey(name: 'low_level_relationship')
       final String? lowLevelRelationship,
       required final String name,
-      required final String label}) = _$RelatedContactImpl;
+      required final String? label}) = _$RelatedContactImpl;
 
   factory _RelatedContact.fromJson(Map<String, dynamic> json) =
       _$RelatedContactImpl.fromJson;
@@ -867,7 +867,7 @@ abstract class _RelatedContact implements RelatedContact {
   @override
   String get name;
   @override
-  String get label;
+  String? get label;
 
   /// Create a copy of RelatedContact
   /// with the given fields replaced by the non-null parameter values.

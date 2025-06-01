@@ -1,8 +1,5 @@
-
-
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +13,7 @@ import 'package:prayer_ml/prayers/groups/paper_mode_view_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/notebook_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
+import 'package:prayer_ml/prayers/groups/requests.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/utility.dart';
@@ -388,7 +386,7 @@ class ViewableRequest extends ConsumerWidget {
               const SizedBox(height: 12),
               Text("Created At: ${dateTimeToDate(request.createdAt)}", style: const TextStyle(color: Colors.grey)),
               const SizedBox(height: 4),
-              LoadableRelatedContacts(contactId: request.user.id),
+              LoadableRelatedContacts(contactId: request.user.id, relatedContactIds: request.relatedContactIds),
               LoadableCollection(requestId: request.id, contactId: request.user.id),
               LoadableBibleVerses(requestId: request.id),
             ],
@@ -483,15 +481,19 @@ class BibleVerseList extends StatelessWidget {
 
 
 class LoadableRelatedContacts extends ConsumerWidget {
-  const LoadableRelatedContacts({super.key, required this.contactId});
+  const LoadableRelatedContacts({super.key, required this.contactId, this.relatedContactIds});
 
   final int contactId;
+  final List<int>? relatedContactIds;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (relatedContactIds == null || relatedContactIds!.isEmpty) {
+      return const Text("No related contacts");
+    }
     var relatedContacts = ref.watch(fetchRelatedContactsProvider(contactId));
     return switch(relatedContacts) {
-      AsyncData(:final value) => Text(relatedContactsFullDescription(value)),
+      AsyncData(:final value) => Text(relatedContactsAsString(findRelatedContacts(value, relatedContactIds!))),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "LoadableRelatedContacts", error: error, stackTrace: stackTrace),
       _ => const Text("Loading related contacts..."),
     };
@@ -511,9 +513,9 @@ class LoadableCollection extends ConsumerWidget {
       AsyncData(:final value) => value != null ? CompactRequestCard(
             title: value.collection.title, 
             description: value.collection.description,
-            relatedContactIds: value.collection.relatedContactIds,
+            relatedContactIds: getRelatedContactIds(value.collection.relatedContacts),
             allRelatedContacts: value.relatedContacts,
-            // child: CompactRequestButtonGroup(request: value, allRelatedContacts: prayerRequestContact.relatedContacts),
+            child: CompactRequestButtonGroup(request: value.collection, allRelatedContacts: value.relatedContacts),
           ) : const Text("No collection"),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "LoadableCollection", error: error, stackTrace: stackTrace),
       _ => const Text("Loading collection..."),
@@ -926,7 +928,7 @@ class RecommendedPrayerRequestsView extends ConsumerWidget {
               return CompactRequestCard(
                 title: collection.title,
                 description: collection.description,
-                relatedContactIds: collection.relatedContactIds,
+                relatedContactIds: getRelatedContactIds(collection.relatedContacts),
                 allRelatedContacts: const [], 
                 compactionMode: CompactionMode.withoutRequest
               );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
+import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/shared/utility.dart';
@@ -353,7 +354,6 @@ class _RecommendationState extends ConsumerState<Recommendation> {
     var recommendation = widget.recommendation;
     var prayerCollection = recommendation.collection;
     var urgencyLabel = prayerCollection.followUpRankLabel;
-    var userName = prayerCollection.user.name;
     return Card(
       elevation: 4, // Adjust elevation for more or less shadow
       shape: RoundedRectangleBorder(
@@ -400,7 +400,7 @@ class _RecommendationState extends ConsumerState<Recommendation> {
         ),
         subtitle: AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
-          firstChild: CollectionHighLevelDetail(userName: userName, recommendation: recommendation),
+          firstChild: CollectionHighLevelDetail(recommendation: recommendation),
           secondChild: CollectionGranularDetail(prayerCollection: prayerCollection, recommendation: recommendation),
           crossFadeState: useCollectionGranularDetails ? CrossFadeState.showSecond : CrossFadeState.showFirst,
         ),
@@ -467,11 +467,9 @@ class CollectionGranularDetail extends StatelessWidget {
       ElevatedButton(
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => 
-            RequestDashboard(
-              prayerWithAll: PrayerRequestWithAll(collection: recommendation.collection, 
-              relatedContacts: [],
-            )
-          )),
+            RequestDashboardLoader(
+              collection: recommendation.collection,
+            )),
         ),
         style: ElevatedButton.styleFrom(
           minimumSize: const Size.fromHeight(40),
@@ -486,19 +484,22 @@ class CollectionGranularDetail extends StatelessWidget {
 class CollectionHighLevelDetail extends StatelessWidget {
   const CollectionHighLevelDetail({
     super.key,
-    required this.userName,
     required this.recommendation,
   });
 
-  final String userName;
   final CollectionRecommendation recommendation;
 
   @override
   Widget build(BuildContext context) {
+    Collection pc = recommendation.collection;
+    String username = pc.user.name;
+    if (pc.relatedContacts.isNotEmpty) {
+      username += " - ${relatedContactsAsString(pc.relatedContacts)}";
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(userName, textAlign: TextAlign.left,),
+        Text(username, textAlign: TextAlign.left,),
         _collectionDateInformation(recommendation),
       ],
     );
@@ -532,6 +533,16 @@ Widget _collectionDateInformation(CollectionRecommendation recommendation) {
       Row(
         children: dateRangeState,
       ),
+      // If relevancyExpirationDate is not null, show the expiration date
+      if (prayerCollection.relevancyExpirationDate != null) 
+        Row(
+          children: [
+            // Show when this collection will expire
+            const Icon(Icons.hourglass_bottom),
+            const SizedBox(width: 4),
+            Text("Expires ${dateToTextualDate(prayerCollection.relevancyExpirationDate!.toIso8601String())}"),
+          ],
+        ),
     ],
   );
 }

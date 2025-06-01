@@ -11,7 +11,7 @@ class Collection with _$Collection {
     required int id,
     @Default("") String? title,
     @JsonKey(name: 'summary') @Default("") String? description,
-    @JsonKey(name: 'related_contact_ids') @Default([]) List<int> relatedContactIds,
+    @JsonKey(name: 'related_contacts') @Default([]) List<RelatedContact> relatedContacts,
     @JsonKey(name: 'contact') required Contact user,
     @JsonKey(name: 'contact_group') required ContactGroupPairs group,
     @Default("") @JsonKey(name: 'created_at') String createdAt,
@@ -19,6 +19,7 @@ class Collection with _$Collection {
     @Default("") @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
     @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
     @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
+    @JsonKey(name: 'relevancy_expiration_date') DateTime? relevancyExpirationDate,
     double? score,
   }) = _Collection;
 

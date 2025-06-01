@@ -44,7 +44,7 @@ class RelatedContact with _$RelatedContact {
     @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
     @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
     required String name,
-    required String label,
+    required String? label,
   }) = _RelatedContact;
 
   factory RelatedContact.fromJson(Map<String, dynamic> json) => _$RelatedContactFromJson(json);

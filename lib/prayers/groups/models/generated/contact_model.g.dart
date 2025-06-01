@@ -52,7 +52,7 @@ _$RelatedContactImpl _$$RelatedContactImplFromJson(Map<String, dynamic> json) =>
       highLevelRelationship: json['high_level_relationship'] as String?,
       lowLevelRelationship: json['low_level_relationship'] as String?,
       name: json['name'] as String,
-      label: json['label'] as String,
+      label: json['label'] as String?,
     );
 
 Map<String, dynamic> _$$RelatedContactImplToJson(

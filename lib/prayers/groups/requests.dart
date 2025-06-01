@@ -77,7 +77,7 @@ class PrayerRequests extends StatelessWidget {
           return CompactRequestCard(
             title: prayerRequestContact.prayerRequests[index].title, 
             description: prayerRequestContact.prayerRequests[index].description,
-            relatedContactIds: prayerRequestContact.prayerRequests[index].relatedContactIds,
+            relatedContactIds: getRelatedContactIds(prayerRequestContact.prayerRequests[index].relatedContacts),
             allRelatedContacts: prayerRequestContact.relatedContacts,
             child: CompactRequestButtonGroup(request: prayerRequestContact.prayerRequests[index], allRelatedContacts: prayerRequestContact.relatedContacts),
           );
@@ -240,6 +240,22 @@ Future<dynamic> editPrayerRequestBottomSheet(BuildContext context, WidgetRef ref
   );
 }
 
+class RequestDashboardLoader extends ConsumerWidget {
+  const RequestDashboardLoader({super.key, required this.collection});
+
+  final Collection collection;
+  
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var viewModel = ref.watch(fetchRelatedContactsProvider(collection.user.id));
+    return switch(viewModel) {
+      AsyncData(:final value) => RequestDashboard(prayerWithAll: PrayerRequestWithAll(collection: collection, relatedContacts: value)),
+      AsyncError(:final error, :final stackTrace) => PrintError(caller: "RequestDashboardLoader", error: error, stackTrace: stackTrace),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
+  }
+}
+
 class RequestDashboard extends StatelessWidget {
   const RequestDashboard({super.key, required this.prayerWithAll});
 
@@ -250,7 +266,8 @@ class RequestDashboard extends StatelessWidget {
     var theme = Theme.of(context);
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
     var collection = prayerWithAll.collection;
-    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, collection.relatedContactIds);
+    
+    var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, getRelatedContactIds(collection.relatedContacts));
     return Column(
       children: <Widget> [
         AppBar(title: const Text("Request Dashboard")),
@@ -273,7 +290,7 @@ class RequestDashboard extends StatelessWidget {
                     Text(collection.title ?? ""),
                     Text(collection.description ?? ""),
                     Text("Created At: ${dateTimeToDate(collection.createdAt)}"),
-                    Text("Related contacts: ${relatedContactsFullDescription(relatedContacts)}"),
+                    Text("Related contacts: ${relatedContactsAsString(relatedContacts)}"),
                   ],
                 ),
               ),

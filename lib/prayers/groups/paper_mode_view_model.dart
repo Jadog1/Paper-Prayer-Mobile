@@ -6,7 +6,7 @@ import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 
 class PaperModeSharedState extends ChangeNotifier {
   ContactAndGroupPair? _selectedUser;
-  bool _aiMode = false;
+  bool _aiMode = true;
   Map<int, bool> hiddenPrayerRequests = {};
   final List<PrayerRequest> _newRequests = [
     defaultPrayerRequest(

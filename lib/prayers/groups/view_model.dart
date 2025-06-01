@@ -48,22 +48,29 @@ class PrayerRequestViewModel extends ChangeNotifier {
   }
 }
 
+List<int> getRelatedContactIds(List<RelatedContact> relatedContacts) {
+  return relatedContacts.map((contact) => contact.id).toList();
+}
+
 List<RelatedContact> findRelatedContacts(List<RelatedContact> allRelated, List<int> relatedContactIds) {
   return allRelated.where((related) => relatedContactIds.contains(related.id)).toList();
 }
 
 String relatedContactsAsString(List<RelatedContact> relatedContacts) {
   List<String> contacts = [];
-  for (var contact in relatedContacts) {
-    contacts.add("${contact.name} (${contact.highLevelRelationship})");
-  }
-  return contacts.join(", ");
-}
-
-String relatedContactsFullDescription(List<RelatedContact> relatedContacts) {
-  List<String> contacts = [];
-  for (var contact in relatedContacts) {
-    contacts.add("${contact.name} is ${contact.highLevelRelationship} and ${contact.lowLevelRelationship}. Additional info: ${contact.label}");
+  for (var relatedContact in relatedContacts) {
+    String relatedContactString = relatedContact.name;
+    if (relatedContactString.isEmpty && relatedContact.lowLevelRelationship != null && relatedContact.lowLevelRelationship!.isNotEmpty) {
+      relatedContactString = relatedContact.lowLevelRelationship!;
+    } 
+    
+    if (relatedContact.highLevelRelationship != null && relatedContact.highLevelRelationship!.isNotEmpty && relatedContact.highLevelRelationship != 'other') {
+      relatedContactString = "$relatedContactString (${relatedContact.highLevelRelationship!})";
+    }  
+    if (relatedContact.label != null && relatedContact.label!.isNotEmpty) {
+      relatedContactString = "$relatedContactString [${relatedContact.label}]";
+    }
+    contacts.add(relatedContactString.trim());
   }
   return contacts.join(", ");
 }
