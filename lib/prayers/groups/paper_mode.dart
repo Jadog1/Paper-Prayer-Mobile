@@ -74,16 +74,16 @@ class OptionsHeader extends ConsumerWidget {
                   ),
                 ],
               ),
-              TextButton.icon(
-                icon: const Icon(Icons.auto_awesome),
-                label: const Text("Follow up"),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (_) => const RecommendedPrayerRequestsLoader(),
-                  );
-                },
-              ),
+              // TextButton.icon(
+              //   icon: const Icon(Icons.auto_awesome),
+              //   label: const Text("Follow up"),
+              //   onPressed: () {
+              //     showModalBottomSheet(
+              //       context: context,
+              //       builder: (_) => const RecommendedPrayerRequestsLoader(),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),
@@ -144,7 +144,7 @@ class _PaperState extends ConsumerState<Paper> {
               }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(data.items[index-1])]);
+                children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(context, data.items[index-1])]);
             }
             var request = data.items[index];
 
@@ -159,9 +159,9 @@ class _PaperState extends ConsumerState<Paper> {
 
             if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) >= 1) {
               widgets.add(dateBreak(data.items[index-1].createdAt));
-              widgets.add(usernameBreak(data.items[index-1]));
+              widgets.add(usernameBreak(context, data.items[index-1]));
             } else if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
-              widgets.add(usernameBreak(data.items[index-1]));
+              widgets.add(usernameBreak(context, data.items[index-1]));
             }
 
             
@@ -285,16 +285,30 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
   }
 }
 
-Widget usernameBreak(PrayerRequest prayerRequest) {
+Widget usernameBreak(BuildContext context, PrayerRequest prayerRequest) {
   var name = prayerRequest.user.name;
   if (name.isEmpty) {
     name = "No name";
   }
   return PaperMarginSpace(
-    paperLine: Text(
-      name, 
-      textAlign: TextAlign.left,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    paperLine: GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (_) => RecommendedPrayerRequestsLoader(contact: prayerRequest.user),
+        );
+      },
+      child: Row(
+        children: [
+          const Icon(Icons.auto_awesome, size: 16, color: Colors.amber),
+          const SizedBox(width: 2),
+          Text(
+            name, 
+            textAlign: TextAlign.left,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -845,7 +859,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
               &&
               state.selectedUser != null
             )
-            usernameBreak(newRequests[i]),
+            usernameBreak(context, newRequests[i]),
             
           PaperBlock(
             prayerRequest: newRequests[i], 
@@ -893,15 +907,12 @@ class PaperMarginSpace extends StatelessWidget {
 }
 
 class RecommendedPrayerRequestsLoader extends ConsumerWidget {
-  const RecommendedPrayerRequestsLoader({super.key});
+  const RecommendedPrayerRequestsLoader({super.key,  required this.contact});
+  final Contact contact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var state = ref.watch(paperModeSharedStateProvider);
-    if (state.selectedUser == null) {
-      return const Text("No recommended requests");
-    }
-    var recommendedRequests = ref.watch(fetchRecommendationsProvider(state.selectedUser!.contact.id));
+    var recommendedRequests = ref.watch(fetchRecommendationsProvider(contact.id));
     return switch(recommendedRequests) {
       AsyncData(:final value) => RecommendedPrayerRequestsView(collections: value),
       AsyncError(:final error, :final stackTrace) => PrintError(caller: "PrayerRequestConsumer", error: error, stackTrace: stackTrace),
