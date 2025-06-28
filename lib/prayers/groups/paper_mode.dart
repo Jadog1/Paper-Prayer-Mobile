@@ -357,8 +357,45 @@ class ViewableRequest extends ConsumerWidget {
 
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
-      onLongPress: () {
-        state.setEditModeOverride(request.id, true);
+      onLongPress: () async {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext modalContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+          ListTile(
+            leading: const Icon(Icons.edit),
+            title: const Text('Edit'),
+            onTap: () {
+              Navigator.pop(modalContext);
+              state.setEditModeOverride(request.id, true);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete),
+            title: const Text('Delete'),
+            onTap: () async {
+              Navigator.pop(modalContext);
+              try {
+            await removeRequest(request);
+            state.hidePrayerRequest(request.id);
+              } catch (_) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Failed to delete request. Please try again later.")),
+              );
+              log("Failed to delete request: ${request.id}");
+            }
+              }
+            },
+          ),
+            ],
+          ),
+        );
+          },
+        );
       },
       child: PaperMarginSpace(
         // icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
@@ -591,6 +628,11 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       }
       if (widget.controller.text.isEmpty) {
         return KeyEventResult.handled;
+      }
+      try {
+        clearDebounceTimeout(widget.prayerRequest.id); // Let it run without waiting on this async method to return
+      } catch (e) {
+        log("Error clearing debounce timeout: $e");
       }
       state.addDefaultPrayerRequest(user);
       return KeyEventResult.handled;
