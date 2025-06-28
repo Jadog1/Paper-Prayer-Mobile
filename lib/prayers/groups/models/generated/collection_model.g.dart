@@ -21,8 +21,12 @@ _$CollectionImpl _$$CollectionImplFromJson(Map<String, dynamic> json) =>
       createdAt: json['created_at'] as String? ?? "",
       updatedAt: json['updated_at'] as String? ?? "",
       followUpRankLabel: json['follow_up_rank_label'] as String? ?? "",
-      startRangeOfEventDate: json['start_range_of_event_date'] as String?,
-      endRangeOfEventDate: json['end_range_of_event_date'] as String?,
+      startRangeOfEventDate: json['start_range_of_event_date'] == null
+          ? null
+          : DateTime.parse(json['start_range_of_event_date'] as String),
+      endRangeOfEventDate: json['end_range_of_event_date'] == null
+          ? null
+          : DateTime.parse(json['end_range_of_event_date'] as String),
       relevancyExpirationDate: json['relevancy_expiration_date'] == null
           ? null
           : DateTime.parse(json['relevancy_expiration_date'] as String),
@@ -40,8 +44,10 @@ Map<String, dynamic> _$$CollectionImplToJson(_$CollectionImpl instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'follow_up_rank_label': instance.followUpRankLabel,
-      'start_range_of_event_date': instance.startRangeOfEventDate,
-      'end_range_of_event_date': instance.endRangeOfEventDate,
+      'start_range_of_event_date':
+          instance.startRangeOfEventDate?.toIso8601String(),
+      'end_range_of_event_date':
+          instance.endRangeOfEventDate?.toIso8601String(),
       'relevancy_expiration_date':
           instance.relevancyExpirationDate?.toIso8601String(),
       'score': instance.score,

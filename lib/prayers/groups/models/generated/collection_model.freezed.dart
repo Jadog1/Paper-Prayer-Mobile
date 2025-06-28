@@ -38,9 +38,9 @@ mixin _$Collection {
   @JsonKey(name: 'follow_up_rank_label')
   String get followUpRankLabel => throw _privateConstructorUsedError;
   @JsonKey(name: 'start_range_of_event_date')
-  String? get startRangeOfEventDate => throw _privateConstructorUsedError;
+  DateTime? get startRangeOfEventDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'end_range_of_event_date')
-  String? get endRangeOfEventDate => throw _privateConstructorUsedError;
+  DateTime? get endRangeOfEventDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'relevancy_expiration_date')
   DateTime? get relevancyExpirationDate => throw _privateConstructorUsedError;
   double? get score => throw _privateConstructorUsedError;
@@ -71,8 +71,9 @@ abstract class $CollectionCopyWith<$Res> {
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'updated_at') String updatedAt,
       @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
-      @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
-      @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
+      @JsonKey(name: 'start_range_of_event_date')
+      DateTime? startRangeOfEventDate,
+      @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       DateTime? relevancyExpirationDate,
       double? score});
@@ -150,11 +151,11 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
       startRangeOfEventDate: freezed == startRangeOfEventDate
           ? _value.startRangeOfEventDate
           : startRangeOfEventDate // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       endRangeOfEventDate: freezed == endRangeOfEventDate
           ? _value.endRangeOfEventDate
           : endRangeOfEventDate // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       relevancyExpirationDate: freezed == relevancyExpirationDate
           ? _value.relevancyExpirationDate
           : relevancyExpirationDate // ignore: cast_nullable_to_non_nullable
@@ -205,8 +206,9 @@ abstract class _$$CollectionImplCopyWith<$Res>
       @JsonKey(name: 'created_at') String createdAt,
       @JsonKey(name: 'updated_at') String updatedAt,
       @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
-      @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
-      @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
+      @JsonKey(name: 'start_range_of_event_date')
+      DateTime? startRangeOfEventDate,
+      @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       DateTime? relevancyExpirationDate,
       double? score});
@@ -284,11 +286,11 @@ class __$$CollectionImplCopyWithImpl<$Res>
       startRangeOfEventDate: freezed == startRangeOfEventDate
           ? _value.startRangeOfEventDate
           : startRangeOfEventDate // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       endRangeOfEventDate: freezed == endRangeOfEventDate
           ? _value.endRangeOfEventDate
           : endRangeOfEventDate // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       relevancyExpirationDate: freezed == relevancyExpirationDate
           ? _value.relevancyExpirationDate
           : relevancyExpirationDate // ignore: cast_nullable_to_non_nullable
@@ -358,10 +360,10 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
   final String followUpRankLabel;
   @override
   @JsonKey(name: 'start_range_of_event_date')
-  final String? startRangeOfEventDate;
+  final DateTime? startRangeOfEventDate;
   @override
   @JsonKey(name: 'end_range_of_event_date')
-  final String? endRangeOfEventDate;
+  final DateTime? endRangeOfEventDate;
   @override
   @JsonKey(name: 'relevancy_expiration_date')
   final DateTime? relevancyExpirationDate;
@@ -470,9 +472,9 @@ abstract class _Collection implements Collection {
       @JsonKey(name: 'updated_at') final String updatedAt,
       @JsonKey(name: 'follow_up_rank_label') final String followUpRankLabel,
       @JsonKey(name: 'start_range_of_event_date')
-      final String? startRangeOfEventDate,
+      final DateTime? startRangeOfEventDate,
       @JsonKey(name: 'end_range_of_event_date')
-      final String? endRangeOfEventDate,
+      final DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       final DateTime? relevancyExpirationDate,
       final double? score}) = _$CollectionImpl;
@@ -507,10 +509,10 @@ abstract class _Collection implements Collection {
   String get followUpRankLabel;
   @override
   @JsonKey(name: 'start_range_of_event_date')
-  String? get startRangeOfEventDate;
+  DateTime? get startRangeOfEventDate;
   @override
   @JsonKey(name: 'end_range_of_event_date')
-  String? get endRangeOfEventDate;
+  DateTime? get endRangeOfEventDate;
   @override
   @JsonKey(name: 'relevancy_expiration_date')
   DateTime? get relevancyExpirationDate;

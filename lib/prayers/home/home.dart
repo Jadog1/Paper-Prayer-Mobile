@@ -511,14 +511,15 @@ Widget _collectionDateInformation(CollectionRecommendation recommendation) {
   Collection prayerCollection = recommendation.collection;
 
   List<Widget> dateRangeState = [];
+  
   if (todayIsBetween(prayerCollection.startRangeOfEventDate, prayerCollection.endRangeOfEventDate)) {
     dateRangeState.add(const Icon(Icons.today));
     dateRangeState.add(const SizedBox(width: 4));
-    dateRangeState.add(Expanded(child: Text("Happening now until ${dateToTextualDate(prayerCollection.endRangeOfEventDate!)}")));
+    dateRangeState.add(Expanded(child: Text("Happening now until ${dateTimeToTextualDate(prayerCollection.endRangeOfEventDate!)}")));
   } else if (prayerCollection.startRangeOfEventDate != null) {
     dateRangeState.add(const Icon(Icons.hourglass_top));
     dateRangeState.add(const SizedBox(width: 4));
-    dateRangeState.add(Expanded(child: Text("Happening ${dateToTextualDate(prayerCollection.startRangeOfEventDate!)}")));
+    dateRangeState.add(Expanded(child: Text("Happening ${dateTimeToTextualDate(prayerCollection.startRangeOfEventDate!)}")));
   }
 
   return Column(
@@ -527,7 +528,7 @@ Widget _collectionDateInformation(CollectionRecommendation recommendation) {
         children: [
           const Icon(Icons.book_outlined),
           const SizedBox(width: 4),
-          Text("Updated ${dateToTextualDate(prayerCollection.updatedAt)}"),
+          Text("Updated ${dateStringToTextualDate(prayerCollection.updatedAt)}"),
         ],
       ),
       Row(
@@ -540,7 +541,7 @@ Widget _collectionDateInformation(CollectionRecommendation recommendation) {
             // Show when this collection will expire
             const Icon(Icons.hourglass_bottom),
             const SizedBox(width: 4),
-            Text("Expires ${dateToTextualDate(prayerCollection.relevancyExpirationDate!.toIso8601String())}"),
+            Text("Expires ${dateStringToTextualDate(prayerCollection.relevancyExpirationDate!.toIso8601String())}"),
           ],
         ),
     ],

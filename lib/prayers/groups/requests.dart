@@ -2,6 +2,7 @@ import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
@@ -266,6 +267,10 @@ class RequestDashboard extends StatelessWidget {
     var theme = Theme.of(context);
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
     var collection = prayerWithAll.collection;
+    var format = DateFormat('yMd');
+    var relevancyExpirationDate = collection.relevancyExpirationDate==null ? format.format(collection.relevancyExpirationDate!.toLocal()) : "N/A";
+    var startRangeOfEventDate = collection.startRangeOfEventDate==null ? format.format(collection.startRangeOfEventDate!.toLocal()) : "N/A";
+    var endRangeOfEventDate = collection.endRangeOfEventDate==null ? format.format(collection.endRangeOfEventDate!.toLocal()) : "N/A";
     
     var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, getRelatedContactIds(collection.relatedContacts));
     return Column(
@@ -286,11 +291,89 @@ class RequestDashboard extends StatelessWidget {
               AccordionSection(
                 header: Text("Request Details", style: headerStyle),
                 content: Column(
-                  children: [
-                    Text(collection.title ?? ""),
-                    Text(collection.description ?? ""),
-                    Text("Created At: ${dateTimeToDate(collection.createdAt)}"),
-                    Text("Related contacts: ${relatedContactsAsString(relatedContacts)}"),
+                    children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                      child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title & Created At
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                collection.title ?? "",
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                // Remove overflow and maxLines to allow wrapping
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IntrinsicWidth(
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    dateTimeToDate(collection.createdAt),
+                                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 16, thickness: 1),
+                        // Description
+                        if ((collection.description ?? "").isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                          collection.description ?? "",
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14, color: Colors.black87),
+                          ),
+                        ),
+                        // Related Contacts
+                        Row(
+                        children: [
+                          Icon(Icons.people, size: 16, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Expanded(
+                          child: Text(
+                            relatedContactsAsString(relatedContacts),
+                            style: const TextStyle(fontSize: 13),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          ),
+                        ],
+                        ),
+                        const Divider(height: 16, thickness: 1),
+                        // Follow Up Rank & Sentiment
+                        Row(
+                        children: [
+                          Icon(Icons.star, size: 16, color: Colors.amber[700]),
+                          const SizedBox(width: 2),
+                          Text(collection.followUpRankLabel, style: const TextStyle(fontSize: 13)),
+                        ],
+                        ),
+                        const Divider(height: 16, thickness: 1),
+                        // Dates (compact)
+                        Wrap(
+                        spacing: 10,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Icon(Icons.event_busy, size: 16, color: Colors.red[300]),
+                          Text(relevancyExpirationDate, style: const TextStyle(fontSize: 12)),
+                          Icon(Icons.event, size: 16, color: Colors.blue[300]),
+                          Text(startRangeOfEventDate, style: const TextStyle(fontSize: 12)),
+                          Icon(Icons.event, size: 16, color: Colors.green[300]),
+                          Text(endRangeOfEventDate, style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      ],
+                      ),
+                    ),
                   ],
                 ),
               ),

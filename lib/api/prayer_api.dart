@@ -211,6 +211,36 @@ class PrayerRequestApiClient {
     final json = jsonDecode(response.body) as List;
     return json.map((verse) => BibleReferenceAndText.fromJson(verse)).toList();
   }
+
+  Future<bool> requestHasGeneratedFeatures(int requestId) async {
+    final response = await authClient.get(config.uri("/prayer_requests/has-generated/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error checking request features: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return json['has_generated'] as bool;
+  }
+
+  Future<PrayerRequest> fetchPrayerRequest(int requestId) async {
+    final response = await authClient.get(config.uri("/prayer_requests/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting prayer request: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return PrayerRequest.fromJson(json);
+  }
+
+  Future<void> clearDebounceTimeout(int requestId) async {
+    final response = await authClient.post(config.uri("/prayer_requests/clear-debounce/$requestId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error clearing debounce timeout: ${response.statusCode} - ${response.body}");
+    }
+  }
 }
 
 class CollectionsApiClient {

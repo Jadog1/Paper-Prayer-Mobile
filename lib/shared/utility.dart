@@ -18,7 +18,7 @@ int daysBetween(DateTime from, DateTime to) {
   return (to.difference(from).inHours / 24).round();
 }
 
-String dateToTextualDate(String date) {
+String dateStringToTextualDate(String date) {
   try {
     DateTime dateTime = DateTime.parse(date).toLocal();
     return timeago.format(dateTime, allowFromNow: true); // Example: 3 hours ago
@@ -27,14 +27,22 @@ String dateToTextualDate(String date) {
   }
 }
 
-bool todayIsBetween(String? start, String? end) {
+String dateTimeToTextualDate(DateTime? dateTime) {
+  if (dateTime == null) {
+    return "Invalid date";
+  }
+  dateTime = dateTime.toLocal();
+  return timeago.format(dateTime, allowFromNow: true); // Example: 3 hours ago
+}
+
+bool todayIsBetween(DateTime? start, DateTime? end) {
   if (start == null || end == null) {
     return false;
   }
   DateTime now = DateTime.now();
-  DateTime startDate = DateTime.parse(start).toLocal();
-  DateTime endDate = DateTime.parse(end).toLocal();
-  return now.isAfter(startDate) && now.isBefore(endDate);
+  start = start.toLocal();
+  end = end.toLocal();
+  return now.isAfter(start) && now.isBefore(end);
 }
 
 bool isSameDateAsToday(DateTime date) {

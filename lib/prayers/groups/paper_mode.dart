@@ -27,7 +27,7 @@ class PaperMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ref.read(paperModeSharedStateProvider).init();
+    ref.read(paperModeSharedStateProvider).startBackgroundFeatureCheck(fetchUpdatedPrayerRequest);
     return Column(
         children: [
           const OptionsHeader(),
@@ -74,16 +74,6 @@ class OptionsHeader extends ConsumerWidget {
                   ),
                 ],
               ),
-              // TextButton.icon(
-              //   icon: const Icon(Icons.auto_awesome),
-              //   label: const Text("Follow up"),
-              //   onPressed: () {
-              //     showModalBottomSheet(
-              //       context: context,
-              //       builder: (_) => const RecommendedPrayerRequestsLoader(),
-              //     );
-              //   },
-              // ),
             ],
           ),
         ),
@@ -154,6 +144,7 @@ class _PaperState extends ConsumerState<Paper> {
                 prayerRequest: request,
                 currentGroup: widget.groupContacts,
                 allowsAIMode: true,
+                newRequest: false,
               ));
             }
 
@@ -251,7 +242,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
-    var useViewableRequest = state.aiMode && widget.allowsAIMode;
+    var useViewableRequest = state.aiMode && widget.allowsAIMode && !_editFocusNode.hasFocus && !state.prayerIdsInOverrideEditMode.contains(widget.prayerRequest.id);
     var requiresUserSelection = state.selectedUser == null && widget.newRequest;
     if (requiresUserSelection || _changingUser) {
       return UserSelection(
@@ -313,63 +304,6 @@ Widget usernameBreak(BuildContext context, PrayerRequest prayerRequest) {
   );
 }
 
-class ScribbleDivider extends StatelessWidget {
-  const ScribbleDivider({
-    super.key,
-    this.color = Colors.grey,
-    this.height = 1,
-  });
-
-  final Color color;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: double.infinity,
-      child: CustomPaint(
-        painter: _ScribblePainter(color: color),
-      ),
-    );
-  }
-}
-
-class _ScribblePainter extends CustomPainter {
-  _ScribblePainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-
-    final path = Path();
-
-    // Start scribbly path from left to right
-    const wiggleHeight = 2.0;
-    const waveLength = 8.0;
-
-    path.moveTo(0, size.height / 2);
-
-    for (double x = 0; x <= size.width; x += waveLength) {
-      final y = (x ~/ waveLength) % 2 == 0
-          ? size.height / 2 - wiggleHeight
-          : size.height / 2 + wiggleHeight;
-      path.lineTo(x, y);
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-
 class ViewableRequest extends ConsumerWidget {
   const ViewableRequest({
     super.key,
@@ -388,22 +322,28 @@ class ViewableRequest extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(request.features?.title ?? "", style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(request.description, style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
-              Text("Created At: ${dateTimeToDate(request.createdAt)}", style: const TextStyle(color: Colors.grey)),
-              const SizedBox(height: 4),
-              LoadableRelatedContacts(contactId: request.user.id, relatedContactIds: request.relatedContactIds),
-              LoadableCollection(requestId: request.id, contactId: request.user.id),
-              LoadableBibleVerses(requestId: request.id),
-            ],
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.2,
+          maxChildSize: 0.75,
+          expand: false,
+          builder: (_, controller) => Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(request.features?.title ?? "", style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(request.description, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  Text("Created At: ${dateTimeToDate(request.createdAt)}", style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  LoadableRelatedContacts(contactId: request.user.id, relatedContactIds: request.relatedContactIds),
+                  LoadableCollection(requestId: request.id, contactId: request.user.id),
+                  LoadableBibleVerses(requestId: request.id),
+                ],
+              ),
           ),
         );
       },
@@ -413,9 +353,13 @@ class ViewableRequest extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summary = request.features != null ? request.features!.title : request.description;
+    var state = ref.watch(paperModeSharedStateProvider);
 
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
+      onLongPress: () {
+        state.setEditModeOverride(request.id, true);
+      },
       child: PaperMarginSpace(
         // icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
         paperLine: Expanded(
@@ -626,6 +570,14 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
         _saveState = SaveState.editing;
       } else if (_saveState == SaveState.editing && !_isFocused) {
         _saveState = SaveState.noAction;
+        if (widget.prayerRequest.id != 0) {
+          try {
+          clearDebounceTimeout(widget.prayerRequest.id); // Let it run without waiting on this async method to return
+          } catch (e) {
+            log("Error clearing debounce timeout: $e");
+          }
+          ref.read(paperModeSharedStateProvider).setEditModeOverride(widget.prayerRequest.id, false);
+        }
       }
     });
   }
@@ -865,6 +817,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
             prayerRequest: newRequests[i], 
             currentGroup: widget.currentGroup, 
             newRequest: true,
+            allowsAIMode: newRequests[i].features != null,
           ),
         ],
       ],

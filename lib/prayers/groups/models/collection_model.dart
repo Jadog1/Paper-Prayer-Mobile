@@ -17,8 +17,8 @@ class Collection with _$Collection {
     @Default("") @JsonKey(name: 'created_at') String createdAt,
     @Default("") @JsonKey(name: 'updated_at') String updatedAt,
     @Default("") @JsonKey(name: 'follow_up_rank_label') String followUpRankLabel,
-    @JsonKey(name: 'start_range_of_event_date') String? startRangeOfEventDate,
-    @JsonKey(name: 'end_range_of_event_date') String? endRangeOfEventDate,
+    @JsonKey(name: 'start_range_of_event_date') DateTime? startRangeOfEventDate,
+    @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
     @JsonKey(name: 'relevancy_expiration_date') DateTime? relevancyExpirationDate,
     double? score,
   }) = _Collection;

@@ -185,9 +185,27 @@ Future<void> removeRequest(PrayerRequest request) async {
   await prayerApi.removeRequest(request.id);
 }
 
+Future<PrayerRequest> fetchUpdatedPrayerRequest(int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.fetchPrayerRequest(requestId);
+}
+
 @riverpod
 Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(Ref ref, int requestId) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   return await prayerApi.fetchBibleVersesForPrayerRequest(requestId);
+}
+
+Future<bool> hasGeneratedFeatures(int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  return await prayerApi.requestHasGeneratedFeatures(requestId);
+}
+
+Future<void> clearDebounceTimeout(int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  await prayerApi.clearDebounceTimeout(requestId);
 }
