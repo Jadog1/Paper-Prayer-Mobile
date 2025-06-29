@@ -214,6 +214,12 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
       });
     }
   }
+
+  void focusOnEdit() {
+    if (!_editFocusNode.hasFocus) {
+      _editFocusNode.requestFocus();
+    }
+  }
   
   @override
   void initState() {
@@ -265,7 +271,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
       return const SizedBox.shrink();
     }
     if (useViewableRequest) {
-      return ViewableRequest(request: widget.prayerRequest);
+      return ViewableRequest(request: widget.prayerRequest, focusOnEdit: focusOnEdit);
     }
     return EditableRequest(
       prayerRequest: widget.prayerRequest, 
@@ -308,9 +314,11 @@ class ViewableRequest extends ConsumerWidget {
   const ViewableRequest({
     super.key,
     required this.request,
+    required this.focusOnEdit,
   });
 
   final PrayerRequest request;
+  final VoidCallback focusOnEdit;
 
   void _showDetailSheet(BuildContext context, WidgetRef ref) {
 
@@ -329,9 +337,7 @@ class ViewableRequest extends ConsumerWidget {
           expand: false,
           builder: (_, controller) => Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
                 children: [
                   Text(request.features?.title ?? "", style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
@@ -371,6 +377,9 @@ class ViewableRequest extends ConsumerWidget {
             onTap: () {
               Navigator.pop(modalContext);
               state.setEditModeOverride(request.id, true);
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                focusOnEdit();
+              });
             },
           ),
           ListTile(
