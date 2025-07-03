@@ -268,9 +268,9 @@ class RequestDashboard extends StatelessWidget {
     var headerStyle = TextStyle(fontSize: 20, color: theme.colorScheme.onPrimaryContainer);
     var collection = prayerWithAll.collection;
     var format = DateFormat('yMd');
-    var relevancyExpirationDate = collection.relevancyExpirationDate==null ? format.format(collection.relevancyExpirationDate!.toLocal()) : "N/A";
-    var startRangeOfEventDate = collection.startRangeOfEventDate==null ? format.format(collection.startRangeOfEventDate!.toLocal()) : "N/A";
-    var endRangeOfEventDate = collection.endRangeOfEventDate==null ? format.format(collection.endRangeOfEventDate!.toLocal()) : "N/A";
+    var relevancyExpirationDate = collection.relevancyExpirationDate!=null ? format.format(collection.relevancyExpirationDate!.toLocal()) : "N/A";
+    var startRangeOfEventDate = collection.startRangeOfEventDate!=null ? format.format(collection.startRangeOfEventDate!.toLocal()) : "N/A";
+    var endRangeOfEventDate = collection.endRangeOfEventDate!=null ? format.format(collection.endRangeOfEventDate!.toLocal()) : "N/A";
     
     var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts, getRelatedContactIds(collection.relatedContacts));
     return Column(
