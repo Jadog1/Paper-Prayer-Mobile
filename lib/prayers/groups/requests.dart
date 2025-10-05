@@ -418,19 +418,19 @@ class RequestDashboard extends StatelessWidget {
           children: [
             Tooltip(
               triggerMode: TooltipTriggerMode.tap,
-              message: 'Relevancy Expiration Date: The date after which this request is no longer considered relevant.',
+              message: 'The date after which this request is no longer considered relevant.',
               child: Icon(Icons.event_busy, size: 16, color: Colors.red[300]),
             ),
             Text(relevancyExpirationDate, style: const TextStyle(fontSize: 12)),
             Tooltip(
               triggerMode: TooltipTriggerMode.tap,
-              message: 'Start Range of Event Date: The earliest possible date for the event.',
+              message: 'The earliest possible date for the event.',
               child: Icon(Icons.event, size: 16, color: Colors.blue[300]),
             ),
             Text(startRangeOfEventDate, style: const TextStyle(fontSize: 12)),
             Tooltip(
               triggerMode: TooltipTriggerMode.tap,
-              message: 'End Range of Event Date: The latest possible date for the event.',
+              message: 'The latest possible date for the event.',
               child: Icon(Icons.event, size: 16, color: Colors.green[300]),
             ),
             Text(endRangeOfEventDate, style: const TextStyle(fontSize: 12)),
