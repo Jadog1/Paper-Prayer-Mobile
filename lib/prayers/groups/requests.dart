@@ -269,23 +269,53 @@ Future<dynamic> editPrayerRequestBottomSheet(
 }
 
 class RequestDashboardLoader extends ConsumerWidget {
-  const RequestDashboardLoader({super.key, required this.collection});
+  const RequestDashboardLoader({
+    super.key,
+    this.collection,
+    this.collectionId,
+    this.userId,
+    this.relatedContacts,
+  }) : assert(
+    (collection != null && relatedContacts != null) || (collectionId != null && userId != null) || collection != null,
+    'Either (collection and relatedContacts), collectionId and userId, or just collection must be provided'
+  );
 
-  final Collection collection;
+  final Collection? collection;
+  final int? collectionId;
+  final int? userId;
+  final List<RelatedContact>? relatedContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchRelatedContactsProvider(collection.user.id));
-    return switch (viewModel) {
-      AsyncData(:final value) => RequestDashboard(
+    if (collection != null && relatedContacts != null) {
+      return RequestDashboard(
           prayerWithAll: PrayerRequestWithAll(
-              collection: collection, relatedContacts: value)),
-      AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "RequestDashboardLoader",
-          error: error,
-          stackTrace: stackTrace),
-      _ => const Center(child: CircularProgressIndicator()),
-    };
+              collection: collection!, relatedContacts: relatedContacts!));
+    } else if (collection != null) {
+      var viewModel = ref.watch(fetchRelatedContactsProvider(collection!.user.id));
+      return switch (viewModel) {
+        AsyncData(:final value) => RequestDashboard(
+            prayerWithAll: PrayerRequestWithAll(
+                collection: collection!, relatedContacts: value)),
+        AsyncError(:final error, :final stackTrace) => PrintError(
+            caller: "RequestDashboardLoader",
+            error: error,
+            stackTrace: stackTrace),
+        _ => const CreativeLoadingScreen(),
+      };
+    } else {
+      var provider = ref.watch(fetchCollectionWithContactsProvider(collectionId!, userId!));
+      return switch (provider) {
+        AsyncData(:final value) => RequestDashboard(
+            prayerWithAll: PrayerRequestWithAll(
+                collection: value.collection, relatedContacts: value.relatedContacts)),
+        AsyncError(:final error, :final stackTrace) => PrintError(
+            caller: "RequestDashboardLoader",
+            error: error,
+            stackTrace: stackTrace),
+        _ => const CreativeLoadingScreen(),
+      };
+    }
   }
 }
 
@@ -437,6 +467,64 @@ class RequestDashboard extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class CreativeLoadingScreen extends StatefulWidget {
+  const CreativeLoadingScreen({super.key});
+
+  @override
+  State<CreativeLoadingScreen> createState() => _CreativeLoadingScreenState();
+}
+
+class _CreativeLoadingScreenState extends State<CreativeLoadingScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FadeTransition(
+            opacity: _animation,
+            child: const Icon(
+              Icons.book,
+              size: 64,
+              color: Colors.blue,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Loading your prayer collection...',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Preparing thoughts and prayers',
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+        ],
+      ),
     );
   }
 }

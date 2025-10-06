@@ -18,4 +18,7 @@ To do this, we will want to go to ./lib/prayers/home/home.dart. This contains th
    - At the top, show a title of "Paper Prayer".
       - Under it, it should have buttons to open current recommendations
    - At the bottom, keep it blank for now. I will be adding a way to view latest updated requests later.
-4. Add a new view for current recommendations. Similar to how 
+4. Add a new view for current recommendations. Similar to how the paper_mode.dart file maintains a clean implementation, we should also do something similar for displaying our recommendations. For each recommendation, it uses the PaginatedCollectionRecommendation. We should use a cursor pagination pattern here. That can be defined from the repo like PaginatedPrayerRequestsNotifier.
+   - For each collection row, it should show the collection title, and below it as a subtitle font, it should show the summary.
+   - When you tap on the collection, it should drop down with the list of 5 most recent prayer requests highlights. That can be found on the `prayerRequest.features.highlights`. While it's performing the API search, it should show the user it is loading with a loading indicator where the 5 highlights would be. Each highlight should only be one line, and if it overflows, it should be truncated with an ellipsis.
+   - At the bottom of the list of highlights, it should have a button to "View All Requests". When tapped, it should open a new page that shows all the requests for that collection.
