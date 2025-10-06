@@ -44,7 +44,29 @@ class NewHomePageConsumer extends ConsumerWidget {
                 ),
               ),
               
-              const SizedBox(height: 40),
+              const SizedBox(height: 12),
+              
+              // Subtitle/Description
+              Text(
+                "Prayer requests to follow up on",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              
+              const SizedBox(height: 8),
+              
+              // Divider to separate header from content
+              Divider(
+                height: 32,
+                thickness: 1.5,
+                color: Colors.blue[100],
+                indent: 40,
+                endIndent: 40,
+              ),
               
               // Recommendations Section
               Expanded(
@@ -78,8 +100,15 @@ class NewHomePageConsumer extends ConsumerWidget {
                 ),
               ),
               
+              // Visual separator before bottom section
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.grey[300],
+              ),
+              
               // Quick add text field (uneditable placeholder)
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               TextField(
                 enabled: false,
                 decoration: InputDecoration(
@@ -97,7 +126,7 @@ class NewHomePageConsumer extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -117,57 +146,50 @@ class _RecommendationGroupButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              // Icon
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.blueAccent.withValues(alpha: 0.1),
-                child: _getIconForGroup(group.icon),
-              ),
-              const SizedBox(width: 16),
-              
-              // Title and description
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      group.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
+        child: Row(
+          children: [
+            // Simple icon without background
+            Icon(
+              _getIconForGroup(group.icon).icon,
+              color: _getIconColor(group.icon),
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            
+            // Title and description
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group.title,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      group.description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    group.description,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
                     ),
-                  ],
-                ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-              
-              // Arrow icon
-              const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
-            ],
-          ),
+            ),
+            
+            // Simple arrow
+            Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
+          ],
         ),
       ),
     );
@@ -176,11 +198,22 @@ class _RecommendationGroupButton extends StatelessWidget {
   Icon _getIconForGroup(String iconType) {
     switch (iconType) {
       case "priority":
-        return const Icon(Icons.notification_important, color: Colors.blueAccent, size: 28);
+        return const Icon(Icons.notification_important);
       case "contact":
-        return const Icon(Icons.person, color: Colors.green, size: 28);
+        return const Icon(Icons.person);
       default:
-        return const Icon(Icons.question_mark, color: Colors.grey, size: 28);
+        return const Icon(Icons.question_mark);
+    }
+  }
+
+  Color _getIconColor(String iconType) {
+    switch (iconType) {
+      case "priority":
+        return Colors.blueAccent;
+      case "contact":
+        return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 }
