@@ -20,21 +20,40 @@ import 'package:prayer_ml/shared/utility.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 
+// Configuration class for modularity
+class PaperModeConfig {
+  const PaperModeConfig({
+    this.readOnly = false,
+    this.showHeader = true,
+    this.contactId,
+  });
+
+  final bool readOnly;
+  final bool showHeader;
+  final int? contactId;
+}
+
 class PaperMode extends ConsumerWidget {
-  const PaperMode({super.key, required this.currentGroup});
+  const PaperMode({
+    super.key,
+    required this.currentGroup,
+    this.config = const PaperModeConfig(),
+  });
 
   final GroupContacts currentGroup;
+  final PaperModeConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.read(paperModeSharedStateProvider).startBackgroundFeatureCheck(fetchUpdatedPrayerRequest);
     return Column(
         children: [
-          const OptionsHeader(),
+          if (config.showHeader) 
+            OptionsHeader(config: config),
           Expanded(
             child:Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child:  Paper(groupContacts: currentGroup),
+              child:  Paper(groupContacts: currentGroup, config: config),
             ),
           ),
         ],
@@ -43,7 +62,9 @@ class PaperMode extends ConsumerWidget {
 } 
 
 class OptionsHeader extends ConsumerWidget {
-  const OptionsHeader({super.key});
+  const OptionsHeader({super.key, required this.config});
+
+  final PaperModeConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,9 +104,14 @@ class OptionsHeader extends ConsumerWidget {
 }
 
 class Paper extends ConsumerStatefulWidget {
-  const Paper({super.key, required this.groupContacts});
+  const Paper({
+    super.key,
+    required this.groupContacts,
+    required this.config,
+  });
 
   final GroupContacts groupContacts;
+  final PaperModeConfig config;
 
   @override
   ConsumerState<Paper> createState() => _PaperState();
@@ -113,68 +139,80 @@ class _PaperState extends ConsumerState<Paper> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.groupContacts.group.id);
+    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.groupContacts.group.id, widget.config.contactId);
     var state = ref.watch(paperModeSharedStateProvider);
     return PagingHelperView(
         provider: provider,
         futureRefreshable: provider.future,
         notifierRefreshable: provider.notifier,
-        contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
-          itemCount: widgetCount,
-          reverse: true,
-          itemBuilder: (context, index) {
-            // if the index is last, then
-            // return the end item view.
-            if (index == widgetCount - 1) {
-              if (data.items.isEmpty) {
-                return NewRequestsManager(
-                  previousRequest: null,
-                  currentGroup: widget.groupContacts,
+        contentBuilder: (data, widgetCount, endItemView) {
+          var filteredItems = widget.config.contactId != null ? data.items.where((r) => r.user.id == widget.config.contactId).toList() : data.items;
+          return ListView.builder(
+            itemCount: filteredItems.length + 1,
+            reverse: true,
+            itemBuilder: (context, index) {
+              if (index == filteredItems.length) {
+                if (filteredItems.isEmpty) {
+                  return widget.config.readOnly
+                      ? const SizedBox.shrink()
+                      : NewRequestsManager(
+                          previousRequest: null,
+                          currentGroup: widget.groupContacts,
+                          config: widget.config,
+                        );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    endItemView,
+                    dateBreak(filteredItems.last.createdAt),
+                    usernameBreak(context, filteredItems.last)
+                  ],
                 );
               }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [endItemView, dateBreak(data.items[index-1].createdAt), usernameBreak(context, data.items[index-1])]);
-            }
-            var request = data.items[index];
+              var request = filteredItems[index];
 
-            List<Widget> widgets = [];
-            if (state.hiddenPrayerRequests.containsKey(request.id) == false) {
-              widgets.add(PaperBlock(
-                prayerRequest: request,
-                currentGroup: widget.groupContacts,
-                allowsAIMode: true,
-                newRequest: false,
-              ));
-            }
-
-            if (index > 0 && daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.parse(data.items[index-1].createdAt)) >= 1) {
-              widgets.add(dateBreak(data.items[index-1].createdAt));
-              widgets.add(usernameBreak(context, data.items[index-1]));
-            } else if (index > 0 && data.items[index].user.id != data.items[index-1].user.id) {
-              widgets.add(usernameBreak(context, data.items[index-1]));
-            }
-
-            
-            if (index == 0) {
-              PrayerRequest? previousRequest;
-              if (daysBetween(DateTime.parse(data.items[index].createdAt), DateTime.now()) >= 1) {
-                widgets.add(dateBreak(DateTime.now().toIso8601String()));
-                previousRequest = data.items[index];
+              List<Widget> widgets = [];
+              if (state.hiddenPrayerRequests.containsKey(request.id) == false) {
+                widgets.add(PaperBlock(
+                  prayerRequest: request,
+                  currentGroup: widget.groupContacts,
+                  config: widget.config,
+                  allowsAIMode: true,
+                  newRequest: false,
+                ));
               }
 
-              widgets.add(NewRequestsManager(
-                previousRequest: previousRequest,
-                currentGroup: widget.groupContacts,
-              )); // New unsaved entry
-            }
+              if (index > 0 && daysBetween(DateTime.parse(filteredItems[index].createdAt), DateTime.parse(filteredItems[index - 1].createdAt)) >= 1) {
+                widgets.add(dateBreak(filteredItems[index - 1].createdAt));
+                widgets.add(usernameBreak(context, filteredItems[index - 1]));
+              } else if (index > 0 && filteredItems[index].user.id != filteredItems[index - 1].user.id) {
+                widgets.add(usernameBreak(context, filteredItems[index - 1]));
+              }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: widgets,
-            );
-          },
-        ),
+              if (index == 0) {
+                PrayerRequest? previousRequest;
+                if (daysBetween(DateTime.parse(filteredItems[index].createdAt), DateTime.now()) >= 1) {
+                  widgets.add(dateBreak(DateTime.now().toIso8601String()));
+                  previousRequest = filteredItems[index];
+                }
+
+                if (!widget.config.readOnly) {
+                  widgets.add(NewRequestsManager(
+                    previousRequest: previousRequest,
+                    currentGroup: widget.groupContacts,
+                    config: widget.config,
+                  ));
+                }
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widgets,
+              );
+            },  
+        );
+      },
     );
   }
 }
@@ -188,12 +226,13 @@ class _PaperState extends ConsumerState<Paper> {
 // Additionally, if a user taps and holds on a block, it should animate to swap between view/edit mode.
 class PaperBlock extends ConsumerStatefulWidget {
   const PaperBlock({super.key, 
-    required this.prayerRequest, required this.currentGroup,
+    required this.prayerRequest, required this.currentGroup, required this.config,
     this.allowsAIMode = false, this.newRequest = false,
   });
 
   final PrayerRequest prayerRequest;
   final GroupContacts currentGroup;
+  final PaperModeConfig config;
   final bool allowsAIMode;
   final bool newRequest;
 
@@ -230,7 +269,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
     _controller.addListener(() {
       onChange(_controller.text);
     });
-    if (widget.prayerRequest.id == 0) {
+    if (widget.prayerRequest.id == 0 && !widget.config.readOnly) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _editFocusNode.requestFocus();
       });
@@ -248,8 +287,9 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(paperModeSharedStateProvider);
-    var useViewableRequest = state.aiMode && widget.allowsAIMode && !_editFocusNode.hasFocus && !state.prayerIdsInOverrideEditMode.contains(widget.prayerRequest.id);
-    var requiresUserSelection = state.selectedUser == null && widget.newRequest;
+    var useViewableRequest = widget.config.readOnly ||
+        (state.aiMode && widget.allowsAIMode && !_editFocusNode.hasFocus && !state.prayerIdsInOverrideEditMode.contains(widget.prayerRequest.id));
+    var requiresUserSelection = !widget.config.readOnly && state.selectedUser == null && widget.newRequest;
     if (requiresUserSelection || _changingUser) {
       return UserSelection(
         currentGroup: widget.currentGroup,
@@ -271,7 +311,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
       return const SizedBox.shrink();
     }
     if (useViewableRequest) {
-      return ViewableRequest(request: widget.prayerRequest, focusOnEdit: focusOnEdit);
+      return ViewableRequest(request: widget.prayerRequest, focusOnEdit: widget.config.readOnly ? null : focusOnEdit);
     }
     return EditableRequest(
       prayerRequest: widget.prayerRequest, 
@@ -314,11 +354,11 @@ class ViewableRequest extends ConsumerWidget {
   const ViewableRequest({
     super.key,
     required this.request,
-    required this.focusOnEdit,
+    this.focusOnEdit,
   });
 
   final PrayerRequest request;
-  final VoidCallback focusOnEdit;
+  final VoidCallback? focusOnEdit;
 
   void _showDetailSheet(BuildContext context, WidgetRef ref) {
 
@@ -363,7 +403,7 @@ class ViewableRequest extends ConsumerWidget {
 
     return InkWell(
       onTap: () => _showDetailSheet(context, ref),
-      onLongPress: () async {
+      onLongPress: focusOnEdit != null ? () async {
         showModalBottomSheet(
           context: context,
           builder: (BuildContext modalContext) {
@@ -378,7 +418,7 @@ class ViewableRequest extends ConsumerWidget {
               Navigator.pop(modalContext);
               state.setEditModeOverride(request.id, true);
               SchedulerBinding.instance.addPostFrameCallback((_) {
-                focusOnEdit();
+                focusOnEdit!();
               });
             },
           ),
@@ -405,7 +445,7 @@ class ViewableRequest extends ConsumerWidget {
         );
           },
         );
-      },
+      } : null,
       child: PaperMarginSpace(
         // icon: const Icon(Icons.info_outline, size: 16, color: Colors.grey),
         paperLine: Expanded(
@@ -816,10 +856,11 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
 // NewRequestsManager is a widget that manages new requests created by the user at the bottom of the page.
 // It handles the state of who the current request is for and displaying all the newly created requests.
 class NewRequestsManager extends ConsumerStatefulWidget {
-  const NewRequestsManager({super.key, required this.currentGroup, required this.previousRequest});
+  const NewRequestsManager({super.key, required this.currentGroup, required this.previousRequest, required this.config});
 
   final GroupContacts currentGroup;
   final PrayerRequest? previousRequest;
+  final PaperModeConfig config;
 
   @override
   ConsumerState<NewRequestsManager> createState() => _NewRequestsManagerState();
@@ -867,6 +908,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
           PaperBlock(
             prayerRequest: newRequests[i], 
             currentGroup: widget.currentGroup, 
+            config: widget.config,
             newRequest: true,
             allowsAIMode: newRequests[i].features != null,
           ),
