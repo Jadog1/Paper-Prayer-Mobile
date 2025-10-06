@@ -50,3 +50,25 @@ class CollectionRecommendation with _$CollectionRecommendation {
 
   factory CollectionRecommendation.fromJson(Map<String, dynamic> json) => _$CollectionRecommendationFromJson(json);
 }
+
+@freezed
+class HistoricalCollectionRecommendation with _$HistoricalCollectionRecommendation {
+  const factory HistoricalCollectionRecommendation({
+    required Collection collection,
+    @JsonKey(name: "recommendation_type") required String recommendationType,
+    @JsonKey(name: "for_date") required String forDate,
+  }) = _HistoricalCollectionRecommendation;
+
+  factory HistoricalCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$HistoricalCollectionRecommendationFromJson(json);
+}
+
+@freezed
+class PaginatedHistoricalCollectionRecommendation with _$PaginatedHistoricalCollectionRecommendation {
+  const factory PaginatedHistoricalCollectionRecommendation({
+    required List<HistoricalCollectionRecommendation> collections,
+    required CursorPagination pagination,
+    @JsonKey(name: "has_next") @Default(false) bool hasNext,
+  }) = _PaginatedHistoricalCollectionRecommendation;
+
+  factory PaginatedHistoricalCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$PaginatedHistoricalCollectionRecommendationFromJson(json);
+}

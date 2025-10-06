@@ -79,3 +79,42 @@ Map<String, dynamic> _$$CollectionRecommendationImplToJson(
       'collection': instance.collection,
       'recommendation_type': instance.recommendationType,
     };
+
+_$HistoricalCollectionRecommendationImpl
+    _$$HistoricalCollectionRecommendationImplFromJson(
+            Map<String, dynamic> json) =>
+        _$HistoricalCollectionRecommendationImpl(
+          collection:
+              Collection.fromJson(json['collection'] as Map<String, dynamic>),
+          recommendationType: json['recommendation_type'] as String,
+          forDate: json['for_date'] as String,
+        );
+
+Map<String, dynamic> _$$HistoricalCollectionRecommendationImplToJson(
+        _$HistoricalCollectionRecommendationImpl instance) =>
+    <String, dynamic>{
+      'collection': instance.collection,
+      'recommendation_type': instance.recommendationType,
+      'for_date': instance.forDate,
+    };
+
+_$PaginatedHistoricalCollectionRecommendationImpl
+    _$$PaginatedHistoricalCollectionRecommendationImplFromJson(
+            Map<String, dynamic> json) =>
+        _$PaginatedHistoricalCollectionRecommendationImpl(
+          collections: (json['collections'] as List<dynamic>)
+              .map((e) => HistoricalCollectionRecommendation.fromJson(
+                  e as Map<String, dynamic>))
+              .toList(),
+          pagination: CursorPagination.fromJson(
+              json['pagination'] as Map<String, dynamic>),
+          hasNext: json['has_next'] as bool? ?? false,
+        );
+
+Map<String, dynamic> _$$PaginatedHistoricalCollectionRecommendationImplToJson(
+        _$PaginatedHistoricalCollectionRecommendationImpl instance) =>
+    <String, dynamic>{
+      'collections': instance.collections,
+      'pagination': instance.pagination,
+      'has_next': instance.hasNext,
+    };

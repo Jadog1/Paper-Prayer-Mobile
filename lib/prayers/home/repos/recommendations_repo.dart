@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/models/shared.dart';
 import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
 import 'package:prayer_ml/shared/config.dart';
@@ -64,4 +66,51 @@ class PaginatedCollectionRecommendationNotifier extends _$PaginatedCollectionRec
       nextCursor: repository.pagination.cursor,
     );
   }
+}
+
+@riverpod
+class PaginatedHistoricalRecommendationNotifier extends _$PaginatedHistoricalRecommendationNotifier
+    with CursorPagingNotifierMixin<HistoricalCollectionRecommendation> {
+  @override
+  late int limit;
+  
+  /// Builds the initial state of the provider by fetching data with a null cursor.
+  @override
+  Future<CursorPagingData<HistoricalCollectionRecommendation>> build(int limit) {
+    this.limit = limit;
+    return fetch(cursor: null);
+  }
+
+  /// Fetches paginated historical recommendations based on the provided [cursor].
+  @override
+  Future<CursorPagingData<HistoricalCollectionRecommendation>> fetch({
+    required String? cursor
+  }) async {
+    final pagination = CursorPagination(
+      limit: limit,
+      cursor: cursor,
+    );
+    var recommendationsApi = config.recommendationsApiClient;
+    final repository = await recommendationsApi.getRecommendationHistory(pagination);
+
+    return CursorPagingData(
+      items: repository.collections,
+      hasMore: repository.hasNext,
+      nextCursor: repository.pagination.cursor,
+    );
+  }
+}
+
+@riverpod
+Future<List<int>> unresolvedFollowups(Ref ref, {int lookbackDays = 30}) async {
+  var config = Config();
+  var recommendationsApi = config.recommendationsApiClient;
+  return await recommendationsApi.getUnresolvedFollowups(lookbackDays: lookbackDays);
+}
+
+@riverpod
+Future<List<PrayerRequest>> recentPrayerRequests(Ref ref, int collectionId, {int n = 5}) async {
+  var config = Config();
+  var recommendationsApi = config.recommendationsApiClient;
+  return await recommendationsApi.getRecentPrayerRequests(collectionId, n: n);
 }

@@ -761,7 +761,7 @@ mixin _$PrayerFeatures {
   String? get emotion => throw _privateConstructorUsedError;
   String? get prayerType => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  String get highlight => throw _privateConstructorUsedError;
+  String? get highlight => throw _privateConstructorUsedError;
 
   /// Serializes this PrayerFeatures to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -784,7 +784,7 @@ abstract class $PrayerFeaturesCopyWith<$Res> {
       String? emotion,
       String? prayerType,
       String title,
-      String highlight});
+      String? highlight});
 }
 
 /// @nodoc
@@ -806,7 +806,7 @@ class _$PrayerFeaturesCopyWithImpl<$Res, $Val extends PrayerFeatures>
     Object? emotion = freezed,
     Object? prayerType = freezed,
     Object? title = null,
-    Object? highlight = null,
+    Object? highlight = freezed,
   }) {
     return _then(_value.copyWith(
       sentiment: freezed == sentiment
@@ -825,10 +825,10 @@ class _$PrayerFeaturesCopyWithImpl<$Res, $Val extends PrayerFeatures>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      highlight: null == highlight
+      highlight: freezed == highlight
           ? _value.highlight
           : highlight // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -846,7 +846,7 @@ abstract class _$$PrayerFeaturesImplCopyWith<$Res>
       String? emotion,
       String? prayerType,
       String title,
-      String highlight});
+      String? highlight});
 }
 
 /// @nodoc
@@ -866,7 +866,7 @@ class __$$PrayerFeaturesImplCopyWithImpl<$Res>
     Object? emotion = freezed,
     Object? prayerType = freezed,
     Object? title = null,
-    Object? highlight = null,
+    Object? highlight = freezed,
   }) {
     return _then(_$PrayerFeaturesImpl(
       sentiment: freezed == sentiment
@@ -885,10 +885,10 @@ class __$$PrayerFeaturesImplCopyWithImpl<$Res>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      highlight: null == highlight
+      highlight: freezed == highlight
           ? _value.highlight
           : highlight // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -903,7 +903,7 @@ class _$PrayerFeaturesImpl
       this.emotion,
       this.prayerType,
       required this.title,
-      required this.highlight});
+      this.highlight});
 
   factory _$PrayerFeaturesImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrayerFeaturesImplFromJson(json);
@@ -917,7 +917,7 @@ class _$PrayerFeaturesImpl
   @override
   final String title;
   @override
-  final String highlight;
+  final String? highlight;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -979,7 +979,7 @@ abstract class _PrayerFeatures implements PrayerFeatures {
       final String? emotion,
       final String? prayerType,
       required final String title,
-      required final String highlight}) = _$PrayerFeaturesImpl;
+      final String? highlight}) = _$PrayerFeaturesImpl;
 
   factory _PrayerFeatures.fromJson(Map<String, dynamic> json) =
       _$PrayerFeaturesImpl.fromJson;
@@ -993,7 +993,7 @@ abstract class _PrayerFeatures implements PrayerFeatures {
   @override
   String get title;
   @override
-  String get highlight;
+  String? get highlight;
 
   /// Create a copy of PrayerFeatures
   /// with the given fields replaced by the non-null parameter values.

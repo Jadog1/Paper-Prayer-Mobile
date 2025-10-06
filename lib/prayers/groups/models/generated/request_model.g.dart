@@ -70,7 +70,7 @@ _$PrayerFeaturesImpl _$$PrayerFeaturesImplFromJson(Map<String, dynamic> json) =>
       emotion: json['emotion'] as String?,
       prayerType: json['prayerType'] as String?,
       title: json['title'] as String,
-      highlight: json['highlight'] as String,
+      highlight: json['highlight'] as String?,
     );
 
 Map<String, dynamic> _$$PrayerFeaturesImplToJson(
