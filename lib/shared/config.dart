@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:prayer_ml/api/account_api.dart';
 import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/api/notebook_api.dart';
 import 'package:prayer_ml/api/prayer_api.dart';
@@ -13,6 +14,7 @@ class Config {
   late CollectionsApiClient collectionsApiClient;
   late RecommendationApiClient recommendationsApiClient;
   late NotebookApiClient notebookApiClient;
+  late AccountApiClient accountApiClient;
 
   Config() {
     var sharedClient = http.Client();
@@ -23,6 +25,7 @@ class Config {
     collectionsApiClient = CollectionsApiClient(authClient: authClient, baseUrl: apiUrl);
     recommendationsApiClient = RecommendationApiClient(authClient: authClient, baseUrl: apiUrl);
     notebookApiClient = NotebookApiClient(authClient: authClient, baseUrl: apiUrl);
+    accountApiClient = AccountApiClient(authClient: authClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {
