@@ -30,6 +30,9 @@ _$CollectionImpl _$$CollectionImplFromJson(Map<String, dynamic> json) =>
       relevancyExpirationDate: json['relevancy_expiration_date'] == null
           ? null
           : DateTime.parse(json['relevancy_expiration_date'] as String),
+      maxResolutionDate: json['max_resolution_date'] == null
+          ? null
+          : DateTime.parse(json['max_resolution_date'] as String),
       score: (json['score'] as num?)?.toDouble(),
     );
 
@@ -50,5 +53,6 @@ Map<String, dynamic> _$$CollectionImplToJson(_$CollectionImpl instance) =>
           instance.endRangeOfEventDate?.toIso8601String(),
       'relevancy_expiration_date':
           instance.relevancyExpirationDate?.toIso8601String(),
+      'max_resolution_date': instance.maxResolutionDate?.toIso8601String(),
       'score': instance.score,
     };

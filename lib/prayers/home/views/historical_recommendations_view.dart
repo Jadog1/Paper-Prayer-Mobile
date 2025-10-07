@@ -1,0 +1,210 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/requests.dart';
+import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
+import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
+import 'package:prayer_ml/shared/utility.dart';
+import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
+
+class HistoricalRecommendationsView extends ConsumerWidget {
+  const HistoricalRecommendationsView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = paginatedHistoricalRecommendationNotifierProvider(10);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Historical Recommendations"),
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: PagingHelperView(
+          provider: provider,
+          futureRefreshable: provider.future,
+          notifierRefreshable: provider.notifier,
+          contentBuilder: (data, widgetCount, endItemView) => ListView.builder(
+            itemCount: widgetCount,
+            itemBuilder: (context, index) {
+              if (index == widgetCount - 1) {
+                return endItemView;
+              }
+              final historicalRecommendation = data.items[index];
+              return _HistoricalCollectionCard(
+                historicalRecommendation: historicalRecommendation,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HistoricalCollectionCard extends StatelessWidget {
+  final HistoricalCollectionRecommendation historicalRecommendation;
+
+  const _HistoricalCollectionCard({required this.historicalRecommendation});
+
+  @override
+  Widget build(BuildContext context) {
+    final collection = historicalRecommendation.collection;
+    
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => RequestDashboardLoader(
+              collection: collection,
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Collection header with notebook-style left margin
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Left margin line (like notebook paper) - with accent color
+                  Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: 3,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.purple[300]!, Colors.purple[200]!],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(1.5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  
+                  // Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Date badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.purple[50],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            dateStringToTextualDate(historicalRecommendation.forDate),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.purple[800],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Collection title
+                        Text(
+                          collection.title ?? "Untitled",
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Who is being prayed for
+                        _PrayingForText(collection: collection),
+                        const SizedBox(height: 6),
+                        // Collection summary
+                        if (collection.description != null && collection.description!.isNotEmpty)
+                          Text(
+                            collection.description!,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                              height: 1.4,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Arrow icon
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey[400],
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Subtle divider between collections
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.grey[200],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PrayingForText extends StatelessWidget {
+  final Collection collection;
+
+  const _PrayingForText({required this.collection});
+
+  @override
+  Widget build(BuildContext context) {
+    String prayingFor = collection.user.name;
+    if (collection.relatedContacts.isNotEmpty) {
+      final relatedNames = collection.relatedContacts
+          .map((contact) => contact.name)
+          .join(", ");
+      prayingFor += " · $relatedNames";
+    }
+
+    return Row(
+      children: [
+        Icon(Icons.person_outline, size: 14, color: Colors.purple[700]),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            prayingFor,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.purple[700],
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}

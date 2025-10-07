@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/home/current_recommendations.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
+import 'package:prayer_ml/prayers/home/views/historical_recommendations_view.dart';
+import 'package:prayer_ml/prayers/home/views/unresolved_followups_view.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class NewHomePage extends ConsumerWidget {
@@ -100,6 +102,10 @@ class NewHomePageConsumer extends ConsumerWidget {
                 ),
               ),
               
+              // Additional view buttons
+              const SizedBox(height: 8),
+              _AdditionalViewButtons(),
+              
               // Visual separator before bottom section
               Divider(
                 height: 1,
@@ -130,6 +136,64 @@ class NewHomePageConsumer extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AdditionalViewButtons extends StatelessWidget {
+  const _AdditionalViewButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const UnresolvedFollowupsView(lookbackDays: 30),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.follow_the_signs_outlined, size: 18),
+              label: const Text(
+                "Unresolved",
+                style: TextStyle(fontSize: 14),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.orange[700],
+                side: BorderSide(color: Colors.orange[300]!),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const HistoricalRecommendationsView(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.history, size: 18),
+              label: const Text(
+                "History",
+                style: TextStyle(fontSize: 14),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.purple[700],
+                side: BorderSide(color: Colors.purple[300]!),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

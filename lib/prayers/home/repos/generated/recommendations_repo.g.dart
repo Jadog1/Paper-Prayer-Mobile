@@ -6,8 +6,8 @@ part of '../recommendations_repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$unresolvedFollowupsHash() =>
-    r'a6ea0e178dfc92884dcfc524286e9afc8084df07';
+String _$recentPrayerRequestsHash() =>
+    r'aa3cde63b6986542d5e25dbec60c2790f6d31024';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,139 +29,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-/// See also [unresolvedFollowups].
-@ProviderFor(unresolvedFollowups)
-const unresolvedFollowupsProvider = UnresolvedFollowupsFamily();
-
-/// See also [unresolvedFollowups].
-class UnresolvedFollowupsFamily extends Family<AsyncValue<List<int>>> {
-  /// See also [unresolvedFollowups].
-  const UnresolvedFollowupsFamily();
-
-  /// See also [unresolvedFollowups].
-  UnresolvedFollowupsProvider call({
-    int lookbackDays = 30,
-  }) {
-    return UnresolvedFollowupsProvider(
-      lookbackDays: lookbackDays,
-    );
-  }
-
-  @override
-  UnresolvedFollowupsProvider getProviderOverride(
-    covariant UnresolvedFollowupsProvider provider,
-  ) {
-    return call(
-      lookbackDays: provider.lookbackDays,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'unresolvedFollowupsProvider';
-}
-
-/// See also [unresolvedFollowups].
-class UnresolvedFollowupsProvider extends AutoDisposeFutureProvider<List<int>> {
-  /// See also [unresolvedFollowups].
-  UnresolvedFollowupsProvider({
-    int lookbackDays = 30,
-  }) : this._internal(
-          (ref) => unresolvedFollowups(
-            ref as UnresolvedFollowupsRef,
-            lookbackDays: lookbackDays,
-          ),
-          from: unresolvedFollowupsProvider,
-          name: r'unresolvedFollowupsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$unresolvedFollowupsHash,
-          dependencies: UnresolvedFollowupsFamily._dependencies,
-          allTransitiveDependencies:
-              UnresolvedFollowupsFamily._allTransitiveDependencies,
-          lookbackDays: lookbackDays,
-        );
-
-  UnresolvedFollowupsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.lookbackDays,
-  }) : super.internal();
-
-  final int lookbackDays;
-
-  @override
-  Override overrideWith(
-    FutureOr<List<int>> Function(UnresolvedFollowupsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: UnresolvedFollowupsProvider._internal(
-        (ref) => create(ref as UnresolvedFollowupsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        lookbackDays: lookbackDays,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<int>> createElement() {
-    return _UnresolvedFollowupsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is UnresolvedFollowupsProvider &&
-        other.lookbackDays == lookbackDays;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, lookbackDays.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin UnresolvedFollowupsRef on AutoDisposeFutureProviderRef<List<int>> {
-  /// The parameter `lookbackDays` of this provider.
-  int get lookbackDays;
-}
-
-class _UnresolvedFollowupsProviderElement
-    extends AutoDisposeFutureProviderElement<List<int>>
-    with UnresolvedFollowupsRef {
-  _UnresolvedFollowupsProviderElement(super.provider);
-
-  @override
-  int get lookbackDays => (origin as UnresolvedFollowupsProvider).lookbackDays;
-}
-
-String _$recentPrayerRequestsHash() =>
-    r'aa3cde63b6986542d5e25dbec60c2790f6d31024';
 
 /// See also [recentPrayerRequests].
 @ProviderFor(recentPrayerRequests)
@@ -678,6 +545,185 @@ class _PaginatedHistoricalRecommendationNotifierProviderElement
   @override
   int get limit =>
       (origin as PaginatedHistoricalRecommendationNotifierProvider).limit;
+}
+
+String _$paginatedUnresolvedFollowupsNotifierHash() =>
+    r'995a50ba230eefd6ef3e7d45d7670c36964ef02d';
+
+abstract class _$PaginatedUnresolvedFollowupsNotifier
+    extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<Collection>> {
+  late final int limit;
+  late final int lookbackDays;
+
+  FutureOr<CursorPagingData<Collection>> build(
+    int limit, {
+    int lookbackDays = 30,
+  });
+}
+
+/// See also [PaginatedUnresolvedFollowupsNotifier].
+@ProviderFor(PaginatedUnresolvedFollowupsNotifier)
+const paginatedUnresolvedFollowupsNotifierProvider =
+    PaginatedUnresolvedFollowupsNotifierFamily();
+
+/// See also [PaginatedUnresolvedFollowupsNotifier].
+class PaginatedUnresolvedFollowupsNotifierFamily
+    extends Family<AsyncValue<CursorPagingData<Collection>>> {
+  /// See also [PaginatedUnresolvedFollowupsNotifier].
+  const PaginatedUnresolvedFollowupsNotifierFamily();
+
+  /// See also [PaginatedUnresolvedFollowupsNotifier].
+  PaginatedUnresolvedFollowupsNotifierProvider call(
+    int limit, {
+    int lookbackDays = 30,
+  }) {
+    return PaginatedUnresolvedFollowupsNotifierProvider(
+      limit,
+      lookbackDays: lookbackDays,
+    );
+  }
+
+  @override
+  PaginatedUnresolvedFollowupsNotifierProvider getProviderOverride(
+    covariant PaginatedUnresolvedFollowupsNotifierProvider provider,
+  ) {
+    return call(
+      provider.limit,
+      lookbackDays: provider.lookbackDays,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'paginatedUnresolvedFollowupsNotifierProvider';
+}
+
+/// See also [PaginatedUnresolvedFollowupsNotifier].
+class PaginatedUnresolvedFollowupsNotifierProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<
+        PaginatedUnresolvedFollowupsNotifier, CursorPagingData<Collection>> {
+  /// See also [PaginatedUnresolvedFollowupsNotifier].
+  PaginatedUnresolvedFollowupsNotifierProvider(
+    int limit, {
+    int lookbackDays = 30,
+  }) : this._internal(
+          () => PaginatedUnresolvedFollowupsNotifier()
+            ..limit = limit
+            ..lookbackDays = lookbackDays,
+          from: paginatedUnresolvedFollowupsNotifierProvider,
+          name: r'paginatedUnresolvedFollowupsNotifierProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$paginatedUnresolvedFollowupsNotifierHash,
+          dependencies:
+              PaginatedUnresolvedFollowupsNotifierFamily._dependencies,
+          allTransitiveDependencies: PaginatedUnresolvedFollowupsNotifierFamily
+              ._allTransitiveDependencies,
+          limit: limit,
+          lookbackDays: lookbackDays,
+        );
+
+  PaginatedUnresolvedFollowupsNotifierProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.limit,
+    required this.lookbackDays,
+  }) : super.internal();
+
+  final int limit;
+  final int lookbackDays;
+
+  @override
+  FutureOr<CursorPagingData<Collection>> runNotifierBuild(
+    covariant PaginatedUnresolvedFollowupsNotifier notifier,
+  ) {
+    return notifier.build(
+      limit,
+      lookbackDays: lookbackDays,
+    );
+  }
+
+  @override
+  Override overrideWith(
+      PaginatedUnresolvedFollowupsNotifier Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: PaginatedUnresolvedFollowupsNotifierProvider._internal(
+        () => create()
+          ..limit = limit
+          ..lookbackDays = lookbackDays,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        limit: limit,
+        lookbackDays: lookbackDays,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<PaginatedUnresolvedFollowupsNotifier,
+      CursorPagingData<Collection>> createElement() {
+    return _PaginatedUnresolvedFollowupsNotifierProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PaginatedUnresolvedFollowupsNotifierProvider &&
+        other.limit == limit &&
+        other.lookbackDays == lookbackDays;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, limit.hashCode);
+    hash = _SystemHash.combine(hash, lookbackDays.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin PaginatedUnresolvedFollowupsNotifierRef
+    on AutoDisposeAsyncNotifierProviderRef<CursorPagingData<Collection>> {
+  /// The parameter `limit` of this provider.
+  int get limit;
+
+  /// The parameter `lookbackDays` of this provider.
+  int get lookbackDays;
+}
+
+class _PaginatedUnresolvedFollowupsNotifierProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<
+        PaginatedUnresolvedFollowupsNotifier, CursorPagingData<Collection>>
+    with PaginatedUnresolvedFollowupsNotifierRef {
+  _PaginatedUnresolvedFollowupsNotifierProviderElement(super.provider);
+
+  @override
+  int get limit =>
+      (origin as PaginatedUnresolvedFollowupsNotifierProvider).limit;
+  @override
+  int get lookbackDays =>
+      (origin as PaginatedUnresolvedFollowupsNotifierProvider).lookbackDays;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -43,6 +43,8 @@ mixin _$Collection {
   DateTime? get endRangeOfEventDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'relevancy_expiration_date')
   DateTime? get relevancyExpirationDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'max_resolution_date')
+  DateTime? get maxResolutionDate => throw _privateConstructorUsedError;
   double? get score => throw _privateConstructorUsedError;
 
   /// Serializes this Collection to a JSON map.
@@ -76,6 +78,7 @@ abstract class $CollectionCopyWith<$Res> {
       @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       DateTime? relevancyExpirationDate,
+      @JsonKey(name: 'max_resolution_date') DateTime? maxResolutionDate,
       double? score});
 
   $ContactCopyWith<$Res> get user;
@@ -109,6 +112,7 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
     Object? startRangeOfEventDate = freezed,
     Object? endRangeOfEventDate = freezed,
     Object? relevancyExpirationDate = freezed,
+    Object? maxResolutionDate = freezed,
     Object? score = freezed,
   }) {
     return _then(_value.copyWith(
@@ -159,6 +163,10 @@ class _$CollectionCopyWithImpl<$Res, $Val extends Collection>
       relevancyExpirationDate: freezed == relevancyExpirationDate
           ? _value.relevancyExpirationDate
           : relevancyExpirationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      maxResolutionDate: freezed == maxResolutionDate
+          ? _value.maxResolutionDate
+          : maxResolutionDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       score: freezed == score
           ? _value.score
@@ -211,6 +219,7 @@ abstract class _$$CollectionImplCopyWith<$Res>
       @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       DateTime? relevancyExpirationDate,
+      @JsonKey(name: 'max_resolution_date') DateTime? maxResolutionDate,
       double? score});
 
   @override
@@ -244,6 +253,7 @@ class __$$CollectionImplCopyWithImpl<$Res>
     Object? startRangeOfEventDate = freezed,
     Object? endRangeOfEventDate = freezed,
     Object? relevancyExpirationDate = freezed,
+    Object? maxResolutionDate = freezed,
     Object? score = freezed,
   }) {
     return _then(_$CollectionImpl(
@@ -295,6 +305,10 @@ class __$$CollectionImplCopyWithImpl<$Res>
           ? _value.relevancyExpirationDate
           : relevancyExpirationDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      maxResolutionDate: freezed == maxResolutionDate
+          ? _value.maxResolutionDate
+          : maxResolutionDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       score: freezed == score
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
@@ -320,6 +334,7 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       @JsonKey(name: 'start_range_of_event_date') this.startRangeOfEventDate,
       @JsonKey(name: 'end_range_of_event_date') this.endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date') this.relevancyExpirationDate,
+      @JsonKey(name: 'max_resolution_date') this.maxResolutionDate,
       this.score})
       : _relatedContacts = relatedContacts;
 
@@ -368,11 +383,14 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
   @JsonKey(name: 'relevancy_expiration_date')
   final DateTime? relevancyExpirationDate;
   @override
+  @JsonKey(name: 'max_resolution_date')
+  final DateTime? maxResolutionDate;
+  @override
   final double? score;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Collection(id: $id, title: $title, description: $description, relatedContacts: $relatedContacts, user: $user, group: $group, createdAt: $createdAt, updatedAt: $updatedAt, followUpRankLabel: $followUpRankLabel, startRangeOfEventDate: $startRangeOfEventDate, endRangeOfEventDate: $endRangeOfEventDate, relevancyExpirationDate: $relevancyExpirationDate, score: $score)';
+    return 'Collection(id: $id, title: $title, description: $description, relatedContacts: $relatedContacts, user: $user, group: $group, createdAt: $createdAt, updatedAt: $updatedAt, followUpRankLabel: $followUpRankLabel, startRangeOfEventDate: $startRangeOfEventDate, endRangeOfEventDate: $endRangeOfEventDate, relevancyExpirationDate: $relevancyExpirationDate, maxResolutionDate: $maxResolutionDate, score: $score)';
   }
 
   @override
@@ -393,6 +411,7 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       ..add(DiagnosticsProperty('endRangeOfEventDate', endRangeOfEventDate))
       ..add(DiagnosticsProperty(
           'relevancyExpirationDate', relevancyExpirationDate))
+      ..add(DiagnosticsProperty('maxResolutionDate', maxResolutionDate))
       ..add(DiagnosticsProperty('score', score));
   }
 
@@ -422,6 +441,8 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
             (identical(
                     other.relevancyExpirationDate, relevancyExpirationDate) ||
                 other.relevancyExpirationDate == relevancyExpirationDate) &&
+            (identical(other.maxResolutionDate, maxResolutionDate) ||
+                other.maxResolutionDate == maxResolutionDate) &&
             (identical(other.score, score) || other.score == score));
   }
 
@@ -441,6 +462,7 @@ class _$CollectionImpl with DiagnosticableTreeMixin implements _Collection {
       startRangeOfEventDate,
       endRangeOfEventDate,
       relevancyExpirationDate,
+      maxResolutionDate,
       score);
 
   /// Create a copy of Collection
@@ -477,6 +499,7 @@ abstract class _Collection implements Collection {
       final DateTime? endRangeOfEventDate,
       @JsonKey(name: 'relevancy_expiration_date')
       final DateTime? relevancyExpirationDate,
+      @JsonKey(name: 'max_resolution_date') final DateTime? maxResolutionDate,
       final double? score}) = _$CollectionImpl;
 
   factory _Collection.fromJson(Map<String, dynamic> json) =
@@ -516,6 +539,9 @@ abstract class _Collection implements Collection {
   @override
   @JsonKey(name: 'relevancy_expiration_date')
   DateTime? get relevancyExpirationDate;
+  @override
+  @JsonKey(name: 'max_resolution_date')
+  DateTime? get maxResolutionDate;
   @override
   double? get score;
 

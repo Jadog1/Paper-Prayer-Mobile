@@ -72,3 +72,14 @@ class PaginatedHistoricalCollectionRecommendation with _$PaginatedHistoricalColl
 
   factory PaginatedHistoricalCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$PaginatedHistoricalCollectionRecommendationFromJson(json);
 }
+
+@freezed
+class PaginatedUnresolvedFollowups with _$PaginatedUnresolvedFollowups {
+  const factory PaginatedUnresolvedFollowups({
+    required List<CollectionRecommendation> collections,
+    required CursorPagination pagination,
+    @JsonKey(name: "has_next") @Default(false) bool hasNext,
+  }) = _PaginatedUnresolvedFollowups;
+
+  factory PaginatedUnresolvedFollowups.fromJson(Map<String, dynamic> json) => _$PaginatedUnresolvedFollowupsFromJson(json);
+}

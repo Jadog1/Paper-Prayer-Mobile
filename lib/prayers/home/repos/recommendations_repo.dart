@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/models/shared.dart';
 import 'package:prayer_ml/prayers/home/models/recommendations_model.dart';
@@ -102,10 +103,40 @@ class PaginatedHistoricalRecommendationNotifier extends _$PaginatedHistoricalRec
 }
 
 @riverpod
-Future<List<int>> unresolvedFollowups(Ref ref, {int lookbackDays = 30}) async {
-  var config = Config();
-  var recommendationsApi = config.recommendationsApiClient;
-  return await recommendationsApi.getUnresolvedFollowups(lookbackDays: lookbackDays);
+class PaginatedUnresolvedFollowupsNotifier extends _$PaginatedUnresolvedFollowupsNotifier
+    with CursorPagingNotifierMixin<Collection> {
+  @override
+  late int limit;
+  @override
+  late int lookbackDays;
+  
+  /// Builds the initial state of the provider by fetching data with a null cursor.
+  @override
+  Future<CursorPagingData<Collection>> build(int limit, {int lookbackDays = 30}) {
+    this.limit = limit;
+    this.lookbackDays = lookbackDays;
+    return fetch(cursor: null);
+  }
+
+  /// Fetches paginated unresolved followups based on the provided [cursor].
+  @override
+  Future<CursorPagingData<Collection>> fetch({
+    required String? cursor
+  }) async {
+    final pagination = CursorPagination(
+      limit: limit,
+      cursor: cursor,
+    );
+    var recommendationsApi = config.recommendationsApiClient;
+    final repository = await recommendationsApi.getUnresolvedFollowups(pagination, lookbackDays: lookbackDays);
+    var collections = repository.collections.map((e) => e.collection).toList();
+
+    return CursorPagingData(
+      items: collections,
+      hasMore: repository.hasNext,
+      nextCursor: repository.pagination.cursor,
+    );
+  }
 }
 
 @riverpod

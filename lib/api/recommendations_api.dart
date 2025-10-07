@@ -66,18 +66,22 @@ class RecommendationApiClient{
     return PaginatedCollectionRecommendation.fromJson(jsonResponse);
   }
 
-  Future<List<int>> getUnresolvedFollowups({int lookbackDays = 30}) async {
+  Future<PaginatedUnresolvedFollowups> getUnresolvedFollowups(CursorPagination pagination, {int lookbackDays = 30}) async {
     Map<String, dynamic> queryParams = {
       "lookback_days": lookbackDays.toString(),
+      "limit": pagination.limit.toString(),
     };
+    if (pagination.cursor != null) {
+      queryParams["cursor"] = pagination.cursor.toString();
+    }
     final response = await authClient.get(config.uri("/recommendation_groups/recommendations/unresolved-followups", queryParams));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting unresolved followups: ${response.statusCode} - ${response.body}");
     }
 
-    final List<dynamic> jsonResponse = jsonDecode(response.body);
-    return jsonResponse.cast<int>();
+    final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    return PaginatedUnresolvedFollowups.fromJson(jsonResponse);
   }
 
   Future<PaginatedHistoricalCollectionRecommendation> getRecommendationHistory(CursorPagination pagination) async {

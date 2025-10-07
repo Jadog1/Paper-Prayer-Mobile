@@ -118,3 +118,23 @@ Map<String, dynamic> _$$PaginatedHistoricalCollectionRecommendationImplToJson(
       'pagination': instance.pagination,
       'has_next': instance.hasNext,
     };
+
+_$PaginatedUnresolvedFollowupsImpl _$$PaginatedUnresolvedFollowupsImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PaginatedUnresolvedFollowupsImpl(
+      collections: (json['collections'] as List<dynamic>)
+          .map((e) =>
+              CollectionRecommendation.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pagination:
+          CursorPagination.fromJson(json['pagination'] as Map<String, dynamic>),
+      hasNext: json['has_next'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$$PaginatedUnresolvedFollowupsImplToJson(
+        _$PaginatedUnresolvedFollowupsImpl instance) =>
+    <String, dynamic>{
+      'collections': instance.collections,
+      'pagination': instance.pagination,
+      'has_next': instance.hasNext,
+    };

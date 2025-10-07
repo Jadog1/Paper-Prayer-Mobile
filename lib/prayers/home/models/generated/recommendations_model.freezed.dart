@@ -1441,3 +1441,250 @@ abstract class _PaginatedHistoricalCollectionRecommendation
           _$PaginatedHistoricalCollectionRecommendationImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+PaginatedUnresolvedFollowups _$PaginatedUnresolvedFollowupsFromJson(
+    Map<String, dynamic> json) {
+  return _PaginatedUnresolvedFollowups.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PaginatedUnresolvedFollowups {
+  List<CollectionRecommendation> get collections =>
+      throw _privateConstructorUsedError;
+  CursorPagination get pagination => throw _privateConstructorUsedError;
+  @JsonKey(name: "has_next")
+  bool get hasNext => throw _privateConstructorUsedError;
+
+  /// Serializes this PaginatedUnresolvedFollowups to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PaginatedUnresolvedFollowupsCopyWith<PaginatedUnresolvedFollowups>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  factory $PaginatedUnresolvedFollowupsCopyWith(
+          PaginatedUnresolvedFollowups value,
+          $Res Function(PaginatedUnresolvedFollowups) then) =
+      _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+          PaginatedUnresolvedFollowups>;
+  @useResult
+  $Res call(
+      {List<CollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+        $Val extends PaginatedUnresolvedFollowups>
+    implements $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  _$PaginatedUnresolvedFollowupsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_value.copyWith(
+      collections: null == collections
+          ? _value.collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<CollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CursorPaginationCopyWith<$Res> get pagination {
+    return $CursorPaginationCopyWith<$Res>(_value.pagination, (value) {
+      return _then(_value.copyWith(pagination: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$PaginatedUnresolvedFollowupsImplCopyWith<$Res>
+    implements $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  factory _$$PaginatedUnresolvedFollowupsImplCopyWith(
+          _$PaginatedUnresolvedFollowupsImpl value,
+          $Res Function(_$PaginatedUnresolvedFollowupsImpl) then) =
+      __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<CollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  @override
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<$Res>
+    extends _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+        _$PaginatedUnresolvedFollowupsImpl>
+    implements _$$PaginatedUnresolvedFollowupsImplCopyWith<$Res> {
+  __$$PaginatedUnresolvedFollowupsImplCopyWithImpl(
+      _$PaginatedUnresolvedFollowupsImpl _value,
+      $Res Function(_$PaginatedUnresolvedFollowupsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_$PaginatedUnresolvedFollowupsImpl(
+      collections: null == collections
+          ? _value._collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<CollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PaginatedUnresolvedFollowupsImpl
+    with DiagnosticableTreeMixin
+    implements _PaginatedUnresolvedFollowups {
+  const _$PaginatedUnresolvedFollowupsImpl(
+      {required final List<CollectionRecommendation> collections,
+      required this.pagination,
+      @JsonKey(name: "has_next") this.hasNext = false})
+      : _collections = collections;
+
+  factory _$PaginatedUnresolvedFollowupsImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$PaginatedUnresolvedFollowupsImplFromJson(json);
+
+  final List<CollectionRecommendation> _collections;
+  @override
+  List<CollectionRecommendation> get collections {
+    if (_collections is EqualUnmodifiableListView) return _collections;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_collections);
+  }
+
+  @override
+  final CursorPagination pagination;
+  @override
+  @JsonKey(name: "has_next")
+  final bool hasNext;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'PaginatedUnresolvedFollowups(collections: $collections, pagination: $pagination, hasNext: $hasNext)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'PaginatedUnresolvedFollowups'))
+      ..add(DiagnosticsProperty('collections', collections))
+      ..add(DiagnosticsProperty('pagination', pagination))
+      ..add(DiagnosticsProperty('hasNext', hasNext));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PaginatedUnresolvedFollowupsImpl &&
+            const DeepCollectionEquality()
+                .equals(other._collections, _collections) &&
+            (identical(other.pagination, pagination) ||
+                other.pagination == pagination) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_collections), pagination, hasNext);
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PaginatedUnresolvedFollowupsImplCopyWith<
+          _$PaginatedUnresolvedFollowupsImpl>
+      get copyWith => __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<
+          _$PaginatedUnresolvedFollowupsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PaginatedUnresolvedFollowupsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PaginatedUnresolvedFollowups
+    implements PaginatedUnresolvedFollowups {
+  const factory _PaginatedUnresolvedFollowups(
+          {required final List<CollectionRecommendation> collections,
+          required final CursorPagination pagination,
+          @JsonKey(name: "has_next") final bool hasNext}) =
+      _$PaginatedUnresolvedFollowupsImpl;
+
+  factory _PaginatedUnresolvedFollowups.fromJson(Map<String, dynamic> json) =
+      _$PaginatedUnresolvedFollowupsImpl.fromJson;
+
+  @override
+  List<CollectionRecommendation> get collections;
+  @override
+  CursorPagination get pagination;
+  @override
+  @JsonKey(name: "has_next")
+  bool get hasNext;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PaginatedUnresolvedFollowupsImplCopyWith<
+          _$PaginatedUnresolvedFollowupsImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
