@@ -34,7 +34,7 @@ class GroupConsumer extends ConsumerWidget {
       AsyncData(:final value) => GroupView(groupContacts: value),
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "GroupConsumer", error: error, stackTrace: stackTrace),
-      _ => const Center(child: CircularProgressIndicator()),
+      _ => const Center(child: CreativeLoadingScreen()),
     };
   }
 }
