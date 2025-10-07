@@ -31,78 +31,214 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
   Widget build(BuildContext context) {
     var contact = widget.contact;
     var today = DateTime.now();
-    var newContact = Contact(id: contact.id, name: _name, description: _description, createdAt: today.toString(), accountId: contact.accountId);
+    var newContact = Contact(
+      id: contact.id,
+      name: _name.isEmpty ? contact.name : _name,
+      description: _description.isEmpty ? contact.description : _description,
+      createdAt: today.toString(),
+      accountId: contact.accountId,
+    );
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      child: Column(
-        children: [
-          AppBar(
-            title: const Text('Contact Settings'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          TextFormField(
-            initialValue: contact.name,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Contact Name',
-              hintText: 'Enter a new contact name',
+    final isNewContact = contact.id == 0;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isNewContact ? 'Add Member' : 'Edit Member'),
+        backgroundColor: const Color(0xFF8B7355),
+        foregroundColor: Colors.white,
+        elevation: 2,
+        actions: [
+          if (!isNewContact)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Delete Contact',
+              onPressed: () => _showDeleteContactDialog(context),
             ),
-            onChanged: (value) => setState(() {
-              _name = value; 
-            }),
-          ),
-          TextFormField(
-            initialValue: contact.description,
-            textCapitalization: TextCapitalization.sentences,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: 'Description',
-              hintText: 'Enter a new description',
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Contact Info Card
+            _buildContactInfoCard(contact),
+            
+            const SizedBox(height: 24),
+            
+            // Action Buttons
+            _buildActionButtons(context, newContact, isNewContact),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactInfoCard(Contact contact) {
+    return Card(
+      elevation: 4,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8B7355).withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      color: const Color(0xFF8B7355),
+                      size: 28,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Member Information',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
             ),
-            onChanged: (value) => setState(() {
-              _description = value; 
-            }),
-          ),
-          Row(
-            spacing: 20,
-            children: [
-              // Delete float left most
-              DeleteConfirmationButton(
-                onDelete: () async{
-                  await ref.read(groupContactsRepoProvider.notifier).removeContact(contact.id);
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                onCancel: () => Navigator.of(context).pop(),
-                deleteContext: 'contact',
-                child: const Icon(Icons.delete),
+            const SizedBox(height: 20),
+            TextFormField(
+              initialValue: contact.name,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                hintText: 'Enter member name',
+                prefixIcon: const Icon(Icons.badge),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
               ),
-              const Spacer(),
-              InteractiveLoadButton(
-                customProvider: () async {
-                  if (contact.id == 0) {
-                    await ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
-                  } else {
-                    await ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
-                  }
-                },
-                buttonText: 'Save',
-                buttonStyle: saveButtonStyle,
-                successCallback: () {
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              )
-            ],
+              onChanged: (value) => setState(() {
+                _name = value;
+              }),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: contact.description,
+              textCapitalization: TextCapitalization.sentences,
+              maxLines: 4,
+              decoration: InputDecoration(
+                labelText: 'Description',
+                hintText: 'Enter a description (optional)',
+                prefixIcon: const Icon(Icons.notes),
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
+              ),
+              onChanged: (value) => setState(() {
+                _description = value;
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, Contact newContact, bool isNewContact) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              side: const BorderSide(color: Color(0xFF8B7355)),
+              foregroundColor: const Color(0xFF8B7355),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Cancel', style: TextStyle(fontSize: 16)),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          flex: 2,
+          child: InteractiveLoadButton(
+            customProvider: () async {
+              if (widget.contact.id == 0) {
+                await ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
+              } else {
+                await ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
+              }
+            },
+            buttonText: isNewContact ? 'Add Member' : 'Save Changes',
+            buttonStyle: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B7355),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 2,
+            ),
+            successCallback: () {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showDeleteContactDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Delete Contact'),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to delete this contact? All their prayer requests will also be deleted. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await ref.read(groupContactsRepoProvider.notifier).removeContact(widget.contact.id);
+              if (context.mounted) {
+                var nav = Navigator.of(context);
+                nav.pop(); // Close dialog
+                nav.pop(); // Close settings page
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Delete'),
           ),
         ],
       ),
