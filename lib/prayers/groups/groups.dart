@@ -5,7 +5,6 @@ import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
-import 'package:prayer_ml/prayers/groups/requests.dart';
 
 import 'package:prayer_ml/shared/widgets.dart';
 // import 'view_model.dart';
@@ -392,9 +391,9 @@ class GroupNotebook extends ConsumerWidget {
                         return ListTile(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => PrayerRequestConsumer(
-                                  user: groupContacts.members[index],
-                                  group: groupContacts.group),
+                              builder: (context) => PaperMode(
+                                  config: PaperModeConfig(contactId: groupContacts.members[index].id),
+                                  currentGroup: groupContacts),
                             ),
                           ),
                           leading:

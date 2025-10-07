@@ -93,10 +93,10 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
                     color: const Color(0xFF8B7355).withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Icon(
                       Icons.person,
-                      color: const Color(0xFF8B7355),
+                      color: Color(0xFF8B7355),
                       size: 28,
                     ),
                   ),
