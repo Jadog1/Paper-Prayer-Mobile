@@ -93,7 +93,7 @@ class NewHomePageConsumer extends ConsumerWidget {
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const _RecommendationGroupsSkeleton(),
                   error: (error, stackTrace) => PrintError(
                     caller: "NewHomePage",
                     error: error,
@@ -104,7 +104,7 @@ class NewHomePageConsumer extends ConsumerWidget {
               
               // Additional view buttons
               const SizedBox(height: 8),
-              _AdditionalViewButtons(),
+              const _AdditionalViewButtons(),
               
               // Visual separator before bottom section
               Divider(
@@ -279,5 +279,149 @@ class _RecommendationGroupButton extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+}
+
+// Skeleton loading state for recommendation groups
+class _RecommendationGroupsSkeleton extends StatelessWidget {
+  const _RecommendationGroupsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 4, // Show 4 skeleton items
+      itemBuilder: (context, index) {
+        return const _RecommendationGroupSkeletonItem();
+      },
+    );
+  }
+}
+
+// Individual skeleton item with shimmer animation
+class _RecommendationGroupSkeletonItem extends StatefulWidget {
+  const _RecommendationGroupSkeletonItem();
+
+  @override
+  State<_RecommendationGroupSkeletonItem> createState() =>
+      _RecommendationGroupSkeletonItemState();
+}
+
+class _RecommendationGroupSkeletonItemState
+    extends State<_RecommendationGroupSkeletonItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+    _animation = Tween<double>(begin: -2, end: 2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              Row(
+                children: [
+                  // Icon skeleton
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Title and description skeleton
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 17,
+                          width: double.infinity * 0.6,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          height: 13,
+                          width: double.infinity * 0.85,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          height: 13,
+                          width: double.infinity * 0.7,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Arrow skeleton
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+              // Shimmer overlay
+              Positioned.fill(
+                child: ClipRect(
+                  child: Transform.translate(
+                    offset: Offset(_animation.value * 150, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            Colors.white.withOpacity(0.4),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }
