@@ -1,8 +1,13 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
+import 'package:prayer_ml/prayers/home/widgets/add_collection_update_dialog.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 /// Configuration for the expandable collection card's visual style
@@ -332,26 +337,99 @@ class _HighlightsSection extends ConsumerWidget {
         
         const SizedBox(height: 10),
         
-        // View All Requests button - more subtle
-        TextButton.icon(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => RequestDashboardLoader(
-                  collection: collection,
+        // Action buttons row
+        Row(
+          children: [
+            // Add Update button
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () => _showAddUpdateDialog(context, ref),
+                icon: const Icon(Icons.add_circle_outline, size: 16),
+                label: const Text("Add Update"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.green[700],
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  alignment: Alignment.centerLeft,
                 ),
               ),
-            );
-          },
-          icon: const Icon(Icons.open_in_new, size: 16),
-          label: const Text("View all requests"),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.blueAccent,
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-            alignment: Alignment.centerLeft,
-          ),
+            ),
+            const SizedBox(width: 8),
+            // View All Requests button
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => RequestDashboardLoader(
+                        collection: collection,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.open_in_new, size: 16),
+                label: const Text("View all requests"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  alignment: Alignment.centerLeft,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
+  }
+
+  Future<void> _showAddUpdateDialog(BuildContext context, WidgetRef ref) async {
+    final updateText = await showDialog<String>(
+      context: context,
+      builder: (context) => AddCollectionUpdateDialog(
+        collectionTitle: collection.title ?? "Untitled",
+      ),
+    );
+
+    if (updateText != null && updateText.isNotEmpty && context.mounted) {
+      try {
+        // Create a new prayer request with the update text
+        final newRequest = PrayerRequest(
+          id: 0,
+          description: updateText,
+          user: collection.user,
+          group: collection.group,
+          createdAt: DateTime.now().toIso8601String(),
+          relatedContactIds: collection.relatedContacts.map((c) => c.id).toList(),
+        );
+
+        // Save the request with the enforced collection ID
+        await saveNewRequest(newRequest, enforcedCollectionId: collection.id);
+
+        // Show success notification
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Update saved! The collection will be updated shortly.'),
+              backgroundColor: Colors.green[700],
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } catch (e) {
+        // Show error notification
+        // Log the error
+        developer.log("Error saving update: ${e.toString()}");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to save update: ${e.toString()}'),
+              backgroundColor: Colors.red[700],
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    }
   }
 }

@@ -165,8 +165,12 @@ class PrayerRequestApiClient {
     }
   }
 
-  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
-    final response = await authClient.post(config.uri("/prayer_requests/"), 
+  Future<PrayerRequest> saveRequest(PrayerRequest request, {int? enforcedCollectionId}) async {
+    final queryParams = enforcedCollectionId != null 
+        ? {"enforced_collection_id": enforcedCollectionId.toString()} 
+        : null;
+    
+    final response = await authClient.post(config.uri("/prayer_requests/", queryParams), 
       body: jsonEncode(request.toJson()), headers: {"Content-Type": "application/json"});
 
     if (response.statusCode != 200) {

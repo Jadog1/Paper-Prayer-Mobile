@@ -763,7 +763,7 @@ final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
-String _$prayerRequestRepoHash() => r'9da34ed39f54faaa95bb132da621e4bbea4b7294';
+String _$prayerRequestRepoHash() => r'08af95374c69154cccc58a9312d68c6575311588';
 
 abstract class _$PrayerRequestRepo
     extends BuildlessAutoDisposeAsyncNotifier<List<PrayerRequest>> {
