@@ -7,7 +7,7 @@ part of '../notebook_repo.dart';
 // **************************************************************************
 
 String _$fetchNotebookRequestsAtHash() =>
-    r'662d84b6f61fc5359345f3cba17b6cc9d248152e';
+    r'a6a0cc2d240d7d9c25ab4e97007e94a402a948f8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,10 +44,12 @@ class FetchNotebookRequestsAtFamily
   FetchNotebookRequestsAtProvider call(
     CursorPagination pagination,
     int groupId,
+    int? contactId,
   ) {
     return FetchNotebookRequestsAtProvider(
       pagination,
       groupId,
+      contactId,
     );
   }
 
@@ -58,6 +60,7 @@ class FetchNotebookRequestsAtFamily
     return call(
       provider.pagination,
       provider.groupId,
+      provider.contactId,
     );
   }
 
@@ -83,11 +86,13 @@ class FetchNotebookRequestsAtProvider
   FetchNotebookRequestsAtProvider(
     CursorPagination pagination,
     int groupId,
+    int? contactId,
   ) : this._internal(
           (ref) => fetchNotebookRequestsAt(
             ref as FetchNotebookRequestsAtRef,
             pagination,
             groupId,
+            contactId,
           ),
           from: fetchNotebookRequestsAtProvider,
           name: r'fetchNotebookRequestsAtProvider',
@@ -100,6 +105,7 @@ class FetchNotebookRequestsAtProvider
               FetchNotebookRequestsAtFamily._allTransitiveDependencies,
           pagination: pagination,
           groupId: groupId,
+          contactId: contactId,
         );
 
   FetchNotebookRequestsAtProvider._internal(
@@ -111,10 +117,12 @@ class FetchNotebookRequestsAtProvider
     required super.from,
     required this.pagination,
     required this.groupId,
+    required this.contactId,
   }) : super.internal();
 
   final CursorPagination pagination;
   final int groupId;
+  final int? contactId;
 
   @override
   Override overrideWith(
@@ -133,6 +141,7 @@ class FetchNotebookRequestsAtProvider
         debugGetCreateSourceHash: null,
         pagination: pagination,
         groupId: groupId,
+        contactId: contactId,
       ),
     );
   }
@@ -146,7 +155,8 @@ class FetchNotebookRequestsAtProvider
   bool operator ==(Object other) {
     return other is FetchNotebookRequestsAtProvider &&
         other.pagination == pagination &&
-        other.groupId == groupId;
+        other.groupId == groupId &&
+        other.contactId == contactId;
   }
 
   @override
@@ -154,6 +164,7 @@ class FetchNotebookRequestsAtProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, pagination.hashCode);
     hash = _SystemHash.combine(hash, groupId.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -168,6 +179,9 @@ mixin FetchNotebookRequestsAtRef
 
   /// The parameter `groupId` of this provider.
   int get groupId;
+
+  /// The parameter `contactId` of this provider.
+  int? get contactId;
 }
 
 class _FetchNotebookRequestsAtProviderElement
@@ -180,6 +194,8 @@ class _FetchNotebookRequestsAtProviderElement
       (origin as FetchNotebookRequestsAtProvider).pagination;
   @override
   int get groupId => (origin as FetchNotebookRequestsAtProvider).groupId;
+  @override
+  int? get contactId => (origin as FetchNotebookRequestsAtProvider).contactId;
 }
 
 String _$fetchNotebookCollectionsAtHash() =>
@@ -338,16 +354,18 @@ class _FetchNotebookCollectionsAtProviderElement
 }
 
 String _$paginatedPrayerRequestsNotifierHash() =>
-    r'f9b83987611f7b850de940e96ca679f91562b910';
+    r'e59cd20114ebd173979e629da9167a7f0f895de9';
 
 abstract class _$PaginatedPrayerRequestsNotifier
     extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<PrayerRequest>> {
   late final int limit;
   late final int groupId;
+  late final int? contactId;
 
   FutureOr<CursorPagingData<PrayerRequest>> build(
     int limit,
     int groupId,
+    int? contactId,
   );
 }
 
@@ -366,10 +384,12 @@ class PaginatedPrayerRequestsNotifierFamily
   PaginatedPrayerRequestsNotifierProvider call(
     int limit,
     int groupId,
+    int? contactId,
   ) {
     return PaginatedPrayerRequestsNotifierProvider(
       limit,
       groupId,
+      contactId,
     );
   }
 
@@ -380,6 +400,7 @@ class PaginatedPrayerRequestsNotifierFamily
     return call(
       provider.limit,
       provider.groupId,
+      provider.contactId,
     );
   }
 
@@ -406,10 +427,12 @@ class PaginatedPrayerRequestsNotifierProvider
   PaginatedPrayerRequestsNotifierProvider(
     int limit,
     int groupId,
+    int? contactId,
   ) : this._internal(
           () => PaginatedPrayerRequestsNotifier()
             ..limit = limit
-            ..groupId = groupId,
+            ..groupId = groupId
+            ..contactId = contactId,
           from: paginatedPrayerRequestsNotifierProvider,
           name: r'paginatedPrayerRequestsNotifierProvider',
           debugGetCreateSourceHash:
@@ -421,6 +444,7 @@ class PaginatedPrayerRequestsNotifierProvider
               PaginatedPrayerRequestsNotifierFamily._allTransitiveDependencies,
           limit: limit,
           groupId: groupId,
+          contactId: contactId,
         );
 
   PaginatedPrayerRequestsNotifierProvider._internal(
@@ -432,10 +456,12 @@ class PaginatedPrayerRequestsNotifierProvider
     required super.from,
     required this.limit,
     required this.groupId,
+    required this.contactId,
   }) : super.internal();
 
   final int limit;
   final int groupId;
+  final int? contactId;
 
   @override
   FutureOr<CursorPagingData<PrayerRequest>> runNotifierBuild(
@@ -444,6 +470,7 @@ class PaginatedPrayerRequestsNotifierProvider
     return notifier.build(
       limit,
       groupId,
+      contactId,
     );
   }
 
@@ -454,7 +481,8 @@ class PaginatedPrayerRequestsNotifierProvider
       override: PaginatedPrayerRequestsNotifierProvider._internal(
         () => create()
           ..limit = limit
-          ..groupId = groupId,
+          ..groupId = groupId
+          ..contactId = contactId,
         from: from,
         name: null,
         dependencies: null,
@@ -462,6 +490,7 @@ class PaginatedPrayerRequestsNotifierProvider
         debugGetCreateSourceHash: null,
         limit: limit,
         groupId: groupId,
+        contactId: contactId,
       ),
     );
   }
@@ -476,7 +505,8 @@ class PaginatedPrayerRequestsNotifierProvider
   bool operator ==(Object other) {
     return other is PaginatedPrayerRequestsNotifierProvider &&
         other.limit == limit &&
-        other.groupId == groupId;
+        other.groupId == groupId &&
+        other.contactId == contactId;
   }
 
   @override
@@ -484,6 +514,7 @@ class PaginatedPrayerRequestsNotifierProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, limit.hashCode);
     hash = _SystemHash.combine(hash, groupId.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -498,6 +529,9 @@ mixin PaginatedPrayerRequestsNotifierRef
 
   /// The parameter `groupId` of this provider.
   int get groupId;
+
+  /// The parameter `contactId` of this provider.
+  int? get contactId;
 }
 
 class _PaginatedPrayerRequestsNotifierProviderElement
@@ -511,6 +545,9 @@ class _PaginatedPrayerRequestsNotifierProviderElement
   @override
   int get groupId =>
       (origin as PaginatedPrayerRequestsNotifierProvider).groupId;
+  @override
+  int? get contactId =>
+      (origin as PaginatedPrayerRequestsNotifierProvider).contactId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

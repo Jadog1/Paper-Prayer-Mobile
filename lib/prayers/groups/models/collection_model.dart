@@ -20,6 +20,7 @@ class Collection with _$Collection {
     @JsonKey(name: 'start_range_of_event_date') DateTime? startRangeOfEventDate,
     @JsonKey(name: 'end_range_of_event_date') DateTime? endRangeOfEventDate,
     @JsonKey(name: 'relevancy_expiration_date') DateTime? relevancyExpirationDate,
+    @JsonKey(name: 'max_resolution_date') DateTime? maxResolutionDate,
     double? score,
   }) = _Collection;
 

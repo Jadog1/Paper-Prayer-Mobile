@@ -46,6 +46,7 @@ class PrayerFeatures with _$PrayerFeatures {
     String? emotion,
     String? prayerType,
     required String title,
+    String? highlight,
   }) = _PrayerFeatures;
 
   factory PrayerFeatures.fromJson(Map<String, dynamic> json) => _$PrayerFeaturesFromJson(json);

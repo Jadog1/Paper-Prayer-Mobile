@@ -940,3 +940,751 @@ abstract class _CollectionRecommendation implements CollectionRecommendation {
   _$$CollectionRecommendationImplCopyWith<_$CollectionRecommendationImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+HistoricalCollectionRecommendation _$HistoricalCollectionRecommendationFromJson(
+    Map<String, dynamic> json) {
+  return _HistoricalCollectionRecommendation.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HistoricalCollectionRecommendation {
+  Collection get collection => throw _privateConstructorUsedError;
+  @JsonKey(name: "recommendation_type")
+  String get recommendationType => throw _privateConstructorUsedError;
+  @JsonKey(name: "for_date")
+  String get forDate => throw _privateConstructorUsedError;
+
+  /// Serializes this HistoricalCollectionRecommendation to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $HistoricalCollectionRecommendationCopyWith<
+          HistoricalCollectionRecommendation>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HistoricalCollectionRecommendationCopyWith<$Res> {
+  factory $HistoricalCollectionRecommendationCopyWith(
+          HistoricalCollectionRecommendation value,
+          $Res Function(HistoricalCollectionRecommendation) then) =
+      _$HistoricalCollectionRecommendationCopyWithImpl<$Res,
+          HistoricalCollectionRecommendation>;
+  @useResult
+  $Res call(
+      {Collection collection,
+      @JsonKey(name: "recommendation_type") String recommendationType,
+      @JsonKey(name: "for_date") String forDate});
+
+  $CollectionCopyWith<$Res> get collection;
+}
+
+/// @nodoc
+class _$HistoricalCollectionRecommendationCopyWithImpl<$Res,
+        $Val extends HistoricalCollectionRecommendation>
+    implements $HistoricalCollectionRecommendationCopyWith<$Res> {
+  _$HistoricalCollectionRecommendationCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collection = null,
+    Object? recommendationType = null,
+    Object? forDate = null,
+  }) {
+    return _then(_value.copyWith(
+      collection: null == collection
+          ? _value.collection
+          : collection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+      recommendationType: null == recommendationType
+          ? _value.recommendationType
+          : recommendationType // ignore: cast_nullable_to_non_nullable
+              as String,
+      forDate: null == forDate
+          ? _value.forDate
+          : forDate // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CollectionCopyWith<$Res> get collection {
+    return $CollectionCopyWith<$Res>(_value.collection, (value) {
+      return _then(_value.copyWith(collection: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$HistoricalCollectionRecommendationImplCopyWith<$Res>
+    implements $HistoricalCollectionRecommendationCopyWith<$Res> {
+  factory _$$HistoricalCollectionRecommendationImplCopyWith(
+          _$HistoricalCollectionRecommendationImpl value,
+          $Res Function(_$HistoricalCollectionRecommendationImpl) then) =
+      __$$HistoricalCollectionRecommendationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {Collection collection,
+      @JsonKey(name: "recommendation_type") String recommendationType,
+      @JsonKey(name: "for_date") String forDate});
+
+  @override
+  $CollectionCopyWith<$Res> get collection;
+}
+
+/// @nodoc
+class __$$HistoricalCollectionRecommendationImplCopyWithImpl<$Res>
+    extends _$HistoricalCollectionRecommendationCopyWithImpl<$Res,
+        _$HistoricalCollectionRecommendationImpl>
+    implements _$$HistoricalCollectionRecommendationImplCopyWith<$Res> {
+  __$$HistoricalCollectionRecommendationImplCopyWithImpl(
+      _$HistoricalCollectionRecommendationImpl _value,
+      $Res Function(_$HistoricalCollectionRecommendationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collection = null,
+    Object? recommendationType = null,
+    Object? forDate = null,
+  }) {
+    return _then(_$HistoricalCollectionRecommendationImpl(
+      collection: null == collection
+          ? _value.collection
+          : collection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+      recommendationType: null == recommendationType
+          ? _value.recommendationType
+          : recommendationType // ignore: cast_nullable_to_non_nullable
+              as String,
+      forDate: null == forDate
+          ? _value.forDate
+          : forDate // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HistoricalCollectionRecommendationImpl
+    with DiagnosticableTreeMixin
+    implements _HistoricalCollectionRecommendation {
+  const _$HistoricalCollectionRecommendationImpl(
+      {required this.collection,
+      @JsonKey(name: "recommendation_type") required this.recommendationType,
+      @JsonKey(name: "for_date") required this.forDate});
+
+  factory _$HistoricalCollectionRecommendationImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$HistoricalCollectionRecommendationImplFromJson(json);
+
+  @override
+  final Collection collection;
+  @override
+  @JsonKey(name: "recommendation_type")
+  final String recommendationType;
+  @override
+  @JsonKey(name: "for_date")
+  final String forDate;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'HistoricalCollectionRecommendation(collection: $collection, recommendationType: $recommendationType, forDate: $forDate)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'HistoricalCollectionRecommendation'))
+      ..add(DiagnosticsProperty('collection', collection))
+      ..add(DiagnosticsProperty('recommendationType', recommendationType))
+      ..add(DiagnosticsProperty('forDate', forDate));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HistoricalCollectionRecommendationImpl &&
+            (identical(other.collection, collection) ||
+                other.collection == collection) &&
+            (identical(other.recommendationType, recommendationType) ||
+                other.recommendationType == recommendationType) &&
+            (identical(other.forDate, forDate) || other.forDate == forDate));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, collection, recommendationType, forDate);
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HistoricalCollectionRecommendationImplCopyWith<
+          _$HistoricalCollectionRecommendationImpl>
+      get copyWith => __$$HistoricalCollectionRecommendationImplCopyWithImpl<
+          _$HistoricalCollectionRecommendationImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HistoricalCollectionRecommendationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HistoricalCollectionRecommendation
+    implements HistoricalCollectionRecommendation {
+  const factory _HistoricalCollectionRecommendation(
+          {required final Collection collection,
+          @JsonKey(name: "recommendation_type")
+          required final String recommendationType,
+          @JsonKey(name: "for_date") required final String forDate}) =
+      _$HistoricalCollectionRecommendationImpl;
+
+  factory _HistoricalCollectionRecommendation.fromJson(
+          Map<String, dynamic> json) =
+      _$HistoricalCollectionRecommendationImpl.fromJson;
+
+  @override
+  Collection get collection;
+  @override
+  @JsonKey(name: "recommendation_type")
+  String get recommendationType;
+  @override
+  @JsonKey(name: "for_date")
+  String get forDate;
+
+  /// Create a copy of HistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$HistoricalCollectionRecommendationImplCopyWith<
+          _$HistoricalCollectionRecommendationImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PaginatedHistoricalCollectionRecommendation
+    _$PaginatedHistoricalCollectionRecommendationFromJson(
+        Map<String, dynamic> json) {
+  return _PaginatedHistoricalCollectionRecommendation.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PaginatedHistoricalCollectionRecommendation {
+  List<HistoricalCollectionRecommendation> get collections =>
+      throw _privateConstructorUsedError;
+  CursorPagination get pagination => throw _privateConstructorUsedError;
+  @JsonKey(name: "has_next")
+  bool get hasNext => throw _privateConstructorUsedError;
+
+  /// Serializes this PaginatedHistoricalCollectionRecommendation to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PaginatedHistoricalCollectionRecommendationCopyWith<
+          PaginatedHistoricalCollectionRecommendation>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PaginatedHistoricalCollectionRecommendationCopyWith<$Res> {
+  factory $PaginatedHistoricalCollectionRecommendationCopyWith(
+          PaginatedHistoricalCollectionRecommendation value,
+          $Res Function(PaginatedHistoricalCollectionRecommendation) then) =
+      _$PaginatedHistoricalCollectionRecommendationCopyWithImpl<$Res,
+          PaginatedHistoricalCollectionRecommendation>;
+  @useResult
+  $Res call(
+      {List<HistoricalCollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class _$PaginatedHistoricalCollectionRecommendationCopyWithImpl<$Res,
+        $Val extends PaginatedHistoricalCollectionRecommendation>
+    implements $PaginatedHistoricalCollectionRecommendationCopyWith<$Res> {
+  _$PaginatedHistoricalCollectionRecommendationCopyWithImpl(
+      this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_value.copyWith(
+      collections: null == collections
+          ? _value.collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<HistoricalCollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CursorPaginationCopyWith<$Res> get pagination {
+    return $CursorPaginationCopyWith<$Res>(_value.pagination, (value) {
+      return _then(_value.copyWith(pagination: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$PaginatedHistoricalCollectionRecommendationImplCopyWith<$Res>
+    implements $PaginatedHistoricalCollectionRecommendationCopyWith<$Res> {
+  factory _$$PaginatedHistoricalCollectionRecommendationImplCopyWith(
+          _$PaginatedHistoricalCollectionRecommendationImpl value,
+          $Res Function(_$PaginatedHistoricalCollectionRecommendationImpl)
+              then) =
+      __$$PaginatedHistoricalCollectionRecommendationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<HistoricalCollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  @override
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class __$$PaginatedHistoricalCollectionRecommendationImplCopyWithImpl<$Res>
+    extends _$PaginatedHistoricalCollectionRecommendationCopyWithImpl<$Res,
+        _$PaginatedHistoricalCollectionRecommendationImpl>
+    implements
+        _$$PaginatedHistoricalCollectionRecommendationImplCopyWith<$Res> {
+  __$$PaginatedHistoricalCollectionRecommendationImplCopyWithImpl(
+      _$PaginatedHistoricalCollectionRecommendationImpl _value,
+      $Res Function(_$PaginatedHistoricalCollectionRecommendationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_$PaginatedHistoricalCollectionRecommendationImpl(
+      collections: null == collections
+          ? _value._collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<HistoricalCollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PaginatedHistoricalCollectionRecommendationImpl
+    with DiagnosticableTreeMixin
+    implements _PaginatedHistoricalCollectionRecommendation {
+  const _$PaginatedHistoricalCollectionRecommendationImpl(
+      {required final List<HistoricalCollectionRecommendation> collections,
+      required this.pagination,
+      @JsonKey(name: "has_next") this.hasNext = false})
+      : _collections = collections;
+
+  factory _$PaginatedHistoricalCollectionRecommendationImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$PaginatedHistoricalCollectionRecommendationImplFromJson(json);
+
+  final List<HistoricalCollectionRecommendation> _collections;
+  @override
+  List<HistoricalCollectionRecommendation> get collections {
+    if (_collections is EqualUnmodifiableListView) return _collections;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_collections);
+  }
+
+  @override
+  final CursorPagination pagination;
+  @override
+  @JsonKey(name: "has_next")
+  final bool hasNext;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'PaginatedHistoricalCollectionRecommendation(collections: $collections, pagination: $pagination, hasNext: $hasNext)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty(
+          'type', 'PaginatedHistoricalCollectionRecommendation'))
+      ..add(DiagnosticsProperty('collections', collections))
+      ..add(DiagnosticsProperty('pagination', pagination))
+      ..add(DiagnosticsProperty('hasNext', hasNext));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PaginatedHistoricalCollectionRecommendationImpl &&
+            const DeepCollectionEquality()
+                .equals(other._collections, _collections) &&
+            (identical(other.pagination, pagination) ||
+                other.pagination == pagination) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_collections), pagination, hasNext);
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PaginatedHistoricalCollectionRecommendationImplCopyWith<
+          _$PaginatedHistoricalCollectionRecommendationImpl>
+      get copyWith =>
+          __$$PaginatedHistoricalCollectionRecommendationImplCopyWithImpl<
+                  _$PaginatedHistoricalCollectionRecommendationImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PaginatedHistoricalCollectionRecommendationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PaginatedHistoricalCollectionRecommendation
+    implements PaginatedHistoricalCollectionRecommendation {
+  const factory _PaginatedHistoricalCollectionRecommendation(
+          {required final List<HistoricalCollectionRecommendation> collections,
+          required final CursorPagination pagination,
+          @JsonKey(name: "has_next") final bool hasNext}) =
+      _$PaginatedHistoricalCollectionRecommendationImpl;
+
+  factory _PaginatedHistoricalCollectionRecommendation.fromJson(
+          Map<String, dynamic> json) =
+      _$PaginatedHistoricalCollectionRecommendationImpl.fromJson;
+
+  @override
+  List<HistoricalCollectionRecommendation> get collections;
+  @override
+  CursorPagination get pagination;
+  @override
+  @JsonKey(name: "has_next")
+  bool get hasNext;
+
+  /// Create a copy of PaginatedHistoricalCollectionRecommendation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PaginatedHistoricalCollectionRecommendationImplCopyWith<
+          _$PaginatedHistoricalCollectionRecommendationImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PaginatedUnresolvedFollowups _$PaginatedUnresolvedFollowupsFromJson(
+    Map<String, dynamic> json) {
+  return _PaginatedUnresolvedFollowups.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PaginatedUnresolvedFollowups {
+  List<CollectionRecommendation> get collections =>
+      throw _privateConstructorUsedError;
+  CursorPagination get pagination => throw _privateConstructorUsedError;
+  @JsonKey(name: "has_next")
+  bool get hasNext => throw _privateConstructorUsedError;
+
+  /// Serializes this PaginatedUnresolvedFollowups to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PaginatedUnresolvedFollowupsCopyWith<PaginatedUnresolvedFollowups>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  factory $PaginatedUnresolvedFollowupsCopyWith(
+          PaginatedUnresolvedFollowups value,
+          $Res Function(PaginatedUnresolvedFollowups) then) =
+      _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+          PaginatedUnresolvedFollowups>;
+  @useResult
+  $Res call(
+      {List<CollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+        $Val extends PaginatedUnresolvedFollowups>
+    implements $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  _$PaginatedUnresolvedFollowupsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_value.copyWith(
+      collections: null == collections
+          ? _value.collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<CollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CursorPaginationCopyWith<$Res> get pagination {
+    return $CursorPaginationCopyWith<$Res>(_value.pagination, (value) {
+      return _then(_value.copyWith(pagination: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$PaginatedUnresolvedFollowupsImplCopyWith<$Res>
+    implements $PaginatedUnresolvedFollowupsCopyWith<$Res> {
+  factory _$$PaginatedUnresolvedFollowupsImplCopyWith(
+          _$PaginatedUnresolvedFollowupsImpl value,
+          $Res Function(_$PaginatedUnresolvedFollowupsImpl) then) =
+      __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<CollectionRecommendation> collections,
+      CursorPagination pagination,
+      @JsonKey(name: "has_next") bool hasNext});
+
+  @override
+  $CursorPaginationCopyWith<$Res> get pagination;
+}
+
+/// @nodoc
+class __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<$Res>
+    extends _$PaginatedUnresolvedFollowupsCopyWithImpl<$Res,
+        _$PaginatedUnresolvedFollowupsImpl>
+    implements _$$PaginatedUnresolvedFollowupsImplCopyWith<$Res> {
+  __$$PaginatedUnresolvedFollowupsImplCopyWithImpl(
+      _$PaginatedUnresolvedFollowupsImpl _value,
+      $Res Function(_$PaginatedUnresolvedFollowupsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? collections = null,
+    Object? pagination = null,
+    Object? hasNext = null,
+  }) {
+    return _then(_$PaginatedUnresolvedFollowupsImpl(
+      collections: null == collections
+          ? _value._collections
+          : collections // ignore: cast_nullable_to_non_nullable
+              as List<CollectionRecommendation>,
+      pagination: null == pagination
+          ? _value.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as CursorPagination,
+      hasNext: null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PaginatedUnresolvedFollowupsImpl
+    with DiagnosticableTreeMixin
+    implements _PaginatedUnresolvedFollowups {
+  const _$PaginatedUnresolvedFollowupsImpl(
+      {required final List<CollectionRecommendation> collections,
+      required this.pagination,
+      @JsonKey(name: "has_next") this.hasNext = false})
+      : _collections = collections;
+
+  factory _$PaginatedUnresolvedFollowupsImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$PaginatedUnresolvedFollowupsImplFromJson(json);
+
+  final List<CollectionRecommendation> _collections;
+  @override
+  List<CollectionRecommendation> get collections {
+    if (_collections is EqualUnmodifiableListView) return _collections;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_collections);
+  }
+
+  @override
+  final CursorPagination pagination;
+  @override
+  @JsonKey(name: "has_next")
+  final bool hasNext;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'PaginatedUnresolvedFollowups(collections: $collections, pagination: $pagination, hasNext: $hasNext)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'PaginatedUnresolvedFollowups'))
+      ..add(DiagnosticsProperty('collections', collections))
+      ..add(DiagnosticsProperty('pagination', pagination))
+      ..add(DiagnosticsProperty('hasNext', hasNext));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PaginatedUnresolvedFollowupsImpl &&
+            const DeepCollectionEquality()
+                .equals(other._collections, _collections) &&
+            (identical(other.pagination, pagination) ||
+                other.pagination == pagination) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_collections), pagination, hasNext);
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PaginatedUnresolvedFollowupsImplCopyWith<
+          _$PaginatedUnresolvedFollowupsImpl>
+      get copyWith => __$$PaginatedUnresolvedFollowupsImplCopyWithImpl<
+          _$PaginatedUnresolvedFollowupsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PaginatedUnresolvedFollowupsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PaginatedUnresolvedFollowups
+    implements PaginatedUnresolvedFollowups {
+  const factory _PaginatedUnresolvedFollowups(
+          {required final List<CollectionRecommendation> collections,
+          required final CursorPagination pagination,
+          @JsonKey(name: "has_next") final bool hasNext}) =
+      _$PaginatedUnresolvedFollowupsImpl;
+
+  factory _PaginatedUnresolvedFollowups.fromJson(Map<String, dynamic> json) =
+      _$PaginatedUnresolvedFollowupsImpl.fromJson;
+
+  @override
+  List<CollectionRecommendation> get collections;
+  @override
+  CursorPagination get pagination;
+  @override
+  @JsonKey(name: "has_next")
+  bool get hasNext;
+
+  /// Create a copy of PaginatedUnresolvedFollowups
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PaginatedUnresolvedFollowupsImplCopyWith<
+          _$PaginatedUnresolvedFollowupsImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

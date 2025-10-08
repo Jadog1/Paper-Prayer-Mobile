@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prayer_ml/prayers/home/home.dart';
+// import 'package:prayer_ml/prayers/home/home.dart';
+import 'package:prayer_ml/prayers/home/new_home.dart';
 import 'package:prayer_ml/prayers/settings/settings.dart';
 import './groups/groups.dart';
 
@@ -42,7 +43,7 @@ class _PrayersPageState extends State<PrayersPage> {
           onDestinationSelected: (value) => setState(() => pageIndex = value),
         ),
         body: const <Widget> [
-          HomePageConsumer(),
+          NewHomePage(),
           Groups(),
           AccountSettingsPage(),
         ][pageIndex],

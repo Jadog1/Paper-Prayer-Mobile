@@ -59,3 +59,10 @@ Future<CollectionAndRelatedContacts?> fetchCollectionFromRequest(Ref ref, int re
   var relatedContacts = await config.contactApiClient.fetchRelatedContacts(contactId);
   return CollectionAndRelatedContacts(collection: collection, relatedContacts: relatedContacts);
 }
+@riverpod
+Future<CollectionAndRelatedContacts> fetchCollectionWithContacts(Ref ref, int collectionId, int contactId) async {
+  var api = config.collectionsApiClient;
+  var collection = await api.fetch(collectionId);
+  var relatedContacts = await config.contactApiClient.fetchRelatedContacts(contactId);
+  return CollectionAndRelatedContacts(collection: collection, relatedContacts: relatedContacts);
+}

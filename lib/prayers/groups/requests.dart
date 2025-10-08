@@ -269,23 +269,53 @@ Future<dynamic> editPrayerRequestBottomSheet(
 }
 
 class RequestDashboardLoader extends ConsumerWidget {
-  const RequestDashboardLoader({super.key, required this.collection});
+  const RequestDashboardLoader({
+    super.key,
+    this.collection,
+    this.collectionId,
+    this.userId,
+    this.relatedContacts,
+  }) : assert(
+    (collection != null && relatedContacts != null) || (collectionId != null && userId != null) || collection != null,
+    'Either (collection and relatedContacts), collectionId and userId, or just collection must be provided'
+  );
 
-  final Collection collection;
+  final Collection? collection;
+  final int? collectionId;
+  final int? userId;
+  final List<RelatedContact>? relatedContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchRelatedContactsProvider(collection.user.id));
-    return switch (viewModel) {
-      AsyncData(:final value) => RequestDashboard(
+    if (collection != null && relatedContacts != null) {
+      return RequestDashboard(
           prayerWithAll: PrayerRequestWithAll(
-              collection: collection, relatedContacts: value)),
-      AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "RequestDashboardLoader",
-          error: error,
-          stackTrace: stackTrace),
-      _ => const Center(child: CircularProgressIndicator()),
-    };
+              collection: collection!, relatedContacts: relatedContacts!));
+    } else if (collection != null) {
+      var viewModel = ref.watch(fetchRelatedContactsProvider(collection!.user.id));
+      return switch (viewModel) {
+        AsyncData(:final value) => RequestDashboard(
+            prayerWithAll: PrayerRequestWithAll(
+                collection: collection!, relatedContacts: value)),
+        AsyncError(:final error, :final stackTrace) => PrintError(
+            caller: "RequestDashboardLoader",
+            error: error,
+            stackTrace: stackTrace),
+        _ => const CreativeLoadingScreen(),
+      };
+    } else {
+      var provider = ref.watch(fetchCollectionWithContactsProvider(collectionId!, userId!));
+      return switch (provider) {
+        AsyncData(:final value) => RequestDashboard(
+            prayerWithAll: PrayerRequestWithAll(
+                collection: value.collection, relatedContacts: value.relatedContacts)),
+        AsyncError(:final error, :final stackTrace) => PrintError(
+            caller: "RequestDashboardLoader",
+            error: error,
+            stackTrace: stackTrace),
+        _ => const CreativeLoadingScreen(),
+      };
+    }
   }
 }
 
@@ -319,13 +349,14 @@ class RequestDashboard extends StatelessWidget {
             child: Column(
               children: [
                 collectionDetails(
+                  context,
                   collection,
                   relatedContacts,
                   relevancyExpirationDate,
                   startRangeOfEventDate,
                   endRangeOfEventDate,
                 ),
-                const Divider(height: 16, thickness: 1),
+                const Divider(height: 16, thickness: 3),
                 Expanded(
                   child: RelatedRequests(prayerWithAll: prayerWithAll),
                 ),
@@ -338,6 +369,7 @@ class RequestDashboard extends StatelessWidget {
   }
 
   Column collectionDetails(
+      BuildContext context,
       Collection collection,
       List<RelatedContact> relatedContacts,
       String relevancyExpirationDate,
@@ -414,11 +446,23 @@ class RequestDashboard extends StatelessWidget {
           spacing: 10,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Icon(Icons.event_busy, size: 16, color: Colors.red[300]),
+            Tooltip(
+              triggerMode: TooltipTriggerMode.tap,
+              message: 'The date after which this request is no longer considered relevant.',
+              child: Icon(Icons.event_busy, size: 16, color: Colors.red[300]),
+            ),
             Text(relevancyExpirationDate, style: const TextStyle(fontSize: 12)),
-            Icon(Icons.event, size: 16, color: Colors.blue[300]),
+            Tooltip(
+              triggerMode: TooltipTriggerMode.tap,
+              message: 'The earliest possible date for the event.',
+              child: Icon(Icons.event, size: 16, color: Colors.blue[300]),
+            ),
             Text(startRangeOfEventDate, style: const TextStyle(fontSize: 12)),
-            Icon(Icons.event, size: 16, color: Colors.green[300]),
+            Tooltip(
+              triggerMode: TooltipTriggerMode.tap,
+              message: 'The latest possible date for the event.',
+              child: Icon(Icons.event, size: 16, color: Colors.green[300]),
+            ),
             Text(endRangeOfEventDate, style: const TextStyle(fontSize: 12)),
           ],
         ),

@@ -290,6 +290,17 @@ class CollectionsApiClient {
     }
   }
 
+  Future<Collection> fetch(int collectionId) async {
+    final response = await authClient.get(config.uri("/collections/$collectionId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting collection: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return Collection.fromJson(json);
+  }
+
   Future<Collection?> fetchCollectionFromRequest(int requestId) async {
     final response = await authClient.get(config.uri("/collections/request/$requestId"));
 
