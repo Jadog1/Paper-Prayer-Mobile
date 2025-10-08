@@ -4,6 +4,7 @@ import 'package:prayer_ml/prayers/home/current_recommendations.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/prayers/home/views/historical_recommendations_view.dart';
 import 'package:prayer_ml/prayers/home/views/unresolved_followups_view.dart';
+import 'package:prayer_ml/prayers/home/widgets/upcoming_events_preview.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class NewHomePage extends ConsumerWidget {
@@ -101,6 +102,9 @@ class NewHomePageConsumer extends ConsumerWidget {
                   ),
                 ),
               ),
+              
+              // Upcoming Events Preview Section
+              const UpcomingEventsPreview(),
               
               // Additional view buttons
               const SizedBox(height: 8),

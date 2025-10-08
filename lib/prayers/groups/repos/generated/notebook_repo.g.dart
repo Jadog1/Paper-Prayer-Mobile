@@ -7,7 +7,7 @@ part of '../notebook_repo.dart';
 // **************************************************************************
 
 String _$fetchNotebookRequestsAtHash() =>
-    r'a6a0cc2d240d7d9c25ab4e97007e94a402a948f8';
+    r'a733ad722fa8fbd7ade0afbce8c26fb8060fcb43';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,12 +44,14 @@ class FetchNotebookRequestsAtFamily
   FetchNotebookRequestsAtProvider call(
     CursorPagination pagination,
     int groupId,
-    int? contactId,
-  ) {
+    int? contactId, {
+    int? eventId,
+  }) {
     return FetchNotebookRequestsAtProvider(
       pagination,
       groupId,
       contactId,
+      eventId: eventId,
     );
   }
 
@@ -61,6 +63,7 @@ class FetchNotebookRequestsAtFamily
       provider.pagination,
       provider.groupId,
       provider.contactId,
+      eventId: provider.eventId,
     );
   }
 
@@ -86,13 +89,15 @@ class FetchNotebookRequestsAtProvider
   FetchNotebookRequestsAtProvider(
     CursorPagination pagination,
     int groupId,
-    int? contactId,
-  ) : this._internal(
+    int? contactId, {
+    int? eventId,
+  }) : this._internal(
           (ref) => fetchNotebookRequestsAt(
             ref as FetchNotebookRequestsAtRef,
             pagination,
             groupId,
             contactId,
+            eventId: eventId,
           ),
           from: fetchNotebookRequestsAtProvider,
           name: r'fetchNotebookRequestsAtProvider',
@@ -106,6 +111,7 @@ class FetchNotebookRequestsAtProvider
           pagination: pagination,
           groupId: groupId,
           contactId: contactId,
+          eventId: eventId,
         );
 
   FetchNotebookRequestsAtProvider._internal(
@@ -118,11 +124,13 @@ class FetchNotebookRequestsAtProvider
     required this.pagination,
     required this.groupId,
     required this.contactId,
+    required this.eventId,
   }) : super.internal();
 
   final CursorPagination pagination;
   final int groupId;
   final int? contactId;
+  final int? eventId;
 
   @override
   Override overrideWith(
@@ -142,6 +150,7 @@ class FetchNotebookRequestsAtProvider
         pagination: pagination,
         groupId: groupId,
         contactId: contactId,
+        eventId: eventId,
       ),
     );
   }
@@ -156,7 +165,8 @@ class FetchNotebookRequestsAtProvider
     return other is FetchNotebookRequestsAtProvider &&
         other.pagination == pagination &&
         other.groupId == groupId &&
-        other.contactId == contactId;
+        other.contactId == contactId &&
+        other.eventId == eventId;
   }
 
   @override
@@ -165,6 +175,7 @@ class FetchNotebookRequestsAtProvider
     hash = _SystemHash.combine(hash, pagination.hashCode);
     hash = _SystemHash.combine(hash, groupId.hashCode);
     hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, eventId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -182,6 +193,9 @@ mixin FetchNotebookRequestsAtRef
 
   /// The parameter `contactId` of this provider.
   int? get contactId;
+
+  /// The parameter `eventId` of this provider.
+  int? get eventId;
 }
 
 class _FetchNotebookRequestsAtProviderElement
@@ -196,6 +210,8 @@ class _FetchNotebookRequestsAtProviderElement
   int get groupId => (origin as FetchNotebookRequestsAtProvider).groupId;
   @override
   int? get contactId => (origin as FetchNotebookRequestsAtProvider).contactId;
+  @override
+  int? get eventId => (origin as FetchNotebookRequestsAtProvider).eventId;
 }
 
 String _$fetchNotebookCollectionsAtHash() =>
@@ -354,19 +370,21 @@ class _FetchNotebookCollectionsAtProviderElement
 }
 
 String _$paginatedPrayerRequestsNotifierHash() =>
-    r'e59cd20114ebd173979e629da9167a7f0f895de9';
+    r'37a00863843b371af68a0c9eafa11e85988b1792';
 
 abstract class _$PaginatedPrayerRequestsNotifier
     extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<PrayerRequest>> {
   late final int limit;
   late final int groupId;
   late final int? contactId;
+  late final int? eventId;
 
   FutureOr<CursorPagingData<PrayerRequest>> build(
     int limit,
     int groupId,
-    int? contactId,
-  );
+    int? contactId, {
+    int? eventId,
+  });
 }
 
 /// See also [PaginatedPrayerRequestsNotifier].
@@ -384,12 +402,14 @@ class PaginatedPrayerRequestsNotifierFamily
   PaginatedPrayerRequestsNotifierProvider call(
     int limit,
     int groupId,
-    int? contactId,
-  ) {
+    int? contactId, {
+    int? eventId,
+  }) {
     return PaginatedPrayerRequestsNotifierProvider(
       limit,
       groupId,
       contactId,
+      eventId: eventId,
     );
   }
 
@@ -401,6 +421,7 @@ class PaginatedPrayerRequestsNotifierFamily
       provider.limit,
       provider.groupId,
       provider.contactId,
+      eventId: provider.eventId,
     );
   }
 
@@ -427,12 +448,14 @@ class PaginatedPrayerRequestsNotifierProvider
   PaginatedPrayerRequestsNotifierProvider(
     int limit,
     int groupId,
-    int? contactId,
-  ) : this._internal(
+    int? contactId, {
+    int? eventId,
+  }) : this._internal(
           () => PaginatedPrayerRequestsNotifier()
             ..limit = limit
             ..groupId = groupId
-            ..contactId = contactId,
+            ..contactId = contactId
+            ..eventId = eventId,
           from: paginatedPrayerRequestsNotifierProvider,
           name: r'paginatedPrayerRequestsNotifierProvider',
           debugGetCreateSourceHash:
@@ -445,6 +468,7 @@ class PaginatedPrayerRequestsNotifierProvider
           limit: limit,
           groupId: groupId,
           contactId: contactId,
+          eventId: eventId,
         );
 
   PaginatedPrayerRequestsNotifierProvider._internal(
@@ -457,11 +481,13 @@ class PaginatedPrayerRequestsNotifierProvider
     required this.limit,
     required this.groupId,
     required this.contactId,
+    required this.eventId,
   }) : super.internal();
 
   final int limit;
   final int groupId;
   final int? contactId;
+  final int? eventId;
 
   @override
   FutureOr<CursorPagingData<PrayerRequest>> runNotifierBuild(
@@ -471,6 +497,7 @@ class PaginatedPrayerRequestsNotifierProvider
       limit,
       groupId,
       contactId,
+      eventId: eventId,
     );
   }
 
@@ -482,7 +509,8 @@ class PaginatedPrayerRequestsNotifierProvider
         () => create()
           ..limit = limit
           ..groupId = groupId
-          ..contactId = contactId,
+          ..contactId = contactId
+          ..eventId = eventId,
         from: from,
         name: null,
         dependencies: null,
@@ -491,6 +519,7 @@ class PaginatedPrayerRequestsNotifierProvider
         limit: limit,
         groupId: groupId,
         contactId: contactId,
+        eventId: eventId,
       ),
     );
   }
@@ -506,7 +535,8 @@ class PaginatedPrayerRequestsNotifierProvider
     return other is PaginatedPrayerRequestsNotifierProvider &&
         other.limit == limit &&
         other.groupId == groupId &&
-        other.contactId == contactId;
+        other.contactId == contactId &&
+        other.eventId == eventId;
   }
 
   @override
@@ -515,6 +545,7 @@ class PaginatedPrayerRequestsNotifierProvider
     hash = _SystemHash.combine(hash, limit.hashCode);
     hash = _SystemHash.combine(hash, groupId.hashCode);
     hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, eventId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -532,6 +563,9 @@ mixin PaginatedPrayerRequestsNotifierRef
 
   /// The parameter `contactId` of this provider.
   int? get contactId;
+
+  /// The parameter `eventId` of this provider.
+  int? get eventId;
 }
 
 class _PaginatedPrayerRequestsNotifierProviderElement
@@ -548,6 +582,9 @@ class _PaginatedPrayerRequestsNotifierProviderElement
   @override
   int? get contactId =>
       (origin as PaginatedPrayerRequestsNotifierProvider).contactId;
+  @override
+  int? get eventId =>
+      (origin as PaginatedPrayerRequestsNotifierProvider).eventId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

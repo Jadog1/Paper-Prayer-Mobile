@@ -26,11 +26,13 @@ class PaperModeConfig {
     this.readOnly = false,
     this.showHeader = true,
     this.contactId,
+    this.eventId,
   });
 
   final bool readOnly;
   final bool showHeader;
   final int? contactId;
+  final int? eventId;
 }
 
 class PaperMode extends ConsumerWidget {
@@ -139,7 +141,7 @@ class _PaperState extends ConsumerState<Paper> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.groupContacts.group.id, widget.config.contactId);
+    var provider = paginatedPrayerRequestsNotifierProvider(10, widget.groupContacts.group.id, widget.config.contactId, eventId: widget.config.eventId);
     var state = ref.watch(paperModeSharedStateProvider);
     return PagingHelperView(
         provider: provider,
