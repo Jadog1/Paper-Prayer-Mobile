@@ -22,7 +22,7 @@ class CalendarView extends ConsumerStatefulWidget {
 }
 
 class _CalendarViewState extends ConsumerState<CalendarView> {
-  CalendarViewType _viewType = CalendarViewType.weekly;
+  CalendarViewType _viewType = CalendarViewType.monthly;
   DateTime _selectedDate = DateTime.now();
 
   @override
