@@ -3,13 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
-import 'package:prayer_ml/prayers/prayers_shared/prayers_shared_widgets.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class PrayerRequestWithAll {
@@ -18,80 +15,6 @@ class PrayerRequestWithAll {
 
   PrayerRequestWithAll(
       {required this.collection, required this.relatedContacts});
-}
-
-class PrayerRequestConsumer extends ConsumerWidget {
-  const PrayerRequestConsumer(
-      {super.key, required this.user, required this.group});
-
-  final Contact user;
-  final Group group;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(fetchCollectionsAndContactsProvider(user, group));
-
-    return switch (viewModel) {
-      AsyncData(:final value) => PrayerRequestView(prayerRequestContact: value),
-      AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "PrayerRequestConsumer",
-          error: error,
-          stackTrace: stackTrace),
-      _ => const Center(child: CircularProgressIndicator()),
-    };
-  }
-}
-
-class PrayerRequestView extends ConsumerWidget {
-  const PrayerRequestView({super.key, required this.prayerRequestContact});
-
-  final UserCollectionsAndContacts prayerRequestContact;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var user = prayerRequestContact.user;
-    var contactGroup = prayerRequestContact.contactGroup;
-
-    return Column(
-      children: [
-        AppBar(
-          title: Text(user.name),
-        ),
-        FloatingPrayerRequestButton(user: user, contactGroup: contactGroup),
-        Expanded(
-          child: PrayerRequests(prayerRequestContact: prayerRequestContact),
-        ),
-      ],
-    );
-  }
-}
-
-class PrayerRequests extends StatelessWidget {
-  const PrayerRequests({super.key, required this.prayerRequestContact});
-
-  final UserCollectionsAndContacts prayerRequestContact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: prayerRequestContact.prayerRequests.length,
-        itemBuilder: (context, index) {
-          return CompactRequestCard(
-            title: prayerRequestContact.prayerRequests[index].title,
-            description: prayerRequestContact.prayerRequests[index].description,
-            relatedContactIds: getRelatedContactIds(
-                prayerRequestContact.prayerRequests[index].relatedContacts),
-            allRelatedContacts: prayerRequestContact.relatedContacts,
-            child: CompactRequestButtonGroup(
-                request: prayerRequestContact.prayerRequests[index],
-                allRelatedContacts: prayerRequestContact.relatedContacts),
-          );
-        },
-      ),
-    );
-  }
 }
 
 class CompactRequestButtonGroup extends ConsumerWidget {
@@ -139,134 +62,6 @@ class CompactRequestButtonGroup extends ConsumerWidget {
       ),
     );
   }
-}
-
-Icon sentimentIcon(String? sentiment) {
-  switch (sentiment) {
-    case 'positive':
-      return const Icon(Icons.sentiment_very_satisfied_sharp);
-    case 'negative':
-      return const Icon(Icons.sentiment_very_dissatisfied);
-    case 'neutral':
-      return const Icon(Icons.sentiment_neutral_rounded);
-    default:
-      return const Icon(Icons.question_mark);
-  }
-}
-
-class FloatingPrayerRequestButton extends StatelessWidget {
-  const FloatingPrayerRequestButton(
-      {super.key, required this.user, required this.contactGroup});
-
-  final Contact user;
-  final ContactGroupPairs contactGroup;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-      child: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-          builder: (context) => Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: AddPrayerRequest(user: user, contactGroup: contactGroup),
-          ),
-        ),
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-// AddPrayerRequest will contain a text field to add a new prayer request
-// The save button should be hidden unless the text field is not empty
-// It should have hint text of "Create a new prayer request"
-class AddPrayerRequest extends ConsumerStatefulWidget {
-  const AddPrayerRequest(
-      {super.key, required this.user, required this.contactGroup});
-
-  final Contact user;
-  final ContactGroupPairs contactGroup;
-
-  @override
-  ConsumerState<AddPrayerRequest> createState() => _AddPrayerRequestState();
-}
-
-class _AddPrayerRequestState extends ConsumerState<AddPrayerRequest> {
-  var newRequest = "";
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 200),
-      child: Column(
-        children: [
-          const Text("Create a new prayer request",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Expanded(
-            child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Prayer Request',
-                ),
-                onChanged: (value) => setState(() => newRequest = value),
-                maxLines: 5,
-                minLines: 3),
-          ),
-          newRequest.isEmpty
-              ? const SizedBox.shrink()
-              : InteractiveLoadButton(
-                  customProvider: () => ref
-                      .read(prayerRequestRepoProvider(widget.user.id).notifier)
-                      .saveRequest(PrayerRequest(
-                          id: 0,
-                          description: newRequest,
-                          user: widget.user,
-                          group: widget.contactGroup,
-                          relatedContactIds: [])),
-                  buttonText: 'Save',
-                  buttonStyle: saveButtonStyle,
-                  successCallback: () => setState(() => newRequest = ""),
-                ),
-        ],
-      ),
-    );
-  }
-}
-
-Future<dynamic> editPrayerRequestBottomSheet(
-    BuildContext context, WidgetRef ref, PrayerRequest request) {
-  var newRequest = request.description;
-  return showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Column(
-        children: [
-          const Text("Edit Prayer Request"),
-          TextField(
-            controller: TextEditingController(text: request.description),
-            decoration: const InputDecoration(
-              labelText: 'Prayer Request',
-            ),
-            onChanged: (value) => newRequest = value,
-            maxLines: 5,
-          ),
-          InteractiveLoadButton(
-            customProvider: () => ref
-                .read(prayerRequestRepoProvider(request.user.id).notifier)
-                .saveRequest(request.copyWith(description: newRequest)),
-            buttonText: 'Save',
-            buttonStyle: saveButtonStyle,
-            successCallback: () => Navigator.of(context).pop(),
-          ),
-        ],
-      );
-    },
-  );
 }
 
 class RequestDashboardLoader extends ConsumerWidget {
