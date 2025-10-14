@@ -35,10 +35,12 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
   @override
   void initState() {
     super.initState();
-    if (widget.config.skipKeyboardFocusOnLoad == true) {
+    final stateNotifier = ref.read(paperModeStateProvider);
+    if (widget.config.skipKeyboardFocusOnLoad == true || stateNotifier.state.createdFirstFocusOnEditMode) {
       return;
     }
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      stateNotifier.setCreatedFirstFocusOnEditMode();
       widget.focusNode.requestFocus();
     });
   }

@@ -16,6 +16,7 @@ class PaperModeState {
     this.hiddenPrayerRequests = const {},
     this.prayerIdsInOverrideEditMode = const {},
     this.newRequests = const [],
+    this.createdFirstFocusOnEditMode = false,
   });
 
   final ContactAndGroupPair? selectedUser;
@@ -23,6 +24,7 @@ class PaperModeState {
   final Map<int, bool> hiddenPrayerRequests;
   final Set<int> prayerIdsInOverrideEditMode;
   final List<PrayerRequest> newRequests;
+  final bool createdFirstFocusOnEditMode;
 
   /// Create initial state with a default prayer request
   factory PaperModeState.initial() {
@@ -44,6 +46,7 @@ class PaperModeState {
     Set<int>? prayerIdsInOverrideEditMode,
     List<PrayerRequest>? newRequests,
     bool clearSelectedUser = false,
+    bool? createdFirstFocusOnEditMode,
   }) {
     return PaperModeState(
       selectedUser: clearSelectedUser ? null : selectedUser ?? this.selectedUser,
@@ -52,6 +55,8 @@ class PaperModeState {
       prayerIdsInOverrideEditMode:
           prayerIdsInOverrideEditMode ?? this.prayerIdsInOverrideEditMode,
       newRequests: newRequests ?? this.newRequests,
+      createdFirstFocusOnEditMode:
+          createdFirstFocusOnEditMode ?? this.createdFirstFocusOnEditMode,
     );
   }
 }
@@ -141,6 +146,13 @@ class PaperModeStateNotifier extends ChangeNotifier {
       prayerIdsInOverrideEditMode: {}, // Clear edit mode when toggling AI mode
     );
     notifyListeners();
+  }
+
+  void setCreatedFirstFocusOnEditMode() {
+    if (!_state.createdFirstFocusOnEditMode) {
+      _state = _state.copyWith(createdFirstFocusOnEditMode: true);
+      notifyListeners();
+    }
   }
 
   /// Add a new default prayer request for the selected user
