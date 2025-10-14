@@ -6,7 +6,7 @@ part of '../events_repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchFutureEventsHash() => r'8391dcf11227489c1c566ef9a6aebf7fb69d7d56';
+String _$fetchFutureEventsHash() => r'8ef5443e8a065d33dac5f908f1b8fec19decc589';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -51,10 +51,14 @@ class FetchFutureEventsFamily
   FetchFutureEventsProvider call({
     int limit = 10,
     int maxDays = 30,
+    int? contactId,
+    int? collectionId,
   }) {
     return FetchFutureEventsProvider(
       limit: limit,
       maxDays: maxDays,
+      contactId: contactId,
+      collectionId: collectionId,
     );
   }
 
@@ -65,6 +69,8 @@ class FetchFutureEventsFamily
     return call(
       limit: provider.limit,
       maxDays: provider.maxDays,
+      contactId: provider.contactId,
+      collectionId: provider.collectionId,
     );
   }
 
@@ -94,11 +100,15 @@ class FetchFutureEventsProvider
   FetchFutureEventsProvider({
     int limit = 10,
     int maxDays = 30,
+    int? contactId,
+    int? collectionId,
   }) : this._internal(
           (ref) => fetchFutureEvents(
             ref as FetchFutureEventsRef,
             limit: limit,
             maxDays: maxDays,
+            contactId: contactId,
+            collectionId: collectionId,
           ),
           from: fetchFutureEventsProvider,
           name: r'fetchFutureEventsProvider',
@@ -111,6 +121,8 @@ class FetchFutureEventsProvider
               FetchFutureEventsFamily._allTransitiveDependencies,
           limit: limit,
           maxDays: maxDays,
+          contactId: contactId,
+          collectionId: collectionId,
         );
 
   FetchFutureEventsProvider._internal(
@@ -122,10 +134,14 @@ class FetchFutureEventsProvider
     required super.from,
     required this.limit,
     required this.maxDays,
+    required this.contactId,
+    required this.collectionId,
   }) : super.internal();
 
   final int limit;
   final int maxDays;
+  final int? contactId;
+  final int? collectionId;
 
   @override
   Override overrideWith(
@@ -144,6 +160,8 @@ class FetchFutureEventsProvider
         debugGetCreateSourceHash: null,
         limit: limit,
         maxDays: maxDays,
+        contactId: contactId,
+        collectionId: collectionId,
       ),
     );
   }
@@ -158,7 +176,9 @@ class FetchFutureEventsProvider
   bool operator ==(Object other) {
     return other is FetchFutureEventsProvider &&
         other.limit == limit &&
-        other.maxDays == maxDays;
+        other.maxDays == maxDays &&
+        other.contactId == contactId &&
+        other.collectionId == collectionId;
   }
 
   @override
@@ -166,6 +186,8 @@ class FetchFutureEventsProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, limit.hashCode);
     hash = _SystemHash.combine(hash, maxDays.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, collectionId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -180,6 +202,12 @@ mixin FetchFutureEventsRef
 
   /// The parameter `maxDays` of this provider.
   int get maxDays;
+
+  /// The parameter `contactId` of this provider.
+  int? get contactId;
+
+  /// The parameter `collectionId` of this provider.
+  int? get collectionId;
 }
 
 class _FetchFutureEventsProviderElement
@@ -191,10 +219,14 @@ class _FetchFutureEventsProviderElement
   int get limit => (origin as FetchFutureEventsProvider).limit;
   @override
   int get maxDays => (origin as FetchFutureEventsProvider).maxDays;
+  @override
+  int? get contactId => (origin as FetchFutureEventsProvider).contactId;
+  @override
+  int? get collectionId => (origin as FetchFutureEventsProvider).collectionId;
 }
 
 String _$fetchEventsInRangeHash() =>
-    r'bfe133d77deb1acdb5dc0275e71d7932a812d55f';
+    r'4fab73f15c2e3774732ac9e5e4d3a936e73103ab';
 
 /// Fetch paginated events for a specific date range
 ///
@@ -219,12 +251,16 @@ class FetchEventsInRangeFamily extends Family<AsyncValue<PaginatedEvents>> {
     required String endDate,
     String? cursor,
     int limit = 50,
+    int? contactId,
+    int? collectionId,
   }) {
     return FetchEventsInRangeProvider(
       startDate: startDate,
       endDate: endDate,
       cursor: cursor,
       limit: limit,
+      contactId: contactId,
+      collectionId: collectionId,
     );
   }
 
@@ -237,6 +273,8 @@ class FetchEventsInRangeFamily extends Family<AsyncValue<PaginatedEvents>> {
       endDate: provider.endDate,
       cursor: provider.cursor,
       limit: provider.limit,
+      contactId: provider.contactId,
+      collectionId: provider.collectionId,
     );
   }
 
@@ -268,6 +306,8 @@ class FetchEventsInRangeProvider
     required String endDate,
     String? cursor,
     int limit = 50,
+    int? contactId,
+    int? collectionId,
   }) : this._internal(
           (ref) => fetchEventsInRange(
             ref as FetchEventsInRangeRef,
@@ -275,6 +315,8 @@ class FetchEventsInRangeProvider
             endDate: endDate,
             cursor: cursor,
             limit: limit,
+            contactId: contactId,
+            collectionId: collectionId,
           ),
           from: fetchEventsInRangeProvider,
           name: r'fetchEventsInRangeProvider',
@@ -289,6 +331,8 @@ class FetchEventsInRangeProvider
           endDate: endDate,
           cursor: cursor,
           limit: limit,
+          contactId: contactId,
+          collectionId: collectionId,
         );
 
   FetchEventsInRangeProvider._internal(
@@ -302,12 +346,16 @@ class FetchEventsInRangeProvider
     required this.endDate,
     required this.cursor,
     required this.limit,
+    required this.contactId,
+    required this.collectionId,
   }) : super.internal();
 
   final String startDate;
   final String endDate;
   final String? cursor;
   final int limit;
+  final int? contactId;
+  final int? collectionId;
 
   @override
   Override overrideWith(
@@ -326,6 +374,8 @@ class FetchEventsInRangeProvider
         endDate: endDate,
         cursor: cursor,
         limit: limit,
+        contactId: contactId,
+        collectionId: collectionId,
       ),
     );
   }
@@ -341,7 +391,9 @@ class FetchEventsInRangeProvider
         other.startDate == startDate &&
         other.endDate == endDate &&
         other.cursor == cursor &&
-        other.limit == limit;
+        other.limit == limit &&
+        other.contactId == contactId &&
+        other.collectionId == collectionId;
   }
 
   @override
@@ -351,6 +403,8 @@ class FetchEventsInRangeProvider
     hash = _SystemHash.combine(hash, endDate.hashCode);
     hash = _SystemHash.combine(hash, cursor.hashCode);
     hash = _SystemHash.combine(hash, limit.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, collectionId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -370,6 +424,12 @@ mixin FetchEventsInRangeRef on AutoDisposeFutureProviderRef<PaginatedEvents> {
 
   /// The parameter `limit` of this provider.
   int get limit;
+
+  /// The parameter `contactId` of this provider.
+  int? get contactId;
+
+  /// The parameter `collectionId` of this provider.
+  int? get collectionId;
 }
 
 class _FetchEventsInRangeProviderElement
@@ -385,10 +445,14 @@ class _FetchEventsInRangeProviderElement
   String? get cursor => (origin as FetchEventsInRangeProvider).cursor;
   @override
   int get limit => (origin as FetchEventsInRangeProvider).limit;
+  @override
+  int? get contactId => (origin as FetchEventsInRangeProvider).contactId;
+  @override
+  int? get collectionId => (origin as FetchEventsInRangeProvider).collectionId;
 }
 
 String _$paginatedEventsNotifierHash() =>
-    r'a0f09ec473663ddd63714fe52bad798727fe2022';
+    r'5479028790ae558d8aec7fa16cf0d3ca54416a2f';
 
 abstract class _$PaginatedEventsNotifier
     extends BuildlessAutoDisposeAsyncNotifier<
@@ -396,12 +460,16 @@ abstract class _$PaginatedEventsNotifier
   late final int limit;
   late final String startDate;
   late final String endDate;
+  late final int? contactId;
+  late final int? collectionId;
 
   FutureOr<CursorPagingData<PrayerCollectionEvent>> build(
     int limit,
     String startDate,
-    String endDate,
-  );
+    String endDate, {
+    int? contactId,
+    int? collectionId,
+  });
 }
 
 /// Paginated events notifier for calendar views
@@ -426,12 +494,16 @@ class PaginatedEventsNotifierFamily
   PaginatedEventsNotifierProvider call(
     int limit,
     String startDate,
-    String endDate,
-  ) {
+    String endDate, {
+    int? contactId,
+    int? collectionId,
+  }) {
     return PaginatedEventsNotifierProvider(
       limit,
       startDate,
       endDate,
+      contactId: contactId,
+      collectionId: collectionId,
     );
   }
 
@@ -443,6 +515,8 @@ class PaginatedEventsNotifierFamily
       provider.limit,
       provider.startDate,
       provider.endDate,
+      contactId: provider.contactId,
+      collectionId: provider.collectionId,
     );
   }
 
@@ -473,12 +547,16 @@ class PaginatedEventsNotifierProvider
   PaginatedEventsNotifierProvider(
     int limit,
     String startDate,
-    String endDate,
-  ) : this._internal(
+    String endDate, {
+    int? contactId,
+    int? collectionId,
+  }) : this._internal(
           () => PaginatedEventsNotifier()
             ..limit = limit
             ..startDate = startDate
-            ..endDate = endDate,
+            ..endDate = endDate
+            ..contactId = contactId
+            ..collectionId = collectionId,
           from: paginatedEventsNotifierProvider,
           name: r'paginatedEventsNotifierProvider',
           debugGetCreateSourceHash:
@@ -491,6 +569,8 @@ class PaginatedEventsNotifierProvider
           limit: limit,
           startDate: startDate,
           endDate: endDate,
+          contactId: contactId,
+          collectionId: collectionId,
         );
 
   PaginatedEventsNotifierProvider._internal(
@@ -503,11 +583,15 @@ class PaginatedEventsNotifierProvider
     required this.limit,
     required this.startDate,
     required this.endDate,
+    required this.contactId,
+    required this.collectionId,
   }) : super.internal();
 
   final int limit;
   final String startDate;
   final String endDate;
+  final int? contactId;
+  final int? collectionId;
 
   @override
   FutureOr<CursorPagingData<PrayerCollectionEvent>> runNotifierBuild(
@@ -517,6 +601,8 @@ class PaginatedEventsNotifierProvider
       limit,
       startDate,
       endDate,
+      contactId: contactId,
+      collectionId: collectionId,
     );
   }
 
@@ -528,7 +614,9 @@ class PaginatedEventsNotifierProvider
         () => create()
           ..limit = limit
           ..startDate = startDate
-          ..endDate = endDate,
+          ..endDate = endDate
+          ..contactId = contactId
+          ..collectionId = collectionId,
         from: from,
         name: null,
         dependencies: null,
@@ -537,6 +625,8 @@ class PaginatedEventsNotifierProvider
         limit: limit,
         startDate: startDate,
         endDate: endDate,
+        contactId: contactId,
+        collectionId: collectionId,
       ),
     );
   }
@@ -552,7 +642,9 @@ class PaginatedEventsNotifierProvider
     return other is PaginatedEventsNotifierProvider &&
         other.limit == limit &&
         other.startDate == startDate &&
-        other.endDate == endDate;
+        other.endDate == endDate &&
+        other.contactId == contactId &&
+        other.collectionId == collectionId;
   }
 
   @override
@@ -561,6 +653,8 @@ class PaginatedEventsNotifierProvider
     hash = _SystemHash.combine(hash, limit.hashCode);
     hash = _SystemHash.combine(hash, startDate.hashCode);
     hash = _SystemHash.combine(hash, endDate.hashCode);
+    hash = _SystemHash.combine(hash, contactId.hashCode);
+    hash = _SystemHash.combine(hash, collectionId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -578,6 +672,12 @@ mixin PaginatedEventsNotifierRef on AutoDisposeAsyncNotifierProviderRef<
 
   /// The parameter `endDate` of this provider.
   String get endDate;
+
+  /// The parameter `contactId` of this provider.
+  int? get contactId;
+
+  /// The parameter `collectionId` of this provider.
+  int? get collectionId;
 }
 
 class _PaginatedEventsNotifierProviderElement
@@ -592,6 +692,11 @@ class _PaginatedEventsNotifierProviderElement
   String get startDate => (origin as PaginatedEventsNotifierProvider).startDate;
   @override
   String get endDate => (origin as PaginatedEventsNotifierProvider).endDate;
+  @override
+  int? get contactId => (origin as PaginatedEventsNotifierProvider).contactId;
+  @override
+  int? get collectionId =>
+      (origin as PaginatedEventsNotifierProvider).collectionId;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

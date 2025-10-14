@@ -17,12 +17,16 @@ class EventsApiClient {
     required String endDate,
     String? cursor,
     int limit = 50,
+    int? contactId,
+    int? collectionId,
   }) async {
     final queryParams = {
       'start_date': startDate,
       'end_date': endDate,
       'limit': limit.toString(),
       if (cursor != null) 'cursor': cursor,
+      if (contactId != null) 'contact_id': contactId.toString(),
+      if (collectionId != null) 'collection_id': collectionId.toString(),
     };
 
     final response = await authClient.get(
@@ -42,11 +46,19 @@ class EventsApiClient {
   Future<List<PrayerCollectionEvent>> getFutureEvents({
     int limit = 10,
     int maxDays = 30,
+    int? contactId,
+    int? collectionId,
   }) async {
     final queryParams = {
       'limit': limit.toString(),
       'max_days': maxDays.toString(),
     };
+    if (contactId != null) {
+      queryParams['contact_id'] = contactId.toString();
+    }
+    if (collectionId != null) {
+      queryParams['collection_id'] = collectionId.toString();
+    }
 
     final response = await authClient.get(
       config.uri("/collections/events/future", queryParams),

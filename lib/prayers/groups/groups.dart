@@ -394,6 +394,7 @@ class GroupNotebook extends ConsumerWidget {
                               builder: (context) => 
                                   PaperMode(config: PaperModeConfig.editable(
                                     contactId: groupContacts.members[index].id,
+                                    skipKeyboardFocusOnLoad: true,
                                     groupContacts: groupContacts))
                             ),
                           ),
