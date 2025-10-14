@@ -747,12 +747,12 @@ class _FetchBibleVersesForPrayerRequestProviderElement
       (origin as FetchBibleVersesForPrayerRequestProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'5bd39288acbb9785049805abcc080a15e5dc7c31';
+String _$groupContactsRepoHash() => r'93cc55f1855d12ceea40bc52eb7f042dadcbce79';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)
 final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
-    GroupContactsRepo, List<GroupContacts>>.internal(
+    GroupContactsRepo, List<GroupWithMembers>>.internal(
   GroupContactsRepo.new,
   name: r'groupContactsRepoProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -762,7 +762,7 @@ final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
+typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupWithMembers>>;
 String _$prayerRequestRepoHash() => r'08af95374c69154cccc58a9312d68c6575311588';
 
 abstract class _$PrayerRequestRepo

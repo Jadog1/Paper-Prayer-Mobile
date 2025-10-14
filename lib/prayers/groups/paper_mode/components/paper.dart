@@ -31,6 +31,7 @@ class _PaperState extends ConsumerState<Paper> {
       widget.config.groupId,
       widget.config.contactId,
       eventId: widget.config.eventId,
+      collectionId: widget.config.collectionId
     );
     
     final stateNotifier = ref.watch(paperModeStateProvider);

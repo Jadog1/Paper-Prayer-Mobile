@@ -20,7 +20,7 @@ class NewRequestsManager extends ConsumerStatefulWidget {
     required this.config,
   });
 
-  final GroupContacts currentGroup;
+  final GroupWithMembers currentGroup;
   final PrayerRequest? previousRequest;
   final PaperModeConfig config;
 

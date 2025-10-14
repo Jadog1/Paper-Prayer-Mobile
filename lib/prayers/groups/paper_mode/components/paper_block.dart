@@ -25,7 +25,7 @@ class PaperBlock extends ConsumerStatefulWidget {
   });
 
   final PrayerRequest prayerRequest;
-  final GroupContacts? currentGroup;
+  final GroupWithMembers? currentGroup;
   final PaperModeConfig config;
   final bool allowsAIMode;
   final bool newRequest;
@@ -97,6 +97,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
       return UserSelection(
         currentGroup: widget.currentGroup!,
         controller: _controller,
+        config: widget.config,
         changeCallback: (ContactAndGroupPair contactAndGroupPair) {
           stateNotifier.setContact(contactAndGroupPair);
           setState(() {

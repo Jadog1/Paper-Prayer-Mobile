@@ -39,7 +39,7 @@ class GroupConsumer extends ConsumerWidget {
 
 class GroupView extends ConsumerWidget {
   const GroupView({super.key, required this.groupContacts});
-  final List<GroupContacts> groupContacts;
+  final List<GroupWithMembers> groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -180,7 +180,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 class GroupNotebook extends ConsumerWidget {
   const GroupNotebook({super.key, required this.groupContacts});
 
-  final GroupContacts groupContacts;
+  final GroupWithMembers groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -362,7 +362,7 @@ class GroupNotebook extends ConsumerWidget {
   }
 
   void _showMembersModal(
-      BuildContext context, GroupContacts groupContacts) {
+      BuildContext context, GroupWithMembers groupContacts) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -484,16 +484,16 @@ class CornerFoldPainter extends CustomPainter {
 // In a future iteration, we will support searching from the server. KISS for now.
 // Search supports tracking the original list and the filtered list, and searching from both contacts and groups
 class SearchState extends ChangeNotifier {
-  SearchState({required List<GroupContacts> groupContacts}) {
+  SearchState({required List<GroupWithMembers> groupContacts}) {
     _groupContacts = groupContacts;
     _filteredGroupContacts = groupContacts;
   }
 
-  List<GroupContacts> _groupContacts = [];
-  List<GroupContacts> _filteredGroupContacts = [];
+  List<GroupWithMembers> _groupContacts = [];
+  List<GroupWithMembers> _filteredGroupContacts = [];
   String searchText = "";
 
-  List<GroupContacts> get groupContacts => _filteredGroupContacts;
+  List<GroupWithMembers> get groupContacts => _filteredGroupContacts;
 
   void filter(String text) {
     searchText = text;
@@ -511,7 +511,7 @@ class SearchState extends ChangeNotifier {
 }
 
 final searchStateProvider = ChangeNotifierProvider.autoDispose
-    .family<SearchState, List<GroupContacts>>((ref, groupContacts) {
+    .family<SearchState, List<GroupWithMembers>>((ref, groupContacts) {
   return SearchState(groupContacts: groupContacts);
 });
 

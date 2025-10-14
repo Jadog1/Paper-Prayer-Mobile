@@ -5,6 +5,7 @@ import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
@@ -358,7 +359,15 @@ class RequestDashboard extends StatelessWidget {
                 ),
                 const Divider(height: 16, thickness: 3),
                 Expanded(
-                  child: RelatedRequests(prayerWithAll: prayerWithAll),
+                  child: PaperMode(
+                    config: PaperModeConfig.editable(
+                      groupId: prayerWithAll.collection.group.groupId,
+                      collectionId: collection.id,
+                      showHeader: false,
+                      skipKeyboardFocusOnLoad: true,
+                      noPadding: true,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -467,63 +476,6 @@ class RequestDashboard extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class RelatedRequests extends ConsumerWidget {
-  const RelatedRequests({super.key, required this.prayerWithAll});
-
-  final PrayerRequestWithAll prayerWithAll;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var collection = prayerWithAll.collection;
-    var viewModel = ref.watch(fetchRequestsInCollectionProvider(collection.id));
-    return switch (viewModel) {
-      AsyncData(:final value) => CompactSimplifiedPrayerRequests(
-          requests: value,
-          prayerWithAll: prayerWithAll,
-        ), // SimplifiedPrayerRequests(requests: value, prayerWithAll: prayerWithAll),
-      AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "RelatedRequests", error: error, stackTrace: stackTrace),
-      _ => const CircularProgressIndicator(),
-    };
-  }
-}
-
-class CompactSimplifiedPrayerRequests extends StatelessWidget {
-  const CompactSimplifiedPrayerRequests(
-      {super.key, required this.requests, required this.prayerWithAll});
-
-  final List<PrayerRequest> requests;
-  final PrayerRequestWithAll prayerWithAll;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: requests.length,
-      itemBuilder: (context, index) {
-        var request = requests[index];
-        var child = Row(
-          children: [
-            Text(dateTimeToDate(requests[index].createdAt)),
-            // const Spacer(),
-            // Text(
-            //   "${(requests[index].score * 100).toStringAsFixed(2)}%",
-            //   style: const TextStyle(fontStyle: FontStyle.italic),
-            // ),
-          ],
-        );
-        return CompactRequestCard(
-          title: request.features?.title,
-          description: request.description,
-          relatedContactIds: request.relatedContactIds,
-          allRelatedContacts: prayerWithAll.relatedContacts,
-          child: child,
-        );
-      },
     );
   }
 }

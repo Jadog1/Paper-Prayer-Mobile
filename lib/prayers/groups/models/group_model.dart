@@ -25,8 +25,8 @@ class ContactAndGroupPair {
   final ContactGroupPairs groupPair;
 }
 
-class GroupContacts {
-  const GroupContacts({
+class GroupWithMembers {
+  const GroupWithMembers({
     required this.group,
     required this.members,
     required this.memberWithContactGroupPairs,

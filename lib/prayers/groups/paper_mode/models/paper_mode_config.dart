@@ -8,15 +8,18 @@ class PaperModeConfig {
   const PaperModeConfig({
     this.readOnly = false,
     this.showHeader = true,
+    this.skipKeyboardFocusOnLoad = false,
     this.contactId,
     this.eventId,
     this.groupContacts,
     this.groupId,
     this.enableBackgroundFeatureCheck = true,
     this.aiModeDefault = true,
+    this.noPadding = false,
     this.pageSize = 10,
+    this.collectionId,
   }) : assert(
-          groupContacts != null || groupId != null || readOnly,
+          (groupContacts == null && groupId == null) == false || readOnly,
           'Either groupContacts or groupId must be provided when not in readOnly mode',
         );
 
@@ -33,7 +36,7 @@ class PaperModeConfig {
   final int? eventId;
 
   /// The group and its contacts (optional, can be null in read-only mode)
-  final GroupContacts? groupContacts;
+  final GroupWithMembers? groupContacts;
 
   /// Alternative to groupContacts - just the group ID
   final int? groupId;
@@ -46,6 +49,15 @@ class PaperModeConfig {
 
   /// Number of items to load per page
   final int pageSize;
+
+  /// Optional collection ID to filter prayer requests
+  final int? collectionId;
+
+  /// Whether to skip focusing the keyboard on load (for embedded use cases)
+  final bool skipKeyboardFocusOnLoad;
+
+  /// Whether to remove padding around the paper content
+  final bool noPadding;
 
   /// Get the effective group ID from either groupContacts or groupId
   int? get effectiveGroupId => groupContacts?.group.id ?? groupId;
@@ -60,11 +72,13 @@ class PaperModeConfig {
     bool? showHeader,
     int? contactId,
     int? eventId,
-    GroupContacts? groupContacts,
+    GroupWithMembers? groupContacts,
     int? groupId,
     bool? enableBackgroundFeatureCheck,
     bool? aiModeDefault,
+    bool? noPadding,
     int? pageSize,
+    int? collectionId,
   }) {
     return PaperModeConfig(
       readOnly: readOnly ?? this.readOnly,
@@ -77,6 +91,9 @@ class PaperModeConfig {
           enableBackgroundFeatureCheck ?? this.enableBackgroundFeatureCheck,
       aiModeDefault: aiModeDefault ?? this.aiModeDefault,
       pageSize: pageSize ?? this.pageSize,
+      collectionId: collectionId ?? this.collectionId,
+      skipKeyboardFocusOnLoad: skipKeyboardFocusOnLoad,
+      noPadding: noPadding ?? this.noPadding,
     );
   }
 
@@ -85,7 +102,9 @@ class PaperModeConfig {
     int? contactId,
     int? eventId,
     bool showHeader = false,
-    GroupContacts? groupContacts,
+    GroupWithMembers? groupContacts,
+    int? collectionId,
+    bool noPadding = false,
   }) {
     return PaperModeConfig(
       readOnly: true,
@@ -93,15 +112,21 @@ class PaperModeConfig {
       contactId: contactId,
       eventId: eventId,
       groupContacts: groupContacts,
+      collectionId: collectionId,
+      noPadding: noPadding,
     );
   }
 
   /// Create an editable configuration with full group context
   factory PaperModeConfig.editable({
-    required GroupContacts groupContacts,
+    GroupWithMembers? groupContacts,
+    int? groupId,
     bool showHeader = true,
     int? contactId,
     int? eventId,
+    int? collectionId,
+    bool skipKeyboardFocusOnLoad = false,
+    bool noPadding = false,
   }) {
     return PaperModeConfig(
       readOnly: false,
@@ -109,6 +134,10 @@ class PaperModeConfig {
       groupContacts: groupContacts,
       contactId: contactId,
       eventId: eventId,
+      collectionId: collectionId,
+      groupId: groupId,
+      skipKeyboardFocusOnLoad: skipKeyboardFocusOnLoad,
+      noPadding: noPadding,
     );
   }
 }

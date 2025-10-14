@@ -18,8 +18,13 @@ class GroupContactsRepo extends _$GroupContactsRepo {
     config = Config();
   }
 
+  // TODO: We need to make this fetchGroups logic to be paginated.
+  // Then we can asynchronously build contacts for a group and other data.
+  // Additionally, this whole process of building a specialized object is being overused
+  // and passed around a good amount. We should consider refactoring this so it's not 
+  // so coupled.
   @override
-  Future<List<GroupContacts>> build() async {
+  Future<List<GroupWithMembers>> build() async {
     var contactApi = config.contactApiClient;
     final groups = await contactApi.fetchGroups();
     final contactResults = await contactApi.fetchContacts(); 
@@ -31,7 +36,7 @@ class GroupContactsRepo extends _$GroupContactsRepo {
         var contact = contactResults.firstWhere((contact) => contact.id == member.contactId);
         return ContactAndGroupPair(contact: contact, groupPair: member);
       }).toList();
-      return GroupContacts(group: group, members: contacts, memberWithContactGroupPairs: memberWithContactGroupPairs);
+      return GroupWithMembers(group: group, members: contacts, memberWithContactGroupPairs: memberWithContactGroupPairs);
     }).toList();
     
     return groupContacts;

@@ -14,19 +14,19 @@ String dateTimeToDate(String dateTime) {
   }
 
 class GroupViewModel extends ChangeNotifier {
-  final List<GroupContacts> _groups = [];
+  final List<GroupWithMembers> _groups = [];
 
-  List<GroupContacts> get groups {
+  List<GroupWithMembers> get groups {
     
    return _groups;
   }
 
-  void addGroup(GroupContacts group) {
+  void addGroup(GroupWithMembers group) {
     _groups.add(group);
     notifyListeners();
   }
 
-  void removeGroup(GroupContacts group) {
+  void removeGroup(GroupWithMembers group) {
     _groups.remove(group);
     notifyListeners();
   }

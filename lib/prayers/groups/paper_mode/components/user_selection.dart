@@ -6,6 +6,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/paper_margin_space.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/models/paper_mode_config.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provider.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 
@@ -16,13 +17,15 @@ class UserSelection extends ConsumerStatefulWidget {
     required this.currentGroup,
     required this.focusNode,
     required this.controller,
+    required this.config,
     this.changeCallback,
   });
 
-  final GroupContacts currentGroup;
+  final GroupWithMembers currentGroup;
   final void Function(ContactAndGroupPair)? changeCallback;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final PaperModeConfig config;
 
   @override
   ConsumerState<UserSelection> createState() => _UserSelectionState();
@@ -32,6 +35,9 @@ class _UserSelectionState extends ConsumerState<UserSelection> {
   @override
   void initState() {
     super.initState();
+    if (widget.config.skipKeyboardFocusOnLoad == true) {
+      return;
+    }
     SchedulerBinding.instance.addPostFrameCallback((_) {
       widget.focusNode.requestFocus();
     });
