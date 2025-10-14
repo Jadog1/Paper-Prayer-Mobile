@@ -200,7 +200,7 @@ class _ChatBubble extends StatelessWidget {
           if (!message.isUser) ...[
             CircleAvatar(
               backgroundColor: Colors.deepPurple[100],
-              child: Icon(Icons.smart_toy, color: Colors.deepPurple, size: 20),
+              child: const Icon(Icons.smart_toy, color: Colors.deepPurple, size: 20),
             ),
             const SizedBox(width: 8),
           ],

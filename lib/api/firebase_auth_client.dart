@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 
 var currentUser = FirebaseAuth.instance.currentUser;
-var timeout = const Duration(seconds: 5);
+var timeout = const Duration(seconds: 10);
 // Design an http client that supports get, post, delete, put.
 // It is being wrapped to add authentication headers.
 class FirebaseAuthHttpClient {
