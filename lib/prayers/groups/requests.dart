@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
-import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
+import 'package:prayer_ml/prayers/groups/views/contact_view.dart';
+import 'package:prayer_ml/prayers/groups/widgets/quick_info_bar.dart';
+import 'package:prayer_ml/prayers/groups/widgets/upcoming_events_widget.dart';
+import 'package:prayer_ml/prayers/groups/widgets/prayer_notes_widget.dart';
+import 'package:prayer_ml/prayers/home/views/calendar_view.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class PrayerRequestWithAll {
@@ -115,162 +118,272 @@ class RequestDashboardLoader extends ConsumerWidget {
   }
 }
 
-class RequestDashboard extends StatelessWidget {
+class RequestDashboard extends ConsumerWidget {
   const RequestDashboard({super.key, required this.prayerWithAll});
 
   final PrayerRequestWithAll prayerWithAll;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var collection = prayerWithAll.collection;
-    var format = DateFormat('yMd');
-    var relevancyExpirationDate = collection.relevancyExpirationDate != null
-        ? format.format(collection.relevancyExpirationDate!.toLocal())
-        : "N/A";
-    var startRangeOfEventDate = collection.startRangeOfEventDate != null
-        ? format.format(collection.startRangeOfEventDate!.toLocal())
-        : "N/A";
-    var endRangeOfEventDate = collection.endRangeOfEventDate != null
-        ? format.format(collection.endRangeOfEventDate!.toLocal())
-        : "N/A";
-
     var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts,
         getRelatedContactIds(collection.relatedContacts));
-    return Column(
-      children: <Widget>[
-        AppBar(title: const Text("Collection Overview")),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: CustomScrollView(
+        slivers: [
+          // Modern App Bar with gradient
+          SliverAppBar(
+            expandedHeight: 120,
+            pinned: true,
+            flexibleSpace: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                // Check if app bar is expanded or collapsed
+                final isExpanded = constraints.maxHeight > kToolbarHeight + 20;
+                
+                return FlexibleSpaceBar(
+                  titlePadding: const EdgeInsets.only(left: 56, bottom: 16, right: 16),
+                  title: Text(
+                    collection.title ?? "Prayer Request",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
+                    maxLines: isExpanded ? 2 : 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.blue[700]!, Colors.blue[500]!],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Content
+          SliverToBoxAdapter(
             child: Column(
               children: [
-                collectionDetails(
-                  context,
-                  collection,
-                  relatedContacts,
-                  relevancyExpirationDate,
-                  startRangeOfEventDate,
-                  endRangeOfEventDate,
+                // Quick Info Bar
+                QuickInfoBar(
+                  createdAt: collection.createdAt,
+                  startDate: collection.startRangeOfEventDate,
+                  expirationDate: collection.relevancyExpirationDate,
                 ),
-                const Divider(height: 16, thickness: 3),
-                Expanded(
-                  child: PaperMode(
-                    config: PaperModeConfig.editable(
-                      groupId: prayerWithAll.collection.group.groupId,
-                      collectionId: collection.id,
-                      showHeader: false,
-                      skipKeyboardFocusOnLoad: true,
-                      noPadding: true,
-                    ),
+
+                // Main Content Grid
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Details Section
+                      _DetailsSection(
+                        collection: collection,
+                        relatedContacts: relatedContacts,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Contact View Link
+                      _ContactViewLink(contact: collection.user, groupId: collection.group.groupId),
+                      const SizedBox(height: 12),
+
+                      // Upcoming Events Section
+                      UpcomingEventsWidget(
+                        collectionId: collection.id,
+                        title: "Upcoming Events",
+                        subtitle: "Events for this collection in the next 30 days",
+                        onViewAll: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => CalendarView(
+                                collectionId: collection.id,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Prayer Notes Section
+                      PrayerNotesWidget(
+                        groupId: collection.group.groupId,
+                        collectionId: collection.id,
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+}
 
-  Column collectionDetails(
-      BuildContext context,
-      Collection collection,
-      List<RelatedContact> relatedContacts,
-      String relevancyExpirationDate,
-      String startRangeOfEventDate,
-      String endRangeOfEventDate) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Title & Created At
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                collection.title ?? "",
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                // Remove overflow and maxLines to allow wrapping
-              ),
+/// Link to open full contact view
+class _ContactViewLink extends StatelessWidget {
+  const _ContactViewLink({
+    required this.contact,
+    required this.groupId,
+  });
+
+  final Contact contact;
+  final int groupId;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ContactView(
+              contact: contact,
+              groupId: groupId,
             ),
-            const SizedBox(width: 8),
-            IntrinsicWidth(
-              child: Row(
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.green[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.person, color: Colors.green[700], size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-                  const SizedBox(width: 2),
                   Text(
-                    dateTimeToDate(collection.createdAt),
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                    "View ${contact.name}'s Profile",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "See all events and prayer notes",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ],
               ),
             ),
+            Icon(Icons.chevron_right, color: Colors.grey[400]),
           ],
         ),
-        const Divider(height: 16, thickness: 1),
-        // Description
-        if ((collection.description ?? "").isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4.0),
-            child: Text(
-              collection.description ?? "",
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
+      ),
+    );
+  }
+}
+
+/// Details section with description and metadata
+class _DetailsSection extends StatelessWidget {
+  const _DetailsSection({
+    required this.collection,
+    required this.relatedContacts,
+  });
+
+  final Collection collection;
+  final List<RelatedContact> relatedContacts;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        // Related Contacts
-        Row(
-          children: [
-            Icon(Icons.people, size: 16, color: Colors.grey[600]),
-            const SizedBox(width: 4),
-            Expanded(
-              child: Text(
-                relatedContactsAsString(relatedContacts),
-                style: const TextStyle(fontSize: 13),
-                overflow: TextOverflow.ellipsis,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Description
+          if ((collection.description ?? "").isNotEmpty) ...[
+            Text(
+              collection.description!,
+              style: const TextStyle(
+                fontSize: 15,
+                height: 1.5,
+                color: Colors.black87,
               ),
             ),
+            const SizedBox(height: 16),
           ],
-        ),
-        const Divider(height: 16, thickness: 1),
-        // Follow Up Rank & Sentiment
-        Row(
-          children: [
-            Icon(Icons.star, size: 16, color: Colors.amber[700]),
-            const SizedBox(width: 2),
-            Text(collection.followUpRankLabel,
-                style: const TextStyle(fontSize: 13)),
+
+          // Related Contacts
+          if (relatedContacts.isNotEmpty) ...[
+            Row(
+              children: [
+                Icon(Icons.people, size: 18, color: Colors.blue[700]),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    relatedContactsAsString(relatedContacts),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
           ],
-        ),
-        const Divider(height: 16, thickness: 1),
-        // Dates (compact)
-        Wrap(
-          spacing: 10,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Tooltip(
-              triggerMode: TooltipTriggerMode.tap,
-              message: 'The date after which this request is no longer considered relevant.',
-              child: Icon(Icons.event_busy, size: 16, color: Colors.red[300]),
-            ),
-            Text(relevancyExpirationDate, style: const TextStyle(fontSize: 12)),
-            Tooltip(
-              triggerMode: TooltipTriggerMode.tap,
-              message: 'The earliest possible date for the event.',
-              child: Icon(Icons.event, size: 16, color: Colors.blue[300]),
-            ),
-            Text(startRangeOfEventDate, style: const TextStyle(fontSize: 12)),
-            Tooltip(
-              triggerMode: TooltipTriggerMode.tap,
-              message: 'The latest possible date for the event.',
-              child: Icon(Icons.event, size: 16, color: Colors.green[300]),
-            ),
-            Text(endRangeOfEventDate, style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-      ],
+
+          // Follow Up Priority
+          Row(
+            children: [
+              Icon(Icons.flag, size: 18, color: Colors.amber[700]),
+              const SizedBox(width: 8),
+              Text(
+                "Priority: ${collection.followUpRankLabel}",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

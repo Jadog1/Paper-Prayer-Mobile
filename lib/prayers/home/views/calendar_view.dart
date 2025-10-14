@@ -11,7 +11,12 @@ enum CalendarViewType { daily, weekly, monthly }
 class CalendarView extends ConsumerStatefulWidget {
   const CalendarView({
     super.key,
+    this.contactId,
+    this.collectionId,
   });
+
+  final int? contactId;
+  final int? collectionId;
 
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
@@ -127,6 +132,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         startDate: startDate,
         endDate: endDate,
         limit: 100,
+        contactId: widget.contactId,
+        collectionId: widget.collectionId,
       ),
     );
 
