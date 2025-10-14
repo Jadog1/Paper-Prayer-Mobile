@@ -156,7 +156,18 @@ class DeleteConfirmationButton extends ConsumerWidget {
 }
 
 class CreativeLoadingScreen extends StatefulWidget {
-  const CreativeLoadingScreen({super.key});
+  const CreativeLoadingScreen({
+    super.key,
+    this.icon = Icons.book,
+    this.iconColor = Colors.blue,
+    this.primaryText = 'Loading your prayer collection...',
+    this.secondaryText = 'Preparing thoughts and prayers',
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String primaryText;
+  final String secondaryText;
 
   @override
   State<CreativeLoadingScreen> createState() => _CreativeLoadingScreenState();
@@ -191,21 +202,21 @@ class _CreativeLoadingScreenState extends State<CreativeLoadingScreen>
         children: [
           FadeTransition(
             opacity: _animation,
-            child: const Icon(
-              Icons.book,
+            child: Icon(
+              widget.icon,
               size: 64,
-              color: Colors.blue,
+              color: widget.iconColor,
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Loading your prayer collection...',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          Text(
+            widget.primaryText,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Preparing thoughts and prayers',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+          Text(
+            widget.secondaryText,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),

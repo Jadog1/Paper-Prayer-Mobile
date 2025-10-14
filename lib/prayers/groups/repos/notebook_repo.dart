@@ -9,10 +9,10 @@ import 'package:prayer_ml/prayers/groups/models/shared.dart';
 part 'generated/notebook_repo.g.dart';
 
 @riverpod
-Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(Ref ref, CursorPagination pagination, int groupId, int? contactId) async {
+Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(Ref ref, CursorPagination pagination, int groupId, int? contactId, {int? eventId}) async {
   var config = Config();
   var api = config.notebookApiClient;
-  return await api.fetchNotebookRequestsAt(pagination, groupId, contactId);
+  return await api.fetchNotebookRequestsAt(pagination, groupId, contactId, eventId: eventId);
 }
 
 @riverpod
@@ -31,12 +31,15 @@ class PaginatedPrayerRequestsNotifier extends _$PaginatedPrayerRequestsNotifier
   late int groupId;
   @override
   late int? contactId;
+  @override
+  late int? eventId;
   /// Builds the initial state of the provider by fetching data with a null cursor.
   @override
-  Future<CursorPagingData<PrayerRequest>> build(int limit, int groupId, int? contactId) {
+  Future<CursorPagingData<PrayerRequest>> build(int limit, int groupId, int? contactId, {int? eventId}) {
     this.limit = limit;
     this.groupId = groupId;
     this.contactId = contactId;
+    this.eventId = eventId;
     return fetch(cursor: null);
   }
 
@@ -51,7 +54,7 @@ class PaginatedPrayerRequestsNotifier extends _$PaginatedPrayerRequestsNotifier
       limit: limit,
       cursor: cursor,
     );
-    final repository = await ref.read(fetchNotebookRequestsAtProvider(pagination, groupId, contactId).future);
+    final repository = await ref.read(fetchNotebookRequestsAtProvider(pagination, groupId, contactId, eventId: eventId).future);
 
     return CursorPagingData(
       items: repository.prayerRequests,

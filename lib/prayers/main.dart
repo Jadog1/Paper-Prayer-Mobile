@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:prayer_ml/prayers/home/home.dart';
 import 'package:prayer_ml/prayers/home/new_home.dart';
-import 'package:prayer_ml/prayers/settings/settings.dart';
+import 'package:prayer_ml/prayers/web/web_view.dart';
+import 'package:prayer_ml/prayers/chat/chat.dart';
 import './groups/groups.dart';
 
 class PrayersPage extends StatefulWidget {
@@ -34,9 +35,14 @@ class _PrayersPageState extends State<PrayersPage> {
               label: 'Notebooks',
             ),
             NavigationDestination(
-              icon: Icon(Icons.manage_accounts_outlined),
-              selectedIcon: Icon(Icons.manage_accounts),
-              label: 'Account',
+              icon: Icon(Icons.web_outlined),
+              selectedIcon: Icon(Icons.web),
+              label: 'Studies',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.chat_outlined),
+              selectedIcon: Icon(Icons.chat),
+              label: 'AI Chat',
             ),
           ],
           selectedIndex: pageIndex,
@@ -45,7 +51,8 @@ class _PrayersPageState extends State<PrayersPage> {
         body: const <Widget> [
           NewHomePage(),
           Groups(),
-          AccountSettingsPage(),
+          WebViewPage(),
+          ChatPage(),
         ][pageIndex],
       ),
     );

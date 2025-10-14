@@ -4,6 +4,8 @@ import 'package:prayer_ml/prayers/home/current_recommendations.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/prayers/home/views/historical_recommendations_view.dart';
 import 'package:prayer_ml/prayers/home/views/unresolved_followups_view.dart';
+import 'package:prayer_ml/prayers/home/widgets/upcoming_events_preview.dart';
+import 'package:prayer_ml/prayers/settings/settings.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class NewHomePage extends ConsumerWidget {
@@ -33,8 +35,27 @@ class NewHomePageConsumer extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Account/Settings button at the top right
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AccountSettingsPage(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.manage_accounts),
+                    iconSize: 28,
+                    color: Colors.blueAccent,
+                    tooltip: 'Account Settings',
+                  ),
+                ],
+              ),
+              
               // Title
-              const SizedBox(height: 20),
               const Text(
                 "Paper Prayer",
                 textAlign: TextAlign.center,
@@ -102,37 +123,13 @@ class NewHomePageConsumer extends ConsumerWidget {
                 ),
               ),
               
+              // Upcoming Events Preview Section
+              const UpcomingEventsPreview(),
+              
               // Additional view buttons
               const SizedBox(height: 8),
               const _AdditionalViewButtons(),
               
-              // Visual separator before bottom section
-              Divider(
-                height: 1,
-                thickness: 1,
-                color: Colors.grey[300],
-              ),
-              
-              // Quick add text field (uneditable placeholder)
-              const SizedBox(height: 16),
-              TextField(
-                enabled: false,
-                decoration: InputDecoration(
-                  hintText: "Quick add requests",
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
             ],
           ),
         ),

@@ -2,23 +2,27 @@
 
 You can gather project context from ./projectContext.md.
 
-See ./externalContext.md for a generated output of changes from the backend that detail all the new endpoints.
+See ./externalContext.md for a generated output of changes from the backend that detail all the new endpoints for interacting with events.
 
 ## Request
 
-Several new endpoints have been implemented on the backend to support a new workflow for generating recommendations. We are only generating recommendations at the collection level, and no longer the contact level. Along with this, we should rethink how we display these. It should all be in one single page.
+Several new endpoints have been implemented on the backend to support a new workflow for reviewing events. Events can be thought of moments in time pulled from a prayer request. Specifically, did it detect a specific date something is happening, or a range of dates that something is happening. This is useful for things like birthdays, anniversaries, surgeries, trips, etc.
 
-To do this, we will want to go to ./lib/prayers/home/home.dart. This contains the current core logic for the home page. In that directory contains the models and repos for fetching the data.
+To do this, we will want to go to ./lib/prayers/home/new_home.dart. This contains the current core logic for the home page. We will want to add support for a calendar view that shows upcoming events, as well as a way to view historical events. This calendar view should allow for either a daily view, weekly view, or monthly view. The default should be a weekly view.
+
+When viewing a specific day, week, or month, we should show the events that are happening in that time frame. For each event, we should show the title of the event, the date(s) it is happening, and a summary of the prayer requests associated with that event.
+
+We should use pagination endpoint to load data incrementally. If clicking into an event, we should show all the requests associated with that event. The paper prayer API can use a new config, `event_id` as an optional parameter. This should use it as a filter when passing to the api. This should open as read-only, and not allow adding new requests from this view.
+
+Additionally, from the home page before clicking the calendar, we should show a preview of a few upcoming events. This can use the API that gets X future events within max X days.
 
 ## Solution
 
-1. Create new view model(s) for supporting historical lookups, and unresolved follow-ups.
-2. Update the repo(s) to support the new endpoints.
-3. Create a new home page (This should be its own file). This new home page should follow a simple pattern:
-   - At the top, show a title of "Paper Prayer".
-      - Under it, it should have buttons to open current recommendations
-   - At the bottom, add an uneditable text field that has a placeholder for "Quick add requests". I will be adding a way to view latest updated requests later and add to it from this view.
-4. Add a new view for current recommendations. Similar to how the paper_mode.dart file maintains a clean implementation, we should also do something similar for displaying our recommendations. For each recommendation, it uses the PaginatedCollectionRecommendation. We should use a cursor pagination pattern here. That can be defined from the repo like PaginatedPrayerRequestsNotifier.
-   - For each collection row, it should show the collection title, and below it as a subtitle font, it should show the summary.
-   - When you tap on the collection, it should drop down with the list of 5 most recent prayer requests highlights. That can be found on the `prayerRequest.features.highlights` (If highlights is null, we should have some kind of visual cue and just show the prayerRequest.request). While it's performing the API search, it should show the user it is loading with a loading indicator where the 5 highlights would be. Each highlight should only be one line, and if it overflows, it should be truncated with an ellipsis.
-   - At the bottom of the list of highlights, it should have a button to "View All Requests". When tapped, it should open a new page that shows all the requests for that collection. This should use the RequestDashboardLoader component to load that information using MaterialPageRoute to push it onto the stack.
+1. Create new view models to support collection events
+2. In the new home page, add a section that has a preview of upcoming events. This should use the "Get X future events within max X days" endpoint.
+3. Add a button to navigate to the calendar view.
+4. Create a new calendar view that allows for daily, weekly, and monthly views. Default to weekly view.
+5. In the calendar view, show events for the selected time frame. Use the "Get all events via cursor pagination with date range" endpoint to load events. This should start loading events as the pagination cursor loops through the data.
+6. We should use loading indicators for each day when loading events.
+7. When clicking on an event, navigate to a new view that shows all prayer requests associated with that event. It should use paper mode with read-only mode enabled, and passing the event_id
+8. Add support for paper_mode.dart to support taking event_id and passing it as a filter to the backend API.

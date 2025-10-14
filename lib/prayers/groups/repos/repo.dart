@@ -135,11 +135,11 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
     return prayerApi.fetchPrayerRequests(contactId);
   }
 
-  Future<PrayerRequest> saveRequest(PrayerRequest request) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request, {int? enforcedCollectionId}) async {
     var prayerApi = config.prayerRequestApiClient;
     PrayerRequest newRequest;
     if (request.id == 0) {
-      newRequest = await prayerApi.saveRequest(request);
+      newRequest = await prayerApi.saveRequest(request, enforcedCollectionId: enforcedCollectionId);
     } else {
       newRequest = await prayerApi.updateRequest(request);
     }
@@ -167,10 +167,10 @@ Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) as
   return prayerApi.fetchSimilarRequests(requestId);
 }
 
-Future<PrayerRequest> saveNewRequest(PrayerRequest request) async {
+Future<PrayerRequest> saveNewRequest(PrayerRequest request, {int? enforcedCollectionId}) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
-  return await prayerApi.saveRequest(request);
+  return await prayerApi.saveRequest(request, enforcedCollectionId: enforcedCollectionId);
 }
 
 Future<PrayerRequest> updateRequest(PrayerRequest request) async {
