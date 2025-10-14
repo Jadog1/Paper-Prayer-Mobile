@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
 import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/prayers/home/views/event_details_view.dart';
@@ -12,10 +11,7 @@ enum CalendarViewType { daily, weekly, monthly }
 class CalendarView extends ConsumerStatefulWidget {
   const CalendarView({
     super.key,
-    required this.groupContacts,
   });
-
-  final GroupContacts groupContacts;
 
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
@@ -311,7 +307,6 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             MaterialPageRoute(
               builder: (context) => EventDetailsView(
                 event: event,
-                groupContacts: widget.groupContacts,
               ),
             ),
           );

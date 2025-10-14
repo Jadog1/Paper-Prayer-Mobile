@@ -7,7 +7,7 @@ part of '../notebook_repo.dart';
 // **************************************************************************
 
 String _$fetchNotebookRequestsAtHash() =>
-    r'a733ad722fa8fbd7ade0afbce8c26fb8060fcb43';
+    r'13e35d90c33fb7d764eadf9200db57781d28b070';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,7 +43,7 @@ class FetchNotebookRequestsAtFamily
   /// See also [fetchNotebookRequestsAt].
   FetchNotebookRequestsAtProvider call(
     CursorPagination pagination,
-    int groupId,
+    int? groupId,
     int? contactId, {
     int? eventId,
   }) {
@@ -88,7 +88,7 @@ class FetchNotebookRequestsAtProvider
   /// See also [fetchNotebookRequestsAt].
   FetchNotebookRequestsAtProvider(
     CursorPagination pagination,
-    int groupId,
+    int? groupId,
     int? contactId, {
     int? eventId,
   }) : this._internal(
@@ -128,7 +128,7 @@ class FetchNotebookRequestsAtProvider
   }) : super.internal();
 
   final CursorPagination pagination;
-  final int groupId;
+  final int? groupId;
   final int? contactId;
   final int? eventId;
 
@@ -189,7 +189,7 @@ mixin FetchNotebookRequestsAtRef
   CursorPagination get pagination;
 
   /// The parameter `groupId` of this provider.
-  int get groupId;
+  int? get groupId;
 
   /// The parameter `contactId` of this provider.
   int? get contactId;
@@ -207,7 +207,7 @@ class _FetchNotebookRequestsAtProviderElement
   CursorPagination get pagination =>
       (origin as FetchNotebookRequestsAtProvider).pagination;
   @override
-  int get groupId => (origin as FetchNotebookRequestsAtProvider).groupId;
+  int? get groupId => (origin as FetchNotebookRequestsAtProvider).groupId;
   @override
   int? get contactId => (origin as FetchNotebookRequestsAtProvider).contactId;
   @override
@@ -370,18 +370,18 @@ class _FetchNotebookCollectionsAtProviderElement
 }
 
 String _$paginatedPrayerRequestsNotifierHash() =>
-    r'37a00863843b371af68a0c9eafa11e85988b1792';
+    r'82cda22d4f326ba44a780300ec460f9f8efe3b5c';
 
 abstract class _$PaginatedPrayerRequestsNotifier
     extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<PrayerRequest>> {
   late final int limit;
-  late final int groupId;
+  late final int? groupId;
   late final int? contactId;
   late final int? eventId;
 
   FutureOr<CursorPagingData<PrayerRequest>> build(
     int limit,
-    int groupId,
+    int? groupId,
     int? contactId, {
     int? eventId,
   });
@@ -401,7 +401,7 @@ class PaginatedPrayerRequestsNotifierFamily
   /// See also [PaginatedPrayerRequestsNotifier].
   PaginatedPrayerRequestsNotifierProvider call(
     int limit,
-    int groupId,
+    int? groupId,
     int? contactId, {
     int? eventId,
   }) {
@@ -447,7 +447,7 @@ class PaginatedPrayerRequestsNotifierProvider
   /// See also [PaginatedPrayerRequestsNotifier].
   PaginatedPrayerRequestsNotifierProvider(
     int limit,
-    int groupId,
+    int? groupId,
     int? contactId, {
     int? eventId,
   }) : this._internal(
@@ -485,7 +485,7 @@ class PaginatedPrayerRequestsNotifierProvider
   }) : super.internal();
 
   final int limit;
-  final int groupId;
+  final int? groupId;
   final int? contactId;
   final int? eventId;
 
@@ -559,7 +559,7 @@ mixin PaginatedPrayerRequestsNotifierRef
   int get limit;
 
   /// The parameter `groupId` of this provider.
-  int get groupId;
+  int? get groupId;
 
   /// The parameter `contactId` of this provider.
   int? get contactId;
@@ -577,7 +577,7 @@ class _PaginatedPrayerRequestsNotifierProviderElement
   @override
   int get limit => (origin as PaginatedPrayerRequestsNotifierProvider).limit;
   @override
-  int get groupId =>
+  int? get groupId =>
       (origin as PaginatedPrayerRequestsNotifierProvider).groupId;
   @override
   int? get contactId =>

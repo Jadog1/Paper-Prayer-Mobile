@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
 import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/prayers/home/views/calendar_view.dart';
@@ -15,7 +13,6 @@ class UpcomingEventsPreview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final futureEventsAsync = ref.watch(fetchFutureEventsProvider(limit: 5, maxDays: 30));
-    final groupContactsAsync = ref.watch(groupContactsRepoProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,30 +39,20 @@ class UpcomingEventsPreview extends ConsumerWidget {
               ),
               
               // View All button
-              groupContactsAsync.when(
-                data: (groupContacts) {
-                  if (groupContacts.isEmpty) return const SizedBox.shrink();
-                  
-                  return TextButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CalendarView(
-                            groupContacts: groupContacts.first,
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.calendar_month, size: 16),
-                    label: const Text("Calendar"),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.orange[700],
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CalendarView(),
                     ),
                   );
                 },
-                loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                icon: const Icon(Icons.calendar_month, size: 16),
+                label: const Text("Calendar"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.orange[700],
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
               ),
             ],
           ),
@@ -90,27 +77,12 @@ class UpcomingEventsPreview extends ConsumerWidget {
               );
             }
 
-            return groupContactsAsync.when(
-              data: (groupContacts) {
-                if (groupContacts.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: events.map((event) {
-                    return _UpcomingEventCard(
-                      event: event,
-                      groupContacts: groupContacts.first,
-                    );
-                  }).toList(),
+            return Column(
+              children: events.map((event) {
+                return _UpcomingEventCard(
+                  event: event,
                 );
-              },
-              loading: () => const _EventsLoadingSkeleton(),
-              error: (error, stackTrace) => PrintError(
-                caller: "UpcomingEventsPreview",
-                error: error,
-                stackTrace: stackTrace,
-              ),
+              }).toList(),
             );
           },
           loading: () => const _EventsLoadingSkeleton(),
@@ -130,11 +102,9 @@ class UpcomingEventsPreview extends ConsumerWidget {
 class _UpcomingEventCard extends StatelessWidget {
   const _UpcomingEventCard({
     required this.event,
-    required this.groupContacts,
   });
 
   final PrayerCollectionEvent event;
-  final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +114,6 @@ class _UpcomingEventCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => EventDetailsView(
               event: event,
-              groupContacts: groupContacts,
             ),
           ),
         );

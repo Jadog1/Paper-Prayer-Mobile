@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
-import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
-
+import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 // import 'view_model.dart';
 
@@ -273,7 +272,8 @@ class GroupNotebook extends ConsumerWidget {
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              PaperMode(currentGroup: groupContacts),
+                              PaperMode(config: PaperModeConfig.editable(
+                                    groupContacts: groupContacts))
                         ),
                       ),
                       child: Container(
@@ -391,9 +391,10 @@ class GroupNotebook extends ConsumerWidget {
                         return ListTile(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => PaperMode(
-                                  config: PaperModeConfig(contactId: groupContacts.members[index].id),
-                                  currentGroup: groupContacts),
+                              builder: (context) => 
+                                  PaperMode(config: PaperModeConfig.editable(
+                                    contactId: groupContacts.members[index].id,
+                                    groupContacts: groupContacts))
                             ),
                           ),
                           leading:
