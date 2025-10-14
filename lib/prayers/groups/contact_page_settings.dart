@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
@@ -48,6 +49,19 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
         foregroundColor: Colors.white,
         elevation: 2,
         actions: [
+          if (!isNewContact)
+            IconButton(
+              icon: const Icon(Icons.visibility_outlined),
+              tooltip: 'View Contact',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ContactView(
+                    contact: contact,
+                    groupId: widget.group.id,
+                  ),
+                ),
+              ),
+            ),
           if (!isNewContact)
             IconButton(
               icon: const Icon(Icons.delete_outline),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
+import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
@@ -365,52 +366,155 @@ class GroupNotebook extends ConsumerWidget {
       BuildContext context, GroupWithMembers groupContacts) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return Consumer(
           builder: (context, ref, child) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Members of ${groupContacts.group.name}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                  // Handle bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 250,
+                  
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8B7355).withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.people,
+                            color: Color(0xFF8B7355),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Members",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                              Text(
+                                "${groupContacts.members.length} member${groupContacts.members.length != 1 ? 's' : ''} in ${groupContacts.group.name}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  Divider(height: 1, color: Colors.grey[200]),
+                  
+                  // Members list
+                  Expanded(
                     child: ListView.builder(
-                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       itemCount: groupContacts.members.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => 
-                                  PaperMode(config: PaperModeConfig.editable(
-                                    contactId: groupContacts.members[index].id,
-                                    skipKeyboardFocusOnLoad: true,
-                                    groupContacts: groupContacts))
-                            ),
+                        final member = groupContacts.members[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[200]!),
                           ),
-                          leading:
-                              const CircleAvatar(child: Icon(Icons.person)),
-                          title: Text(groupContacts.members[index].name),
-                          subtitle: Text(
-                              groupContacts.members[index].description ?? ""),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ContactPageSettings(
-                                    contact: groupContacts.members[index],
-                                    group: groupContacts.group),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            onTap: () {
+                              Navigator.of(context).pop(); // Close modal
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ContactView(
+                                    contact: member,
+                                    groupId: groupContacts.group.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            leading: Hero(
+                              tag: 'contact_${member.id}',
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Colors.green[400]!, Colors.green[600]!],
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
+                            ),
+                            title: Text(
+                              member.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: member.description != null && member.description!.isNotEmpty
+                                ? Text(
+                                    member.description!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  )
+                                : null,
+                            trailing: IconButton(
+                              icon: Icon(Icons.edit_outlined, color: Colors.grey[600]),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close modal
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ContactPageSettings(
+                                      contact: member,
+                                      group: groupContacts.group,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         );
