@@ -5,7 +5,7 @@ import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
-import 'package:prayer_ml/prayers/groups/views/contact_view.dart';
+import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/widgets/quick_info_bar.dart';
 import 'package:prayer_ml/prayers/groups/widgets/upcoming_events_widget.dart';
 import 'package:prayer_ml/prayers/groups/widgets/prayer_notes_widget.dart';
