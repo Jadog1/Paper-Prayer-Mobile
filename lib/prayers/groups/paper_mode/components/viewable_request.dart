@@ -15,10 +15,12 @@ class ViewableRequest extends ConsumerWidget {
     super.key,
     required this.request,
     this.focusOnEdit,
+    this.isExportMode = false,
   });
 
   final PrayerRequest request;
   final VoidCallback? focusOnEdit;
+  final bool isExportMode;
 
   void _showDetailSheet(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
@@ -67,8 +69,8 @@ class ViewableRequest extends ConsumerWidget {
         : request.description;
 
     return InkWell(
-      onTap: () => _showDetailSheet(context, ref),
-      onLongPress: focusOnEdit != null
+      onTap: isExportMode ? null : () => _showDetailSheet(context, ref),
+      onLongPress: (focusOnEdit != null && !isExportMode)
           ? () async {
               showModalBottomSheet(
                 context: context,

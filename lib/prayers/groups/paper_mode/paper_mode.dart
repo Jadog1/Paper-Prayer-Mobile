@@ -26,6 +26,8 @@ library paper_mode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/components/export_action_bar.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/options_header.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/paper.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/models/paper_mode_config.dart';
@@ -44,7 +46,7 @@ export 'providers/paper_mode_provider.dart';
 /// 
 /// Displays a paper-like interface for prayer requests with support for
 /// both read-only viewing and interactive editing.
-class PaperMode extends ConsumerWidget {
+class PaperMode extends ConsumerStatefulWidget {
   const PaperMode({
     super.key,
     required this.config,
@@ -53,16 +55,34 @@ class PaperMode extends ConsumerWidget {
   final PaperModeConfig config;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PaperMode> createState() => _PaperModeState();
+}
+
+class _PaperModeState extends ConsumerState<PaperMode> {
+  List<PrayerRequest> _loadedRequests = [];
+
+  void _onRequestsLoaded(List<PrayerRequest> requests) {
+    // Defer setState to after the current build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _loadedRequests = requests;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // If we have groupContacts directly, use them
-    GroupWithMembers? effectiveGroupContacts = config.groupContacts;
+    GroupWithMembers? effectiveGroupContacts = widget.config.groupContacts;
 
     // If no groupContacts but have groupId, fetch from repo
-    if (effectiveGroupContacts == null && config.groupId != null) {
+    if (effectiveGroupContacts == null && widget.config.groupId != null) {
       final groupContactsAsync = ref.watch(groupContactsRepoProvider);
       
       return switch (groupContactsAsync) {
-        AsyncData(:final value) => _buildGroupIfGroupExists(ref, value),
+        AsyncData(:final value) => _buildGroupIfGroupExists(value),
         AsyncError(:final error, :final stackTrace) => PrintError(
             caller: "PaperMode",
             error: error,
@@ -72,8 +92,8 @@ class PaperMode extends ConsumerWidget {
     }
 
     // If readOnly or we have groupContacts, proceed
-    if (effectiveGroupContacts != null || config.readOnly) {
-      return _buildWithGroupContacts(ref, effectiveGroupContacts);
+    if (effectiveGroupContacts != null || widget.config.readOnly) {
+      return _buildWithGroupContacts(effectiveGroupContacts);
     }
 
     // Configuration error
@@ -82,10 +102,10 @@ class PaperMode extends ConsumerWidget {
     );
   }
 
-  Widget _buildGroupIfGroupExists(WidgetRef ref, List<GroupWithMembers> groups) {
-    final matchingGroup = groups.where((group) => group.group.id == config.groupId).firstOrNull;
+  Widget _buildGroupIfGroupExists(List<GroupWithMembers> groups) {
+    final matchingGroup = groups.where((group) => group.group.id == widget.config.groupId).firstOrNull;
     if (matchingGroup != null) {
-      return _buildWithGroupContacts(ref, matchingGroup);
+      return _buildWithGroupContacts(matchingGroup);
     } else {
       return const Center(
         child: Text('Group not found'),
@@ -93,8 +113,8 @@ class PaperMode extends ConsumerWidget {
     }
   } 
 
-  Widget _buildWithGroupContacts(WidgetRef ref, GroupWithMembers? groupContacts) {
-    final effectiveConfig = config.copyWith(groupContacts: groupContacts);
+  Widget _buildWithGroupContacts(GroupWithMembers? groupContacts) {
+    final effectiveConfig = widget.config.copyWith(groupContacts: groupContacts);
 
     // Start background feature checking if enabled and we have a group context
     if (effectiveConfig.enableBackgroundFeatureCheck && effectiveConfig.effectiveGroupId != null) {
@@ -110,9 +130,13 @@ class PaperMode extends ConsumerWidget {
         Expanded(
           child: Padding(
             padding: padding,
-            child: Paper(config: effectiveConfig),
+            child: Paper(
+              config: effectiveConfig,
+              onRequestsLoaded: _onRequestsLoaded,
+            ),
           ),
         ),
+        ExportActionBar(allRequests: _loadedRequests),
       ],
     );
   }

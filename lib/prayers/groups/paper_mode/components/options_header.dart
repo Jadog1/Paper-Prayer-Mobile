@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/models/paper_mode_config.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provider.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/providers/export_provider.dart';
 
 /// Header widget with navigation and AI mode toggle
 class OptionsHeader extends ConsumerWidget {
@@ -13,6 +14,8 @@ class OptionsHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stateNotifier = ref.watch(paperModeStateProvider);
     final state = stateNotifier.state;
+    final exportNotifier = ref.watch(exportStateProvider);
+    final exportState = exportNotifier.state;
     
     return Column(
       children: [
@@ -31,6 +34,17 @@ class OptionsHeader extends ConsumerWidget {
               ),
               Row(
                 children: [
+                  // Export button
+                  IconButton(
+                    icon: Icon(
+                      exportState.isExportMode ? Icons.close : Icons.file_download,
+                    ),
+                    tooltip: exportState.isExportMode ? 'Cancel export' : 'Export',
+                    onPressed: () {
+                      exportNotifier.toggleExportMode();
+                    },
+                  ),
+                  const SizedBox(width: 8),
                   const Text("Summary"),
                   Switch(
                     value: state.aiMode,

@@ -15,9 +15,11 @@ class Paper extends ConsumerStatefulWidget {
   const Paper({
     super.key,
     required this.config,
+    this.onRequestsLoaded,
   });
 
   final PaperModeConfig config;
+  final void Function(List<PrayerRequest>)? onRequestsLoaded;
 
   @override
   ConsumerState<Paper> createState() => _PaperState();
@@ -47,6 +49,11 @@ class _PaperState extends ConsumerState<Paper> {
                 .where((r) => r.user.id == widget.config.contactId)
                 .toList()
             : data.items;
+
+        // Notify parent of loaded requests
+        if (widget.onRequestsLoaded != null) {
+          widget.onRequestsLoaded!(filteredItems);
+        }
             
         return ListView.builder(
           itemCount: filteredItems.length + 1,
@@ -62,12 +69,40 @@ class _PaperState extends ConsumerState<Paper> {
                         config: widget.config,
                       );
               }
+              
+              // Get all requests for the last date (used for date break selection)
+              final lastDate = filteredItems.last.createdAt;
+              final lastDateRequests = filteredItems
+                  .where((r) => daysBetween(
+                      DateTime.parse(r.createdAt), 
+                      DateTime.parse(lastDate)) == 0)
+                  .toList();
+              
+              // Get all requests for the last user on that date (used for username break selection)
+              final lastUserId = filteredItems.last.user.id;
+              final lastUserRequests = filteredItems
+                  .where((r) => r.user.id == lastUserId && daysBetween(
+                      DateTime.parse(r.createdAt), 
+                      DateTime.parse(lastDate)) == 0)
+                  .toList();
+              
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   endItemView,
-                  dateBreak(filteredItems.last.createdAt, formatTimestamp),
-                  usernameBreak(context, filteredItems.last)
+                  dateBreak(
+                    filteredItems.last.createdAt, 
+                    formatTimestamp,
+                    dateRequests: lastDateRequests,
+                    ref: ref,
+                    context: context,
+                  ),
+                  usernameBreak(
+                    context, 
+                    filteredItems.last,
+                    userRequests: lastUserRequests,
+                    ref: ref,
+                  ),
                 ],
               );
             }
@@ -89,20 +124,70 @@ class _PaperState extends ConsumerState<Paper> {
                 daysBetween(DateTime.parse(filteredItems[index].createdAt),
                         DateTime.parse(filteredItems[index - 1].createdAt)) >=
                     1) {
+              // Get all requests for this date
+              final dateRequests = filteredItems
+                  .where((r) => daysBetween(
+                      DateTime.parse(r.createdAt), 
+                      DateTime.parse(filteredItems[index - 1].createdAt)) == 0)
+                  .toList();
+              
+              // Get all requests for this user on that date
+              final userRequests = filteredItems
+                  .where((r) => r.user.id == filteredItems[index - 1].user.id &&
+                      daysBetween(
+                          DateTime.parse(r.createdAt), 
+                          DateTime.parse(filteredItems[index - 1].createdAt)) == 0)
+                  .toList();
+              
               widgets.add(dateBreak(
-                  filteredItems[index - 1].createdAt, formatTimestamp));
-              widgets.add(usernameBreak(context, filteredItems[index - 1]));
+                filteredItems[index - 1].createdAt, 
+                formatTimestamp,
+                dateRequests: dateRequests,
+                ref: ref,
+                context: context,
+              ));
+              widgets.add(usernameBreak(
+                context, 
+                filteredItems[index - 1],
+                userRequests: userRequests,
+                ref: ref,
+              ));
             } else if (index > 0 &&
                 filteredItems[index].user.id !=
                     filteredItems[index - 1].user.id) {
-              widgets.add(usernameBreak(context, filteredItems[index - 1]));
+              // Get all requests for this user on the same date as index
+              final userRequests = filteredItems
+                  .where((r) => r.user.id == filteredItems[index - 1].user.id &&
+                      daysBetween(
+                          DateTime.parse(r.createdAt), 
+                          DateTime.parse(filteredItems[index].createdAt)) == 0)
+                  .toList();
+              
+              widgets.add(usernameBreak(
+                context, 
+                filteredItems[index - 1],
+                userRequests: userRequests,
+                ref: ref,
+              ));
             }
 
             if (index == 0 && !widget.config.readOnly) {
               PrayerRequest? previousRequest;
               if (daysBetween(DateTime.parse(filteredItems[index].createdAt), DateTime.now()) >= 1) {
+                // Get all requests for today
+                final todayRequests = filteredItems
+                    .where((r) => daysBetween(
+                        DateTime.parse(r.createdAt), 
+                        DateTime.now()) == 0)
+                    .toList();
+                
                 widgets.add(dateBreak(
-                    DateTime.now().toIso8601String(), formatTimestamp));
+                  DateTime.now().toIso8601String(), 
+                  formatTimestamp,
+                  dateRequests: todayRequests,
+                  ref: ref,
+                  context: context,
+                ));
                 previousRequest = filteredItems[index];
               }
 

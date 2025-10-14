@@ -19,12 +19,14 @@ class EditableRequest extends ConsumerStatefulWidget {
     required this.focusNode,
     required this.controller,
     this.newRequest = false,
+    this.isExportMode = false,
   });
 
   final PrayerRequest prayerRequest;
   final FocusNode focusNode;
   final TextEditingController controller;
   final bool newRequest;
+  final bool isExportMode;
 
   @override
   ConsumerState<EditableRequest> createState() => _EditableRequestState();
@@ -181,6 +183,7 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: _onChanged,
                   maxLines: null,
+                  enabled: !widget.isExportMode,
                   decoration: InputDecoration(
                       border: _isFocused
                           ? const UnderlineInputBorder()
