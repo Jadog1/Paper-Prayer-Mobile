@@ -23,13 +23,17 @@ class BatchPaperModeNotifier extends _$BatchPaperModeNotifier {
         ? BatchPaperModeStep.contentEditing
         : BatchPaperModeStep.groupSelection;
 
+    // Only parse content if we have both prefillContent AND groupContacts already
+    // Otherwise, parsing will happen after group selection
+    final shouldParseInitially = config.autoParseOnLoad && 
+        config.prefillContent != null && 
+        config.groupContacts != null;
+
     final initialContentMode = config.autoParseOnLoad && config.prefillContent != null
         ? ContentMode.read
         : ContentMode.edit;
 
-    final initialParsedItems = config.autoParseOnLoad && 
-        config.prefillContent != null && 
-        config.groupContacts != null
+    final initialParsedItems = shouldParseInitially
         ? ContentParser.parseToItems(config.prefillContent!, config.groupContacts!)
         : <BatchContentItem>[];
 
@@ -44,10 +48,26 @@ class BatchPaperModeNotifier extends _$BatchPaperModeNotifier {
 
   /// Select a group and move to content editing
   void selectGroup(GroupWithMembers group) {
-    state = state.copyWith(
-      selectedGroup: group,
-      currentStep: BatchPaperModeStep.contentEditing,
-    );
+    // Check if we have prefill content that needs to be parsed
+    final hasPrefillContent = state.rawContent.isNotEmpty;
+    final shouldAutoParse = hasPrefillContent && state.parsedItems.isEmpty;
+
+    if (shouldAutoParse) {
+      // Parse the prefill content with the newly selected group
+      final parsedItems = ContentParser.parseToItems(state.rawContent, group);
+      
+      state = state.copyWith(
+        selectedGroup: group,
+        currentStep: BatchPaperModeStep.contentEditing,
+        parsedItems: parsedItems,
+        contentMode: ContentMode.read, // Switch to read mode to show parsed content
+      );
+    } else {
+      state = state.copyWith(
+        selectedGroup: group,
+        currentStep: BatchPaperModeStep.contentEditing,
+      );
+    }
   }
 
   /// Update raw content in edit mode

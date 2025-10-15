@@ -36,13 +36,23 @@ BatchPaperMode(
 ### With Prefilled Content
 
 ```dart
+// With group already selected - content is parsed immediately
 BatchPaperMode(
   config: BatchPaperModeConfig.withGroup(
     groupContacts: groupContacts,
     prefillContent: "John Doe\nPray for healing\nJane Smith\nPray for wisdom",
   ),
 )
+
+// Without group - content is parsed after group selection
+BatchPaperMode(
+  config: BatchPaperModeConfig.requiresGroupSelection(
+    prefillContent: "John Doe\nPray for healing\nJane Smith\nPray for wisdom",
+  ),
+)
 ```
+
+**Note**: When `prefillContent` is provided without a group, the content will be stored as raw text and automatically parsed after the user selects a group. The app will then switch to read mode to display the parsed results.
 
 ## Architecture
 
