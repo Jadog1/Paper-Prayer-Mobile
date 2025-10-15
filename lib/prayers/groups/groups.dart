@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
@@ -316,7 +317,7 @@ class GroupNotebook extends ConsumerWidget {
                     ),
                   ),
 
-                  // Bottom Action Bar (Settings & Members)
+                  // Bottom Action Bar - Single Menu Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -325,28 +326,70 @@ class GroupNotebook extends ConsumerWidget {
                           color: Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.settings, 
-                                color: Colors.grey.shade700, size: 20),
-                              padding: const EdgeInsets.all(8),
-                              visualDensity: VisualDensity.compact,
-                              onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      GroupSettings(groupContacts: groupContacts),
-                                ),
+                        child: PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Colors.grey.shade700,
+                            size: 20,
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          tooltip: 'Notebook Options',
+                          onSelected: (value) {
+                            switch (value) {
+                              case 'batch_insert':
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BatchPaperMode(
+                                      config: BatchPaperModeConfig.withGroup(
+                                        groupContacts: groupContacts,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                                break;
+                              case 'settings':
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        GroupSettings(groupContacts: groupContacts),
+                                  ),
+                                );
+                                break;
+                              case 'members':
+                                _showMembersModal(context, groupContacts);
+                                break;
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              value: 'batch_insert',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.playlist_add, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('Batch Insert'),
+                                ],
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.people,
-                                color: Colors.grey.shade700, size: 20),
-                              padding: const EdgeInsets.all(8),
-                              visualDensity: VisualDensity.compact,
-                              onPressed: () =>
-                                  _showMembersModal(context, groupContacts),
+                            PopupMenuItem<String>(
+                              value: 'members',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.people, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('View Members'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'settings',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.settings, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('Settings'),
+                                ],
+                              ),
                             ),
                           ],
                         ),

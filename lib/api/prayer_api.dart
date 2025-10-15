@@ -278,6 +278,21 @@ class PrayerRequestApiClient {
       throw Exception("Error clearing debounce timeout: ${response.statusCode} - ${response.body}");
     }
   }
+
+  Future<List<PrayerRequest>> batchInsertRequests(List<PrayerRequest> requests) async {
+    final response = await authClient.post(
+      config.uri("/prayer_requests/bulk"),
+      body: jsonEncode(requests.map((r) => r.toJson()).toList()),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error batch inserting prayer requests: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((request) => PrayerRequest.fromJson(request)).toList();
+  }
 }
 
 class CollectionsApiClient {
