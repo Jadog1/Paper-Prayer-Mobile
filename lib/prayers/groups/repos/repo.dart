@@ -11,6 +11,23 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'generated/repo.g.dart';
 
 @riverpod
+Future<GroupWithMembers> fetchGroupWithMembers(Ref ref, int groupId) async {
+  var contactApi = config.contactApiClient;
+  final group = await contactApi.fetchGroupById(groupId);
+  final contacts = await contactApi.fetchContactsInGroup(groupId);
+  final contactGroupPairs = await contactApi.fetchContactGroupByGroupId(groupId);
+  var memberWithContactGroupPairs = contactGroupPairs.map((pair) {
+    var contact = contacts.firstWhere((contact) => contact.id == pair.contactId);
+    return ContactAndGroupPair(contact: contact, groupPair: pair);
+  }).toList();
+  return GroupWithMembers(
+    group: group,
+    members: contacts,
+    memberWithContactGroupPairs: memberWithContactGroupPairs,
+  );
+}
+
+@riverpod
 class GroupContactsRepo extends _$GroupContactsRepo {
   late Config config;
 

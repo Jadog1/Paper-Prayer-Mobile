@@ -128,6 +128,39 @@ class ContactsApiClient {
     return ContactGroupPairs.fromJson(json);
   }
 
+  Future<List<ContactGroupPairs>> fetchContactGroupByGroupId(int groupId) async {
+    final response = await authClient.get(config.uri("/contacts/contact_groups/$groupId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting contact group by group ID: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((group) => ContactGroupPairs.fromJson(group)).toList();
+  }
+
+  Future<List<Contact>> fetchContactsInGroup(int groupId) async {
+    final response = await authClient.get(config.uri("/contacts/groups/$groupId/contacts"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting contacts in group: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body) as List;
+    return json.map((contact) => Contact.fromJson(contact)).toList();
+  }
+
+  Future<Group> fetchGroupById(int groupId) async {
+    final response = await authClient.get(config.uri("/contacts/groups/$groupId"));
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting group by ID: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return Group.fromJson(json);
+  }
+
   Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {
     final response = await authClient.get(config.uri("/contacts/related/$contactId"));
 

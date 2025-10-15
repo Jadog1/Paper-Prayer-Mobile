@@ -11,6 +11,7 @@ Here are some files that may be relevant to this feature request:
 - `groups.dart`
 - `group_model.dart`
 - `paper_mode.dart`
+- `repo.dart`
 
 ## Request
 
@@ -71,3 +72,8 @@ Testing should include:
 
 - Unit tests for the parsing logic between edit and read mode
 - Widget tests for the BatchPaperMode widget to ensure it behaves correctly in both modes
+
+## Technical details
+
+- To find all groups, you should use the repo riverpod method for fetching groups. Then to convert that into GroupWithMembers, you should use `fetchGroupWithMembers`
+- The term "page" used is very loose. I would prefer not to use Navigator for different steps of the wizard, because then it makes returning out of the wizard more complicated. Instead, use a single Scaffold and change the body based on the current step of the wizard.
