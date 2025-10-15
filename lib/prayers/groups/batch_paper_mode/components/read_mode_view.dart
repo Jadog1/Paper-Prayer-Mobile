@@ -130,6 +130,21 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
             onReorder: (oldIndex, newIndex) {
               notifier.reorderItems(oldIndex, newIndex);
             },
+            proxyDecorator: (child, index, animation) {
+              return AnimatedBuilder(
+                animation: animation,
+                builder: (context, child) {
+                  final double elevation = Curves.easeInOut.transform(animation.value) * 6 + 2;
+                  return Material(
+                    elevation: elevation,
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    child: child,
+                  );
+                },
+                child: child,
+              );
+            },
             itemCount: state.parsedItems.length,
             itemBuilder: (context, index) {
               final item = state.parsedItems[index];
@@ -222,34 +237,36 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
         padding: const EdgeInsets.only(right: 16),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      child: Card(
-        margin: EdgeInsets.only(
+      child: Padding(
+        padding: EdgeInsets.only(
           bottom: 8,
           left: item.isPrayerRequest && isUnderContact ? 24 : 0,
         ),
-        elevation: item.isAmbiguousContact ? 4 : 2,
-        color: item.isContact
-            ? Colors.blue.shade50
-            : item.isAmbiguousContact
-                ? Colors.orange.shade50
-                : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            color: item.isAmbiguousContact
-                ? Colors.orange.shade400
-                : item.isContact
-                    ? Colors.blue.shade300
-                    : Colors.grey.shade300,
-            width: item.isAmbiguousContact ? 2 : 1,
+        child: Card(
+          margin: EdgeInsets.zero,
+          elevation: item.isAmbiguousContact ? 4 : 2,
+          color: item.isContact
+              ? Colors.blue.shade50
+              : item.isAmbiguousContact
+                  ? Colors.orange.shade50
+                  : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(
+              color: item.isAmbiguousContact
+                  ? Colors.orange.shade400
+                  : item.isContact
+                      ? Colors.blue.shade300
+                      : Colors.grey.shade300,
+              width: item.isAmbiguousContact ? 2 : 1,
+            ),
           ),
-        ),
-        child: InkWell(
-          onTap: () => _showEditDialog(context, item, notifier),
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
+          child: InkWell(
+            onTap: () => _showEditDialog(context, item, notifier),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
               children: [
                 // Drag handle
                 Icon(
@@ -318,6 +335,7 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
