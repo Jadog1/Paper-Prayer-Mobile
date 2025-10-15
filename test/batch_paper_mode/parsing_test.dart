@@ -219,8 +219,8 @@ This is a very long line that exceeds 150 characters and should be treated as a 
         ];
 
         final result = ContentParser.itemsToRawText(items);
-        
-        expect(result, equals('John Doe\nPrayer for healing\nJane Smith\nPrayer for wisdom'));
+
+        expect(result, equals('John Doe\n----------\n- Prayer for healing\n\nJane Smith\n----------\n- Prayer for wisdom'));
       });
 
       test('should handle empty list', () {
@@ -239,7 +239,7 @@ This is a very long line that exceeds 150 characters and should be treated as a 
         ];
 
         final result = ContentParser.itemsToRawText(items);
-        expect(result, equals('John Doe')); // Should use full name
+        expect(result, equals('John Doe\n----------')); // Should use full name
       });
 
       test('should handle ambiguous contacts', () {
@@ -253,18 +253,23 @@ This is a very long line that exceeds 150 characters and should be treated as a 
         ];
 
         final result = ContentParser.itemsToRawText(items);
-        expect(result, equals('John')); // Should use content as-is
+        expect(result, equals('John\n----------')); // Should use content as-is
       });
     });
     group('round-trip conversion', () {
       test('should maintain data through parse and convert cycle', () {
         final originalContent = '''
 John Doe
-Prayer for healing
+----------
+- Prayer for healing
+
 Jane Smith
-Prayer for wisdom
+----------
+- Prayer for wisdom
+
 Bob Johnson
-Prayer for guidance
+----------
+- Prayer for guidance
 ''';
 
         // Parse to items
