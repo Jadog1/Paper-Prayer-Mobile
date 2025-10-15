@@ -19,8 +19,6 @@ class ReadModeView extends ConsumerStatefulWidget {
 }
 
 class _ReadModeViewState extends ConsumerState<ReadModeView> {
-  bool _tipsExpanded = true;
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(batchPaperModeNotifierProvider(widget.config));
@@ -56,73 +54,34 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Collapsible Instructions
-        InkWell(
-          onTap: () {
-            setState(() {
-              _tipsExpanded = !_tipsExpanded;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16),
+        // Warning for unresolved contacts
+        if (state.hasUnresolvedContacts) ...[
+          Container(
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
+              color: Colors.orange.shade50,
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.orange.shade300),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.check_circle_outline, color: Colors.green.shade700, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Read Mode - Review & Organize',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700,
-                        ),
-                      ),
+                Icon(Icons.warning_amber, color: Colors.orange.shade700),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Please resolve ambiguous contacts before submitting',
+                    style: TextStyle(
+                      color: Colors.orange.shade700,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
-                    Icon(
-                      _tipsExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.green.shade700,
-                    ),
-                  ],
+                  ),
                 ),
-                if (_tipsExpanded) ...[
-                  const SizedBox(height: 8),
-                  _buildTip(Icons.edit, 'To edit, tap the eye button at the top'),
-                  _buildTip(Icons.drag_indicator, 'Drag items to reorder'),
-                  _buildTip(Icons.touch_app, 'Tap to edit content or change type'),
-                  _buildTip(Icons.swipe, 'Swipe left to delete'),
-                  if (state.hasUnresolvedContacts) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Please resolve ambiguous contacts before submitting',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.orange.shade700,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
               ],
             ),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
+        ],
 
         // Reorderable list
         Expanded(
@@ -159,25 +118,6 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTip(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Row(
-        children: [
-          Icon(icon, size: 14, color: Colors.grey.shade600),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade700,
-            ),
-          ),
-        ],
-      ),
     );
   }
 

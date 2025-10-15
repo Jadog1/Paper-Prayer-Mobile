@@ -7,7 +7,7 @@ part of '../batch_paper_mode_provider.dart';
 // **************************************************************************
 
 String _$batchPaperModeNotifierHash() =>
-    r'7b15707b2d08b5b512ae84982eccfccc840a63b3';
+    r'769b07198f008e45ac9e3dfd70dc27d86e47b285';
 
 /// Copied from Dart SDK
 class _SystemHash {

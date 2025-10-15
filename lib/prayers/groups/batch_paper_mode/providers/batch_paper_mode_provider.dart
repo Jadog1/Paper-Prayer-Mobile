@@ -70,6 +70,24 @@ class BatchPaperModeNotifier extends _$BatchPaperModeNotifier {
     }
   }
 
+  /// Go back to group selection while preserving content
+  void goBackToGroupSelection() {
+    // Convert current items back to raw text if in read mode
+    if (!state.isEditMode && state.parsedItems.isNotEmpty) {
+      final rawText = ContentParser.itemsToRawText(state.parsedItems);
+      state = state.copyWith(
+        currentStep: BatchPaperModeStep.groupSelection,
+        rawContent: rawText,
+        contentMode: ContentMode.edit, // Switch to edit mode for next time
+      );
+    } else {
+      // Already in edit mode, just go back
+      state = state.copyWith(
+        currentStep: BatchPaperModeStep.groupSelection,
+      );
+    }
+  }
+
   /// Update raw content in edit mode
   void updateRawContent(String content) {
     state = state.copyWith(rawContent: content);

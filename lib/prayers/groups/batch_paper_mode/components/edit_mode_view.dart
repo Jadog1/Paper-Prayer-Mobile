@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/models/batch_paper_mode_config.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/providers/batch_paper_mode_provider.dart';
@@ -20,7 +19,6 @@ class EditModeView extends ConsumerStatefulWidget {
 class _EditModeViewState extends ConsumerState<EditModeView> {
   late TextEditingController _textController;
   final FocusNode _focusNode = FocusNode();
-  bool _tipsExpanded = true;
 
   @override
   void initState() {
@@ -50,67 +48,6 @@ class _EditModeViewState extends ConsumerState<EditModeView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Collapsible Instructions
-        InkWell(
-          onTap: () {
-            setState(() {
-              _tipsExpanded = !_tipsExpanded;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Edit Mode',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      _tipsExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.blue.shade700,
-                    ),
-                  ],
-                ),
-                if (_tipsExpanded) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Enter one prayer request per line. You can paste content from other sources.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Tip: When you paste content, it will automatically switch to Read Mode for review.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
         // Text area
         Expanded(
           child: Container(
@@ -126,7 +63,7 @@ class _EditModeViewState extends ConsumerState<EditModeView> {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               decoration: const InputDecoration(
-                hintText: 'Enter prayer requests here, one per line...',
+                hintText: 'Enter prayer requests here, one per line...\n\nTip: Click the Help button above for guidance on formatting.',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(16),
               ),

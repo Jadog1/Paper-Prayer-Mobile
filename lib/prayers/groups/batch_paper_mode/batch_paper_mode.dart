@@ -85,26 +85,6 @@ class BatchPaperMode extends ConsumerWidget {
               }
             },
           ),
-          actions: [
-            if (state.currentStep == BatchPaperModeStep.contentEditing && state.isEditMode)
-              IconButton(
-                icon: const Icon(Icons.paste),
-                onPressed: () async {
-                  // Get clipboard data
-                  final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                  if (clipboardData != null && clipboardData.text != null) {
-                    notifier.handlePaste(clipboardData.text!);
-                  }
-                },
-                tooltip: 'Paste',
-              ),
-            if (state.currentStep == BatchPaperModeStep.contentEditing)
-              IconButton(
-                icon: Icon(state.isEditMode ? Icons.visibility : Icons.edit),
-                onPressed: () => notifier.toggleMode(),
-                tooltip: state.isEditMode ? 'Preview' : 'Edit',
-              ),
-          ],
         ),
         body: SafeArea(
           child: Stack(
@@ -114,7 +94,9 @@ class BatchPaperMode extends ConsumerWidget {
                 padding: EdgeInsets.only(
                   left: 16.0,
                   right: 16.0,
-                  top: 16.0,
+                  top: state.currentStep == BatchPaperModeStep.contentEditing 
+                      ? (state.selectedGroup != null ? 92.0 : 56.0) // Space for toolbar (taller if group is shown)
+                      : 16.0,
                   bottom: state.currentStep == BatchPaperModeStep.contentEditing && !state.isEditMode
                       ? 80.0  // Space for bottom buttons in read mode
                       : 16.0, // Normal spacing in edit mode
@@ -162,6 +144,15 @@ class BatchPaperMode extends ConsumerWidget {
                   ],
                 ),
               ),
+
+              // Toolbar (only in content editing step)
+              if (state.currentStep == BatchPaperModeStep.contentEditing)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildToolbar(context, state, notifier),
+                ),
 
               // Bottom action buttons - fixed position (only in read mode)
               if (state.currentStep == BatchPaperModeStep.contentEditing && !state.isEditMode)
@@ -238,6 +229,287 @@ class BatchPaperMode extends ConsumerWidget {
           return ReadModeView(config: config);
         }
     }
+  }
+
+  Widget _buildToolbar(
+    BuildContext context,
+    BatchPaperModeState state,
+    BatchPaperModeNotifier notifier,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Group name display
+          if (state.selectedGroup != null) ...[
+            Row(
+              children: [
+                Icon(Icons.book, size: 16, color: Colors.grey.shade600),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Sending to: ${state.selectedGroup!.group.name}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade800,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          // Action buttons with horizontal scroll
+          SizedBox(
+            height: 36,
+            child: Stack(
+              children: [
+                // Scrollable buttons
+                ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    // Change Group button
+                    if (state.selectedGroup != null) ...[
+                      OutlinedButton.icon(
+                        onPressed: () => notifier.goBackToGroupSelection(),
+                        icon: const Icon(Icons.swap_horiz, size: 16),
+                        label: const Text('Change Group', style: TextStyle(fontSize: 12)),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    // Edit/Preview button
+                    OutlinedButton.icon(
+                      onPressed: () => notifier.toggleMode(),
+                      icon: Icon(state.isEditMode ? Icons.visibility : Icons.edit, size: 16),
+                      label: Text(
+                        state.isEditMode ? 'Preview' : 'Edit',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Paste button (only in edit mode)
+                    if (state.isEditMode) ...[
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                          if (clipboardData != null && clipboardData.text != null) {
+                            notifier.handlePaste(clipboardData.text!);
+                          }
+                        },
+                        icon: const Icon(Icons.paste, size: 16),
+                        label: const Text('Paste', style: TextStyle(fontSize: 12)),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    // Help button
+                    OutlinedButton.icon(
+                      onPressed: () => _showHelpDialog(context, state),
+                      icon: const Icon(Icons.help_outline, size: 16),
+                      label: const Text('Help', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                  ],
+                ),
+                // Scroll indicator on the right
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 24,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0.9),
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.chevron_right,
+                      size: 20,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHelpDialog(BuildContext context, BatchPaperModeState state) {
+    final isEditMode = state.isEditMode;
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              isEditMode ? Icons.edit : Icons.visibility,
+              color: const Color(0xFF8B7355),
+            ),
+            const SizedBox(width: 12),
+            Text(isEditMode ? 'Edit Mode Help' : 'Read Mode Help'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: isEditMode ? _buildEditModeHelp() : _buildReadModeHelp(state),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildEditModeHelp() {
+    return [
+      const Text(
+        'How to use Edit Mode:',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      const SizedBox(height: 12),
+      _buildHelpItem(
+        Icons.edit,
+        'Enter Content',
+        'Type or paste prayer requests. Each line will be parsed separately.',
+      ),
+      _buildHelpItem(
+        Icons.paste,
+        'Paste Content',
+        'Use the Paste button to paste from clipboard. The view will automatically switch to Read Mode for review.',
+      ),
+      _buildHelpItem(
+        Icons.person,
+        'Contact Names',
+        'Lines with just names (< 150 chars) will be detected as contacts. Prayer requests will be associated with the contact above them.',
+      ),
+      _buildHelpItem(
+        Icons.format_list_bulleted,
+        'Formatting',
+        'Bullet points (-, *, •) and numbering (1., 2., etc.) are automatically removed.',
+      ),
+      _buildHelpItem(
+        Icons.visibility,
+        'Preview',
+        'Click the Preview button to see how your content will be organized.',
+      ),
+    ];
+  }
+
+  List<Widget> _buildReadModeHelp(BatchPaperModeState state) {
+    return [
+      const Text(
+        'How to use Read Mode:',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      const SizedBox(height: 12),
+      _buildHelpItem(
+        Icons.drag_indicator,
+        'Reorder Items',
+        'Long press and drag items to change their order.',
+      ),
+      _buildHelpItem(
+        Icons.touch_app,
+        'Edit Items',
+        'Tap any item to edit its content or change between contact/prayer request.',
+      ),
+      _buildHelpItem(
+        Icons.delete_outline,
+        'Delete Items',
+        'Swipe left on any item to delete it.',
+      ),
+      if (state.hasUnresolvedContacts)
+        _buildHelpItem(
+          Icons.warning_amber,
+          'Resolve Ambiguous Contacts',
+          'Items with a warning icon match multiple contacts. Tap them to select the correct contact.',
+          color: Colors.orange,
+        ),
+      _buildHelpItem(
+        Icons.edit,
+        'Switch to Edit',
+        'Click the Edit button to go back to raw text editing.',
+      ),
+      _buildHelpItem(
+        Icons.check_circle,
+        'Submit',
+        'Once everything looks good, click Submit All at the bottom.',
+      ),
+    ];
+  }
+
+  Widget _buildHelpItem(IconData icon, String title, String description, {Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: color ?? const Color(0xFF8B7355)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildActionButtons(

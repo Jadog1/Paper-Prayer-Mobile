@@ -10,6 +10,9 @@ A batch insertion interface for importing multiple prayer requests at once, with
 - **Drag and drop**: Reorder items in read mode
 - **Ambiguous contact resolution**: Handle cases where a name matches multiple contacts
 - **Bulk submission**: Submit all prayer requests at once with proper contact associations
+- **Group management**: Change the selected group at any time while preserving content
+- **Contextual help**: Built-in help dialog with mode-specific tips
+- **Compact toolbar**: Quick access to common actions without cluttering the interface
 
 ## Usage
 
@@ -98,19 +101,31 @@ BatchPaperMode(
 
 ## UI Interactions
 
+### Toolbar (Content Editing Screen)
+
+The toolbar appears below the app bar and provides quick access to:
+
+- **Group Display**: Shows the currently selected notebook/group
+- **Change Group**: Return to group selection while preserving content
+- **Edit/Preview Toggle**: Switch between edit and read modes
+- **Paste Button** (Edit Mode only): Paste content from clipboard
+- **Help Button**: Opens contextual help dialog with mode-specific tips
+
 ### Edit Mode
 
 - Large text area for entering content
-- Paste & Review button (auto-switches to read mode after paste)
+- Paste button automatically switches to read mode after paste
 - Preview button to manually switch to read mode
+- Help dialog provides formatting guidance
 
 ### Read Mode
 
 - **Drag and drop**: Reorder items
 - **Tap**: Edit content or change between contact/prayer request
 - **Swipe**: Delete item (with confirmation)
-- **Ambiguous contacts**: Show warning icon, tap to select correct contact
+- **Ambiguous contacts**: Show warning banner and icon, tap to select correct contact
 - Visual grouping: Prayer requests under contacts are indented
+- Help dialog provides usage instructions
 
 ### Submission
 
