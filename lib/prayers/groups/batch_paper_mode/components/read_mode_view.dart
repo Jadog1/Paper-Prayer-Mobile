@@ -173,8 +173,19 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
     int index,
     BatchPaperModeNotifier notifier,
   ) {
-    final isFirstItemUnderContact = item.isPrayerRequest && index > 0 && 
-        ref.read(batchPaperModeNotifierProvider(widget.config)).parsedItems[index - 1].isContact;
+    // Check if this prayer request belongs under a contact
+    // by finding the most recent contact before this item
+    bool isUnderContact = false;
+    if (item.isPrayerRequest && index > 0) {
+      final items = ref.read(batchPaperModeNotifierProvider(widget.config)).parsedItems;
+      // Look backwards to find if there's a contact before any other contact
+      for (int i = index - 1; i >= 0; i--) {
+        if (items[i].isContact) {
+          isUnderContact = true;
+          break;
+        }
+      }
+    }
 
     return Dismissible(
       key: Key(item.id),
@@ -214,7 +225,7 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
       child: Card(
         margin: EdgeInsets.only(
           bottom: 8,
-          left: item.isPrayerRequest && isFirstItemUnderContact ? 24 : 0,
+          left: item.isPrayerRequest && isUnderContact ? 24 : 0,
         ),
         elevation: item.isAmbiguousContact ? 4 : 2,
         color: item.isContact
@@ -259,7 +270,7 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                       : item.isAmbiguousContact
                           ? Colors.orange.shade700
                           : Colors.grey.shade600,
-                  size: item.isPrayerRequest ? 8 : 20,
+                  size: item.isPrayerRequest ? 16 : 20,
                 ),
                 const SizedBox(width: 12),
 
@@ -396,7 +407,7 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                     ButtonSegment(
                       value: BatchContentItemType.prayerRequest,
                       label: Text('Prayer Request'),
-                      icon: Icon(Icons.note_add, size: 8),
+                      icon: Icon(Icons.note_add, size: 16),
                     ),
                     ButtonSegment(
                       value: BatchContentItemType.contact,
@@ -420,7 +431,7 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                   const Text('Contact:', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<Contact>(
-                    value: selectedContact,
+                    initialValue: selectedContact,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Select a contact...',
