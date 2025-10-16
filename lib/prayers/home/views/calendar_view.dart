@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
 import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/prayers/home/views/event_details_view.dart';
@@ -12,10 +11,12 @@ enum CalendarViewType { daily, weekly, monthly }
 class CalendarView extends ConsumerStatefulWidget {
   const CalendarView({
     super.key,
-    required this.groupContacts,
+    this.contactId,
+    this.collectionId,
   });
 
-  final GroupContacts groupContacts;
+  final int? contactId;
+  final int? collectionId;
 
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
@@ -131,6 +132,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         startDate: startDate,
         endDate: endDate,
         limit: 100,
+        contactId: widget.contactId,
+        collectionId: widget.collectionId,
       ),
     );
 
@@ -302,6 +305,20 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   }
 
   Widget _buildEventCard(PrayerCollectionEvent event) {
+    // Calculate if multi-day and number of days
+    bool isMultiDay = false;
+    int daysSpan = 1;
+    try {
+      final startDate = DateTime.parse(event.eventStart);
+      final endDate = event.eventEnd != null && event.eventEnd!.isNotEmpty
+          ? DateTime.parse(event.eventEnd!)
+          : startDate;
+      isMultiDay = !startDate.isAtSameMomentAs(endDate);
+      daysSpan = endDate.difference(startDate).inDays + 1;
+    } catch (e) {
+      // If parsing fails, assume single day
+    }
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -311,7 +328,6 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             MaterialPageRoute(
               builder: (context) => EventDetailsView(
                 event: event,
-                groupContacts: widget.groupContacts,
               ),
             ),
           );
@@ -352,6 +368,22 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     const SizedBox(height: 4),
+                    // Multi-day indicator
+                    if (isMultiDay)
+                      Row(
+                        children: [
+                          const Icon(Icons.date_range, size: 16, color: Colors.blueAccent),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Multi-day event ($daysSpan days)',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 4),
                     Text(
                       _formatEventDateRange(event),
                       style: TextStyle(
@@ -387,23 +419,28 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   }
 
   Map<String, DateTime> _getDateRange() {
+    const buffer = Duration(days: 30);
     switch (_viewType) {
       case CalendarViewType.daily:
+        final start = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(buffer);
+        final end = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, 23, 59, 59).add(buffer);
         return {
-          'start': DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day),
-          'end': DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, 23, 59, 59),
+          'start': start,
+          'end': end,
         };
       case CalendarViewType.weekly:
-        final weekStart = _getWeekStart(_selectedDate);
-        final weekEnd = weekStart.add(const Duration(days: 7));
+        final weekStart = _getWeekStart(_selectedDate).subtract(buffer);
+        final weekEnd = weekStart.add(const Duration(days: 7)).add(buffer);
         return {
           'start': weekStart,
           'end': weekEnd,
         };
       case CalendarViewType.monthly:
+        final start = DateTime(_selectedDate.year, _selectedDate.month, 1).subtract(buffer);
+        final end = DateTime(_selectedDate.year, _selectedDate.month + 1, 0, 23, 59, 59).add(buffer);
         return {
-          'start': DateTime(_selectedDate.year, _selectedDate.month, 1),
-          'end': DateTime(_selectedDate.year, _selectedDate.month + 1, 0, 23, 59, 59),
+          'start': start,
+          'end': end,
         };
     }
   }

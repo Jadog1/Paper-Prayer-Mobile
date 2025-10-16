@@ -91,8 +91,9 @@ class NewHomePageConsumer extends ConsumerWidget {
                 endIndent: 40,
               ),
               
-              // Recommendations Section
-              Expanded(
+              // Recommendations Section - Flexible with minimum height
+              Flexible(
+                flex: 1,
                 child: viewModel.when(
                   data: (recommendationGroups) {
                     return ListView.builder(
@@ -123,8 +124,11 @@ class NewHomePageConsumer extends ConsumerWidget {
                 ),
               ),
               
-              // Upcoming Events Preview Section
-              const UpcomingEventsPreview(),
+              // Upcoming Events Preview Section - Limited height
+              const Flexible(
+                flex: 2,
+                child: UpcomingEventsPreview(),
+              ),
               
               // Additional view buttons
               const SizedBox(height: 8),

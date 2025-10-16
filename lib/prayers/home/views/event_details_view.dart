@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 
 /// View for displaying prayer requests associated with a specific event
 /// This view opens paper mode in read-only mode filtered by event_id
@@ -10,11 +9,9 @@ class EventDetailsView extends ConsumerWidget {
   const EventDetailsView({
     super.key,
     required this.event,
-    required this.groupContacts,
   });
 
   final PrayerCollectionEvent event;
-  final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,14 +64,10 @@ class EventDetailsView extends ConsumerWidget {
           
           // Paper mode with event filter (read-only)
           Expanded(
-            child: PaperMode(
-              currentGroup: groupContacts,
-              config: PaperModeConfig(
-                readOnly: true,
-                showHeader: false,
-                eventId: event.id,
-              ),
-            ),
+            child: 
+            PaperMode(config: PaperModeConfig.readOnly(
+              showHeader: false,
+              eventId: event.id,))
           ),
         ],
       ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prayer_ml/prayers/groups/models/group_model.dart';
-import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
 import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/prayers/home/views/calendar_view.dart';
@@ -9,13 +7,60 @@ import 'package:prayer_ml/prayers/home/views/event_details_view.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 /// Widget showing a preview of upcoming events
-class UpcomingEventsPreview extends ConsumerWidget {
+class UpcomingEventsPreview extends ConsumerStatefulWidget {
   const UpcomingEventsPreview({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UpcomingEventsPreview> createState() => _UpcomingEventsPreviewState();
+}
+
+class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollIndicator = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_handleScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _handleScroll() {
+    // Show indicator if we can scroll down
+    if (_scrollController.hasClients) {
+      final canScrollDown = _scrollController.position.pixels < 
+          _scrollController.position.maxScrollExtent - 10;
+      if (canScrollDown != _showScrollIndicator) {
+        setState(() {
+          _showScrollIndicator = canScrollDown;
+        });
+      }
+    }
+  }
+
+  void _checkIfScrollable() {
+    // Check after the frame is rendered if content is scrollable
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        final canScroll = _scrollController.position.maxScrollExtent > 0;
+        if (canScroll != _showScrollIndicator) {
+          setState(() {
+            _showScrollIndicator = canScroll;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final futureEventsAsync = ref.watch(fetchFutureEventsProvider(limit: 5, maxDays: 30));
-    final groupContactsAsync = ref.watch(groupContactsRepoProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,85 +87,100 @@ class UpcomingEventsPreview extends ConsumerWidget {
               ),
               
               // View All button
-              groupContactsAsync.when(
-                data: (groupContacts) {
-                  if (groupContacts.isEmpty) return const SizedBox.shrink();
-                  
-                  return TextButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CalendarView(
-                            groupContacts: groupContacts.first,
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.calendar_month, size: 16),
-                    label: const Text("Calendar"),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.orange[700],
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CalendarView(),
                     ),
                   );
                 },
-                loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                icon: const Icon(Icons.calendar_month, size: 16),
+                label: const Text("Calendar"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.orange[700],
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
               ),
             ],
           ),
         ),
 
-        // Events list
-        futureEventsAsync.when(
-          data: (events) {
-            if (events.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
-                child: Center(
-                  child: Text(
-                    "No upcoming events in the next 30 days",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
+        // Scrollable Events list with indicator
+        Expanded(
+          child: Stack(
+            children: [
+              // Events list
+              futureEventsAsync.when(
+                data: (events) {
+                  _checkIfScrollable();
+                  
+                  if (events.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
+                      child: Center(
+                        child: Text(
+                          "No upcoming events in the next 30 days",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(bottom: 48),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return _UpcomingEventCard(
+                        event: events[index],
+                      );
+                    },
+                  );
+                },
+                loading: () => const _EventsLoadingSkeleton(),
+                error: (error, stackTrace) => PrintError(
+                  caller: "UpcomingEventsPreview",
+                  error: error,
+                  stackTrace: stackTrace,
+                ),
+              ),
+              
+              // Scroll indicator at bottom
+              if (_showScrollIndicator)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0.95),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.orange[700],
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
-              );
-            }
-
-            return groupContactsAsync.when(
-              data: (groupContacts) {
-                if (groupContacts.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: events.map((event) {
-                    return _UpcomingEventCard(
-                      event: event,
-                      groupContacts: groupContacts.first,
-                    );
-                  }).toList(),
-                );
-              },
-              loading: () => const _EventsLoadingSkeleton(),
-              error: (error, stackTrace) => PrintError(
-                caller: "UpcomingEventsPreview",
-                error: error,
-                stackTrace: stackTrace,
-              ),
-            );
-          },
-          loading: () => const _EventsLoadingSkeleton(),
-          error: (error, stackTrace) => PrintError(
-            caller: "UpcomingEventsPreview",
-            error: error,
-            stackTrace: stackTrace,
+            ],
           ),
         ),
-
+        
         const SizedBox(height: 8),
       ],
     );
@@ -130,11 +190,9 @@ class UpcomingEventsPreview extends ConsumerWidget {
 class _UpcomingEventCard extends StatelessWidget {
   const _UpcomingEventCard({
     required this.event,
-    required this.groupContacts,
   });
 
   final PrayerCollectionEvent event;
-  final GroupContacts groupContacts;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +202,6 @@ class _UpcomingEventCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => EventDetailsView(
               event: event,
-              groupContacts: groupContacts,
             ),
           ),
         );
@@ -285,10 +342,11 @@ class _EventsLoadingSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        3,
-        (index) => Padding(
+    return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 48),
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
           child: Row(
             children: [
@@ -327,8 +385,8 @@ class _EventsLoadingSkeleton extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -11,17 +11,22 @@ class NotebookApiClient {
 
   NotebookApiClient({required this.authClient, required this.baseUrl});
 
-  Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(CursorPagination pagination, int groupId, int? contactId, {int? eventId}) async {
+  Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(CursorPagination pagination, int? groupId, int? contactId, {int? eventId, int? collectionId}) async {
     var input = {
       "limit": pagination.limit.toString(),
       "cursor": pagination.cursor?.toString(),
-      "group_id": groupId.toString(),
     };
+    if (groupId != null) {
+      input["group_id"] = groupId.toString();
+    }
     if (contactId != null) {
       input["contact_id"] = contactId.toString();
     }
     if (eventId != null) {
       input["event_id"] = eventId.toString();
+    }
+    if (collectionId != null) {
+      input["collection_id"] = collectionId.toString();
     }
     final response = await authClient.get(config.uri("/notebook/", input));
 

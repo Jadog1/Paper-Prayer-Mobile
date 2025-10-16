@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
+import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
-import 'package:prayer_ml/prayers/groups/paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
-
+import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 // import 'view_model.dart';
 
@@ -40,7 +41,7 @@ class GroupConsumer extends ConsumerWidget {
 
 class GroupView extends ConsumerWidget {
   const GroupView({super.key, required this.groupContacts});
-  final List<GroupContacts> groupContacts;
+  final List<GroupWithMembers> groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,7 +182,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 class GroupNotebook extends ConsumerWidget {
   const GroupNotebook({super.key, required this.groupContacts});
 
-  final GroupContacts groupContacts;
+  final GroupWithMembers groupContacts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -273,7 +274,8 @@ class GroupNotebook extends ConsumerWidget {
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              PaperMode(currentGroup: groupContacts),
+                              PaperMode(config: PaperModeConfig.editable(
+                                    groupContacts: groupContacts))
                         ),
                       ),
                       child: Container(
@@ -315,7 +317,7 @@ class GroupNotebook extends ConsumerWidget {
                     ),
                   ),
 
-                  // Bottom Action Bar (Settings & Members)
+                  // Bottom Action Bar - Single Menu Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -324,28 +326,70 @@ class GroupNotebook extends ConsumerWidget {
                           color: Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.settings, 
-                                color: Colors.grey.shade700, size: 20),
-                              padding: const EdgeInsets.all(8),
-                              visualDensity: VisualDensity.compact,
-                              onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      GroupSettings(groupContacts: groupContacts),
-                                ),
+                        child: PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Colors.grey.shade700,
+                            size: 20,
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          tooltip: 'Notebook Options',
+                          onSelected: (value) {
+                            switch (value) {
+                              case 'batch_insert':
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BatchPaperMode(
+                                      config: BatchPaperModeConfig.withGroup(
+                                        groupContacts: groupContacts,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                                break;
+                              case 'settings':
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        GroupSettings(groupContacts: groupContacts),
+                                  ),
+                                );
+                                break;
+                              case 'members':
+                                _showMembersModal(context, groupContacts);
+                                break;
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              value: 'batch_insert',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.playlist_add, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('Batch Insert'),
+                                ],
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.people,
-                                color: Colors.grey.shade700, size: 20),
-                              padding: const EdgeInsets.all(8),
-                              visualDensity: VisualDensity.compact,
-                              onPressed: () =>
-                                  _showMembersModal(context, groupContacts),
+                            PopupMenuItem<String>(
+                              value: 'members',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.people, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('View Members'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'settings',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.settings, size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('Settings'),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -362,53 +406,158 @@ class GroupNotebook extends ConsumerWidget {
   }
 
   void _showMembersModal(
-      BuildContext context, GroupContacts groupContacts) {
+      BuildContext context, GroupWithMembers groupContacts) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return Consumer(
           builder: (context, ref, child) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Members of ${groupContacts.group.name}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                  // Handle bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 250,
+                  
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8B7355).withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.people,
+                            color: Color(0xFF8B7355),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Members",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                              Text(
+                                "${groupContacts.members.length} member${groupContacts.members.length != 1 ? 's' : ''} in ${groupContacts.group.name}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  Divider(height: 1, color: Colors.grey[200]),
+                  
+                  // Members list
+                  Expanded(
                     child: ListView.builder(
-                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       itemCount: groupContacts.members.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PaperMode(
-                                  config: PaperModeConfig(contactId: groupContacts.members[index].id),
-                                  currentGroup: groupContacts),
-                            ),
+                        final member = groupContacts.members[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey[200]!),
                           ),
-                          leading:
-                              const CircleAvatar(child: Icon(Icons.person)),
-                          title: Text(groupContacts.members[index].name),
-                          subtitle: Text(
-                              groupContacts.members[index].description ?? ""),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ContactPageSettings(
-                                    contact: groupContacts.members[index],
-                                    group: groupContacts.group),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            onTap: () {
+                              Navigator.of(context).pop(); // Close modal
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ContactView(
+                                    contact: member,
+                                    groupId: groupContacts.group.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            leading: Hero(
+                              tag: 'contact_${member.id}',
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Colors.green[400]!, Colors.green[600]!],
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
+                            ),
+                            title: Text(
+                              member.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: member.description != null && member.description!.isNotEmpty
+                                ? Text(
+                                    member.description!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  )
+                                : null,
+                            trailing: IconButton(
+                              icon: Icon(Icons.edit_outlined, color: Colors.grey[600]),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close modal
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ContactPageSettings(
+                                      contact: member,
+                                      group: groupContacts.group,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         );
@@ -483,16 +632,16 @@ class CornerFoldPainter extends CustomPainter {
 // In a future iteration, we will support searching from the server. KISS for now.
 // Search supports tracking the original list and the filtered list, and searching from both contacts and groups
 class SearchState extends ChangeNotifier {
-  SearchState({required List<GroupContacts> groupContacts}) {
+  SearchState({required List<GroupWithMembers> groupContacts}) {
     _groupContacts = groupContacts;
     _filteredGroupContacts = groupContacts;
   }
 
-  List<GroupContacts> _groupContacts = [];
-  List<GroupContacts> _filteredGroupContacts = [];
+  List<GroupWithMembers> _groupContacts = [];
+  List<GroupWithMembers> _filteredGroupContacts = [];
   String searchText = "";
 
-  List<GroupContacts> get groupContacts => _filteredGroupContacts;
+  List<GroupWithMembers> get groupContacts => _filteredGroupContacts;
 
   void filter(String text) {
     searchText = text;
@@ -510,7 +659,7 @@ class SearchState extends ChangeNotifier {
 }
 
 final searchStateProvider = ChangeNotifierProvider.autoDispose
-    .family<SearchState, List<GroupContacts>>((ref, groupContacts) {
+    .family<SearchState, List<GroupWithMembers>>((ref, groupContacts) {
   return SearchState(groupContacts: groupContacts);
 });
 

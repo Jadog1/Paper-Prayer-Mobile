@@ -6,7 +6,8 @@ part of '../repo.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchContactGroupHash() => r'fe20ca5ac939236b67ddc28139eba5c3323ec748';
+String _$fetchGroupWithMembersHash() =>
+    r'775c2884c2fe64232fbc7887572d6cf6a51b1ed2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,6 +29,140 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [fetchGroupWithMembers].
+@ProviderFor(fetchGroupWithMembers)
+const fetchGroupWithMembersProvider = FetchGroupWithMembersFamily();
+
+/// See also [fetchGroupWithMembers].
+class FetchGroupWithMembersFamily extends Family<AsyncValue<GroupWithMembers>> {
+  /// See also [fetchGroupWithMembers].
+  const FetchGroupWithMembersFamily();
+
+  /// See also [fetchGroupWithMembers].
+  FetchGroupWithMembersProvider call(
+    int groupId,
+  ) {
+    return FetchGroupWithMembersProvider(
+      groupId,
+    );
+  }
+
+  @override
+  FetchGroupWithMembersProvider getProviderOverride(
+    covariant FetchGroupWithMembersProvider provider,
+  ) {
+    return call(
+      provider.groupId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchGroupWithMembersProvider';
+}
+
+/// See also [fetchGroupWithMembers].
+class FetchGroupWithMembersProvider
+    extends AutoDisposeFutureProvider<GroupWithMembers> {
+  /// See also [fetchGroupWithMembers].
+  FetchGroupWithMembersProvider(
+    int groupId,
+  ) : this._internal(
+          (ref) => fetchGroupWithMembers(
+            ref as FetchGroupWithMembersRef,
+            groupId,
+          ),
+          from: fetchGroupWithMembersProvider,
+          name: r'fetchGroupWithMembersProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchGroupWithMembersHash,
+          dependencies: FetchGroupWithMembersFamily._dependencies,
+          allTransitiveDependencies:
+              FetchGroupWithMembersFamily._allTransitiveDependencies,
+          groupId: groupId,
+        );
+
+  FetchGroupWithMembersProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.groupId,
+  }) : super.internal();
+
+  final int groupId;
+
+  @override
+  Override overrideWith(
+    FutureOr<GroupWithMembers> Function(FetchGroupWithMembersRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchGroupWithMembersProvider._internal(
+        (ref) => create(ref as FetchGroupWithMembersRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        groupId: groupId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<GroupWithMembers> createElement() {
+    return _FetchGroupWithMembersProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchGroupWithMembersProvider && other.groupId == groupId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, groupId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchGroupWithMembersRef
+    on AutoDisposeFutureProviderRef<GroupWithMembers> {
+  /// The parameter `groupId` of this provider.
+  int get groupId;
+}
+
+class _FetchGroupWithMembersProviderElement
+    extends AutoDisposeFutureProviderElement<GroupWithMembers>
+    with FetchGroupWithMembersRef {
+  _FetchGroupWithMembersProviderElement(super.provider);
+
+  @override
+  int get groupId => (origin as FetchGroupWithMembersProvider).groupId;
+}
+
+String _$fetchContactGroupHash() => r'fe20ca5ac939236b67ddc28139eba5c3323ec748';
 
 /// See also [fetchContactGroup].
 @ProviderFor(fetchContactGroup)
@@ -747,12 +882,12 @@ class _FetchBibleVersesForPrayerRequestProviderElement
       (origin as FetchBibleVersesForPrayerRequestProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'5bd39288acbb9785049805abcc080a15e5dc7c31';
+String _$groupContactsRepoHash() => r'93cc55f1855d12ceea40bc52eb7f042dadcbce79';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)
 final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
-    GroupContactsRepo, List<GroupContacts>>.internal(
+    GroupContactsRepo, List<GroupWithMembers>>.internal(
   GroupContactsRepo.new,
   name: r'groupContactsRepoProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -762,7 +897,7 @@ final groupContactsRepoProvider = AutoDisposeAsyncNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupContacts>>;
+typedef _$GroupContactsRepo = AutoDisposeAsyncNotifier<List<GroupWithMembers>>;
 String _$prayerRequestRepoHash() => r'08af95374c69154cccc58a9312d68c6575311588';
 
 abstract class _$PrayerRequestRepo

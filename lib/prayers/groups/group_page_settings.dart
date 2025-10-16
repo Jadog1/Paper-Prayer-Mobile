@@ -10,7 +10,7 @@ import 'package:prayer_ml/shared/widgets.dart';
 class GroupSettings extends ConsumerStatefulWidget {
   const GroupSettings({super.key, this.groupContacts});
 
-  final GroupContacts? groupContacts;
+  final GroupWithMembers? groupContacts;
 
   @override
   ConsumerState<GroupSettings> createState() => _GroupSettingsState();
@@ -35,7 +35,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
   @override
   Widget build(BuildContext context) {
     var groupContacts = widget.groupContacts ?? 
-      const GroupContacts(
+      const GroupWithMembers(
         group: Group(id: 0, name: "", description: ""),
         members: [],
         memberWithContactGroupPairs: [],
@@ -85,7 +85,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildGroupInfoCard(GroupContacts groupContacts) {
+  Widget _buildGroupInfoCard(GroupWithMembers groupContacts) {
     return Card(
       elevation: 4,
       color: Colors.white,
@@ -146,7 +146,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildMembersHeader(BuildContext context, GroupContacts groupContacts) {
+  Widget _buildMembersHeader(BuildContext context, GroupWithMembers groupContacts) {
     return Row(
       children: [
         Icon(Icons.people, color: Colors.grey[700], size: 22),
@@ -178,7 +178,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildMembersList(GroupContacts groupContacts) {
+  Widget _buildMembersList(GroupWithMembers groupContacts) {
     if (groupContacts.members.isEmpty) {
       return Card(
         elevation: 2,
@@ -221,7 +221,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, GroupContacts groupContacts, bool isNewGroup) {
+  Widget _buildActionButtons(BuildContext context, GroupWithMembers groupContacts, bool isNewGroup) {
     return Row(
       children: [
         Expanded(
