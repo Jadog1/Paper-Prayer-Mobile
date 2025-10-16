@@ -60,6 +60,7 @@ class PaperMode extends ConsumerStatefulWidget {
 
 class _PaperModeState extends ConsumerState<PaperMode> {
   List<PrayerRequest> _loadedRequests = [];
+  bool _backgroundFeatureChecked = false;
 
   void _onRequestsLoaded(List<PrayerRequest> requests) {
     // Defer setState to after the current build phase
@@ -77,6 +78,11 @@ class _PaperModeState extends ConsumerState<PaperMode> {
     // If we have groupContacts directly, use them
     GroupWithMembers? effectiveGroupContacts = widget.config.groupContacts;
 
+    // If readOnly or we have groupContacts, proceed
+    if (effectiveGroupContacts != null || widget.config.readOnly) {
+      return _buildWithGroupContacts(effectiveGroupContacts);
+    }
+
     // If no groupContacts but have groupId, fetch from repo
     if (effectiveGroupContacts == null && widget.config.groupId != null) {
       final groupContactsAsync = ref.watch(groupContactsRepoProvider);
@@ -89,11 +95,6 @@ class _PaperModeState extends ConsumerState<PaperMode> {
             stackTrace: stackTrace),
         _ => const Center(child: CircularProgressIndicator()),
       };
-    }
-
-    // If readOnly or we have groupContacts, proceed
-    if (effectiveGroupContacts != null || widget.config.readOnly) {
-      return _buildWithGroupContacts(effectiveGroupContacts);
     }
 
     // Configuration error
@@ -116,11 +117,12 @@ class _PaperModeState extends ConsumerState<PaperMode> {
   Widget _buildWithGroupContacts(GroupWithMembers? groupContacts) {
     final effectiveConfig = widget.config.copyWith(groupContacts: groupContacts);
 
-    // Start background feature checking if enabled and we have a group context
-    if (effectiveConfig.enableBackgroundFeatureCheck && effectiveConfig.effectiveGroupId != null) {
+    // Start background feature checking if enabled
+    if (effectiveConfig.enableBackgroundFeatureCheck && effectiveConfig.groupContacts != null && !_backgroundFeatureChecked) {
       ref.read(paperModeStateProvider).startBackgroundFeatureCheck(
         fetchUpdatedPrayerRequest,
       );
+      _backgroundFeatureChecked = true;
     }
 
     final padding = effectiveConfig.noPadding ? EdgeInsets.zero : const EdgeInsets.fromLTRB(8, 0, 8, 0);

@@ -182,9 +182,13 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
                   focusNode: widget.focusNode,
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: _onChanged,
+                  
                   maxLines: null,
                   enabled: !widget.isExportMode,
                   decoration: InputDecoration(
+                    hintText: "Enter prayer request or @ to select user",
+                    hintStyle: const TextStyle(
+                        color: Colors.grey, fontStyle: FontStyle.italic),
                       border: _isFocused
                           ? const UnderlineInputBorder()
                           : InputBorder.none),

@@ -7,11 +7,59 @@ import 'package:prayer_ml/prayers/home/views/event_details_view.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 /// Widget showing a preview of upcoming events
-class UpcomingEventsPreview extends ConsumerWidget {
+class UpcomingEventsPreview extends ConsumerStatefulWidget {
   const UpcomingEventsPreview({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UpcomingEventsPreview> createState() => _UpcomingEventsPreviewState();
+}
+
+class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollIndicator = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_handleScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _handleScroll() {
+    // Show indicator if we can scroll down
+    if (_scrollController.hasClients) {
+      final canScrollDown = _scrollController.position.pixels < 
+          _scrollController.position.maxScrollExtent - 10;
+      if (canScrollDown != _showScrollIndicator) {
+        setState(() {
+          _showScrollIndicator = canScrollDown;
+        });
+      }
+    }
+  }
+
+  void _checkIfScrollable() {
+    // Check after the frame is rendered if content is scrollable
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        final canScroll = _scrollController.position.maxScrollExtent > 0;
+        if (canScroll != _showScrollIndicator) {
+          setState(() {
+            _showScrollIndicator = canScroll;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final futureEventsAsync = ref.watch(fetchFutureEventsProvider(limit: 5, maxDays: 30));
 
     return Column(
@@ -58,41 +106,81 @@ class UpcomingEventsPreview extends ConsumerWidget {
           ),
         ),
 
-        // Events list
-        futureEventsAsync.when(
-          data: (events) {
-            if (events.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
-                child: Center(
-                  child: Text(
-                    "No upcoming events in the next 30 days",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
+        // Scrollable Events list with indicator
+        Expanded(
+          child: Stack(
+            children: [
+              // Events list
+              futureEventsAsync.when(
+                data: (events) {
+                  _checkIfScrollable();
+                  
+                  if (events.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
+                      child: Center(
+                        child: Text(
+                          "No upcoming events in the next 30 days",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(bottom: 48),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return _UpcomingEventCard(
+                        event: events[index],
+                      );
+                    },
+                  );
+                },
+                loading: () => const _EventsLoadingSkeleton(),
+                error: (error, stackTrace) => PrintError(
+                  caller: "UpcomingEventsPreview",
+                  error: error,
+                  stackTrace: stackTrace,
+                ),
+              ),
+              
+              // Scroll indicator at bottom
+              if (_showScrollIndicator)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0.95),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.orange[700],
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
-              );
-            }
-
-            return Column(
-              children: events.map((event) {
-                return _UpcomingEventCard(
-                  event: event,
-                );
-              }).toList(),
-            );
-          },
-          loading: () => const _EventsLoadingSkeleton(),
-          error: (error, stackTrace) => PrintError(
-            caller: "UpcomingEventsPreview",
-            error: error,
-            stackTrace: stackTrace,
+            ],
           ),
         ),
-
+        
         const SizedBox(height: 8),
       ],
     );
@@ -254,10 +342,11 @@ class _EventsLoadingSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        3,
-        (index) => Padding(
+    return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 48),
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
           child: Row(
             children: [
@@ -296,8 +385,8 @@ class _EventsLoadingSkeleton extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

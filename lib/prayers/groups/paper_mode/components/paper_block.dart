@@ -97,6 +97,11 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
         !widget.config.readOnly && state.selectedUser == null && widget.newRequest && widget.currentGroup != null;
 
     if (requiresUserSelection || _changingUser) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!_userSelectionFocusNode.hasFocus) {
+          _userSelectionFocusNode.requestFocus();
+        }
+      });
       return UserSelection(
         currentGroup: widget.currentGroup!,
         controller: _controller,
@@ -149,7 +154,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
           // padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3)
+                ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3)
                 : null,
             border: isSelected
                 ? Border.all(
