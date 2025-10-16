@@ -26,39 +26,159 @@ class ViewableRequest extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.2,
-          maxChildSize: 0.75,
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
           expand: false,
-          builder: (_, controller) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
+          builder: (_, controller) => Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
               children: [
-                Text(request.features?.title ?? "",
-                    style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 8),
-                Text(request.description, style: const TextStyle(fontSize: 16)),
-                const SizedBox(height: 12),
-                Text("Created At: ${dateTimeToDate(request.createdAt)}",
-                    style: const TextStyle(color: Colors.grey)),
-                const SizedBox(height: 4),
-                LoadableRelatedContacts(
-                    contactId: request.user.id,
-                    relatedContactIds: request.relatedContactIds),
-                LoadableCollection(
-                    requestId: request.id, contactId: request.user.id),
-                LoadableBibleVerses(requestId: request.id),
+                // Drag handle
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Scrollable content
+                Expanded(
+                  child: ListView(
+                    controller: controller,
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    children: [
+                      // Title Section
+                      Text(
+                        request.features?.title ?? "Prayer Request",
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Metadata row
+                      Row(
+                        children: [
+                          Icon(Icons.person, size: 16, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(
+                            request.user.name,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(
+                            dateTimeToDate(request.createdAt),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Description Section
+                      _buildSection(
+                        context,
+                        title: "Full Description",
+                        icon: Icons.description,
+                        child: Text(
+                          request.description,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.5,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Related Contacts Section
+                      _buildSection(
+                        context,
+                        title: "Related People",
+                        icon: Icons.people,
+                        child: LoadableRelatedContacts(
+                          contactId: request.user.id,
+                          relatedContactIds: request.relatedContactIds,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Collection Section
+                      LoadableCollection(
+                        requestId: request.id,
+                        contactId: request.user.id,
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Bible Verses Section
+                      _buildSection(
+                        context,
+                        title: "Related Scripture",
+                        icon: Icons.menu_book,
+                        child: LoadableBibleVerses(requestId: request.id),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 20, color: Theme.of(context).primaryColor),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: child,
+        ),
+      ],
     );
   }
 
