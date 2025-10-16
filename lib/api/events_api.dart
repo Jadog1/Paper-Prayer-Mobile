@@ -1,5 +1,6 @@
 import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/prayers/home/models/events_model.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'dart:convert';
 
 import 'package:prayer_ml/shared/config.dart';
@@ -70,5 +71,32 @@ class EventsApiClient {
 
     final json = jsonDecode(response.body) as List;
     return json.map((event) => PrayerCollectionEvent.fromJson(event)).toList();
+  }
+
+  /// Get the collection associated with a specific event
+  /// Endpoint: GET /events/{event_id}/collection
+  Future<Collection> getCollectionForEvent(int eventId) async {
+    final response = await authClient.get(
+      config.uri("/collections/events/$eventId/collection"),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error getting collection for event: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(response.body);
+    return Collection.fromJson(json);
+  }
+
+  /// Delete an event
+  /// Endpoint: DELETE /events/{event_id}
+  Future<void> deleteEvent(int eventId) async {
+    final response = await authClient.delete(
+      config.uri("/collections/events/$eventId"),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Error deleting event: ${response.statusCode} - ${response.body}");
+    }
   }
 }

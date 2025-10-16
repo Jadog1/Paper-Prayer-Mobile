@@ -13,11 +13,12 @@ class NewHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Navigator(
-      onGenerateRoute: (settings) => MaterialPageRoute(
-        builder: (context) => const NewHomePageConsumer(),
-      ),
-    );
+    return const NewHomePageConsumer();
+    // return Navigator(
+    //   onGenerateRoute: (settings) => MaterialPageRoute(
+    //     builder: (context) => const NewHomePageConsumer(),
+    //   ),
+    // );
   }
 }
 

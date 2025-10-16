@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -65,4 +66,21 @@ Future<CollectionAndRelatedContacts> fetchCollectionWithContacts(Ref ref, int co
   var collection = await api.fetch(collectionId);
   var relatedContacts = await config.contactApiClient.fetchRelatedContacts(contactId);
   return CollectionAndRelatedContacts(collection: collection, relatedContacts: relatedContacts);
+}
+
+@riverpod
+Future<Collection> fetchCollectionForEvent(Ref ref, int eventId) async {
+  var api = config.eventsApiClient;
+  return await api.getCollectionForEvent(eventId);
+}
+
+@riverpod
+Future<void> deleteEvent(Ref ref, int eventId) async {
+  var api = config.eventsApiClient;
+  await api.deleteEvent(eventId);
+  
+  // Invalidate all event-related caches so the UI refreshes
+  ref.invalidate(fetchEventsInRangeProvider);
+  ref.invalidate(fetchFutureEventsProvider);
+  ref.invalidate(paginatedEventsNotifierProvider);
 }

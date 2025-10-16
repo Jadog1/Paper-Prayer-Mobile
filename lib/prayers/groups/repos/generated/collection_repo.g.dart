@@ -614,6 +614,269 @@ class _FetchCollectionWithContactsProviderElement
       (origin as FetchCollectionWithContactsProvider).contactId;
 }
 
+String _$fetchCollectionForEventHash() =>
+    r'7c7d6f6b9806b15f2909a374ccfb5693fb25bb01';
+
+/// See also [fetchCollectionForEvent].
+@ProviderFor(fetchCollectionForEvent)
+const fetchCollectionForEventProvider = FetchCollectionForEventFamily();
+
+/// See also [fetchCollectionForEvent].
+class FetchCollectionForEventFamily extends Family<AsyncValue<Collection>> {
+  /// See also [fetchCollectionForEvent].
+  const FetchCollectionForEventFamily();
+
+  /// See also [fetchCollectionForEvent].
+  FetchCollectionForEventProvider call(
+    int eventId,
+  ) {
+    return FetchCollectionForEventProvider(
+      eventId,
+    );
+  }
+
+  @override
+  FetchCollectionForEventProvider getProviderOverride(
+    covariant FetchCollectionForEventProvider provider,
+  ) {
+    return call(
+      provider.eventId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchCollectionForEventProvider';
+}
+
+/// See also [fetchCollectionForEvent].
+class FetchCollectionForEventProvider
+    extends AutoDisposeFutureProvider<Collection> {
+  /// See also [fetchCollectionForEvent].
+  FetchCollectionForEventProvider(
+    int eventId,
+  ) : this._internal(
+          (ref) => fetchCollectionForEvent(
+            ref as FetchCollectionForEventRef,
+            eventId,
+          ),
+          from: fetchCollectionForEventProvider,
+          name: r'fetchCollectionForEventProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchCollectionForEventHash,
+          dependencies: FetchCollectionForEventFamily._dependencies,
+          allTransitiveDependencies:
+              FetchCollectionForEventFamily._allTransitiveDependencies,
+          eventId: eventId,
+        );
+
+  FetchCollectionForEventProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.eventId,
+  }) : super.internal();
+
+  final int eventId;
+
+  @override
+  Override overrideWith(
+    FutureOr<Collection> Function(FetchCollectionForEventRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchCollectionForEventProvider._internal(
+        (ref) => create(ref as FetchCollectionForEventRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        eventId: eventId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Collection> createElement() {
+    return _FetchCollectionForEventProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchCollectionForEventProvider && other.eventId == eventId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, eventId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchCollectionForEventRef on AutoDisposeFutureProviderRef<Collection> {
+  /// The parameter `eventId` of this provider.
+  int get eventId;
+}
+
+class _FetchCollectionForEventProviderElement
+    extends AutoDisposeFutureProviderElement<Collection>
+    with FetchCollectionForEventRef {
+  _FetchCollectionForEventProviderElement(super.provider);
+
+  @override
+  int get eventId => (origin as FetchCollectionForEventProvider).eventId;
+}
+
+String _$deleteEventHash() => r'da63300bccffd8adf90f37ec58bfe49071679db8';
+
+/// See also [deleteEvent].
+@ProviderFor(deleteEvent)
+const deleteEventProvider = DeleteEventFamily();
+
+/// See also [deleteEvent].
+class DeleteEventFamily extends Family<AsyncValue<void>> {
+  /// See also [deleteEvent].
+  const DeleteEventFamily();
+
+  /// See also [deleteEvent].
+  DeleteEventProvider call(
+    int eventId,
+  ) {
+    return DeleteEventProvider(
+      eventId,
+    );
+  }
+
+  @override
+  DeleteEventProvider getProviderOverride(
+    covariant DeleteEventProvider provider,
+  ) {
+    return call(
+      provider.eventId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'deleteEventProvider';
+}
+
+/// See also [deleteEvent].
+class DeleteEventProvider extends AutoDisposeFutureProvider<void> {
+  /// See also [deleteEvent].
+  DeleteEventProvider(
+    int eventId,
+  ) : this._internal(
+          (ref) => deleteEvent(
+            ref as DeleteEventRef,
+            eventId,
+          ),
+          from: deleteEventProvider,
+          name: r'deleteEventProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$deleteEventHash,
+          dependencies: DeleteEventFamily._dependencies,
+          allTransitiveDependencies:
+              DeleteEventFamily._allTransitiveDependencies,
+          eventId: eventId,
+        );
+
+  DeleteEventProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.eventId,
+  }) : super.internal();
+
+  final int eventId;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(DeleteEventRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DeleteEventProvider._internal(
+        (ref) => create(ref as DeleteEventRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        eventId: eventId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _DeleteEventProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DeleteEventProvider && other.eventId == eventId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, eventId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin DeleteEventRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `eventId` of this provider.
+  int get eventId;
+}
+
+class _DeleteEventProviderElement extends AutoDisposeFutureProviderElement<void>
+    with DeleteEventRef {
+  _DeleteEventProviderElement(super.provider);
+
+  @override
+  int get eventId => (origin as DeleteEventProvider).eventId;
+}
+
 String _$collectionContactRepoHash() =>
     r'37fe3d96a9a7ae83e7366a58cc222eb4caf17ba4';
 

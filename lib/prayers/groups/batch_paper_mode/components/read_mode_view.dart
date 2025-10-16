@@ -1,9 +1,11 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/models/batch_content_item.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/models/batch_paper_mode_config.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/providers/batch_paper_mode_provider.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 
 /// Read mode view with draggable items, click to edit, swipe to delete
 class ReadModeView extends ConsumerStatefulWidget {
@@ -346,12 +348,23 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
     var selectedType = item.type;
     Contact? selectedContact = item.contact;
     
+    // If the content is short (less than 5 words), use it as the default for new contact name
+    String defaultNewContactName = '';
+    if (item.content.isNotEmpty && item.content.split(' ').length < 5) {
+      defaultNewContactName = item.content;
+    }
+    
+    final newContactNameController = TextEditingController(text: defaultNewContactName);
+    // If switching to contact type but no contact is selected, start in creation mode
+    bool isCreatingNewContact = selectedType == BatchContentItemType.contact && selectedContact == null;
+    
     final availableContacts = widget.config.groupContacts?.members ?? [];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Edit Item'),
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
         content: SingleChildScrollView(
           child: StatefulBuilder(
             builder: (context, setState) => Column(
@@ -380,6 +393,10 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                       // Reset contact selection when switching away from contact type
                       if (selectedType != BatchContentItemType.contact) {
                         selectedContact = null;
+                        isCreatingNewContact = false;
+                      } else if (selectedContact == null) {
+                        // When switching to contact type without a contact, show creation mode
+                        isCreatingNewContact = true;
                       }
                     });
                   },
@@ -388,27 +405,62 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                 if (selectedType == BatchContentItemType.contact) ...[
                   const Text('Contact:', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<Contact>(
-                    initialValue: selectedContact,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Select a contact...',
+                  if (!isCreatingNewContact) ...[
+                    DropdownButtonFormField<Contact?>(
+                      value: selectedContact,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Select a contact...',
+                      ),
+                      items: [
+                        ...availableContacts.map((contact) {
+                          return DropdownMenuItem<Contact?>(
+                            value: contact,
+                            child: Text(contact.name),
+                          );
+                        }),
+                        const DropdownMenuItem<Contact?>(
+                          value: null,
+                          child: Row(
+                            children: [
+                              Icon(Icons.add, size: 18),
+                              SizedBox(width: 8),
+                              Text('Create new contact'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onChanged: (Contact? newValue) {
+                        setState(() {
+                          if (newValue == null) {
+                            // User selected "Create new contact" from dropdown
+                            isCreatingNewContact = true;
+                            // Clear the text field or keep default name
+                            if (defaultNewContactName.isEmpty) {
+                              newContactNameController.clear();
+                            } else {
+                              newContactNameController.text = defaultNewContactName;
+                            }
+                          } else {
+                            selectedContact = newValue;
+                            controller.text = newValue.name;
+                          }
+                        });
+                      },
                     ),
-                    items: availableContacts.map((contact) {
-                      return DropdownMenuItem<Contact>(
-                        value: contact,
-                        child: Text(contact.name),
-                      );
-                    }).toList(),
-                    onChanged: (Contact? newValue) {
-                      setState(() {
-                        selectedContact = newValue;
-                        if (newValue != null) {
-                          controller.text = newValue.name;
-                        }
-                      });
-                    },
-                  ),
+                  ] else ...[
+                    TextField(
+                      controller: newContactNameController,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter contact name...',
+                        labelText: 'New Contact Name',
+                      ),
+                      autofocus: true,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ] else ...[
                   const Text('Content:', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
@@ -421,6 +473,23 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
                     ),
                   ),
                 ],
+                // Back button moved outside the conditional to ensure it's always at the bottom
+                if (selectedType == BatchContentItemType.contact && isCreatingNewContact) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          isCreatingNewContact = false;
+                          selectedContact = null;
+                        });
+                      },
+                      icon: const Icon(Icons.arrow_back, size: 16),
+                      label: const Text('Select existing contact'),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ],
             ),
           ),
@@ -431,9 +500,71 @@ class _ReadModeViewState extends ConsumerState<ReadModeView> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (selectedType == BatchContentItemType.contact) {
-                if (selectedContact != null) {
+                if (isCreatingNewContact) {
+                  // Create new contact
+                  final newContactName = newContactNameController.text.trim();
+                  if (newContactName.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please enter a contact name'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    final group = widget.config.groupContacts?.group;
+                    if (group == null) {
+                      throw Exception('Group not found');
+                    }
+
+                    var newContact = Contact(
+                      id: 0,
+                      name: newContactName,
+                      description: "",
+                      createdAt: DateTime.now().toIso8601String(),
+                      accountId: 0,
+                    );
+
+                    newContact = await ref
+                        .read(groupContactsRepoProvider.notifier)
+                        .saveContact(newContact, group);
+
+                    await ref.read(
+                        fetchContactGroupProvider(newContact.id, group.id)
+                            .future);
+
+                    // Add to available contacts list
+                    widget.config.groupContacts?.members.add(newContact);
+
+                    final updatedItem = item.copyWith(
+                      content: newContact.name,
+                      type: selectedType,
+                      contact: newContact,
+                    );
+                    notifier.updateItem(item.id, updatedItem);
+                    
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Created contact: ${newContact.name}')),
+                      );
+                    }
+                  } catch (e) {
+                    log('Error creating contact', error: e);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('An error occurred. Please try again.'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                } else if (selectedContact != null) {
                   final updatedItem = item.copyWith(
                     content: selectedContact!.name,
                     type: selectedType,

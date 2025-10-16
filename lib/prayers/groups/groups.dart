@@ -15,11 +15,12 @@ class Groups extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Navigator(
-      onGenerateRoute: (settings) => MaterialPageRoute(
-        builder: (context) => const GroupConsumer(),
-      ),
-    );
+    return const GroupConsumer();
+    // return Navigator(
+    //   onGenerateRoute: (settings) => MaterialPageRoute(
+    //     builder: (context) => const GroupConsumer(),
+    //   ),
+    // );
   }
 }
 

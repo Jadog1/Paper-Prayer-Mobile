@@ -22,6 +22,7 @@ class PrayersPage extends StatefulWidget {
 
 class _PrayersPageState extends State<PrayersPage> {
   int pageIndex = 0;
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
 
   @override
   void initState() {
@@ -93,14 +94,44 @@ class _PrayersPageState extends State<PrayersPage> {
             ),
           ],
           selectedIndex: pageIndex,
-          onDestinationSelected: (value) => setState(() => pageIndex = value),
+          onDestinationSelected: (value) {
+            if (value == pageIndex) {
+              // Pop to root if already selected
+              _navigatorKeys[value].currentState?.popUntil((route) => route.isFirst);
+            } else {
+              setState(() => pageIndex = value);
+            }
+          },
         ),
-        body: const <Widget> [
-          NewHomePage(),
-          Groups(),
-          WebViewPage(),
-          ChatPage(),
-        ][pageIndex],
+        body: IndexedStack(
+          index: pageIndex,
+          children: [
+            Navigator(
+              key: _navigatorKeys[0],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const NewHomePage(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[1],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const Groups(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[2],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const WebViewPage(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[3],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const ChatPage(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -47,6 +47,13 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
       setState(() {
         _changingUser = changingUser;
       });
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (changingUser) {
+          _userSelectionFocusNode.requestFocus();
+        } else {
+          _editFocusNode.requestFocus();
+        }
+      });
     }
   }
 
@@ -97,11 +104,6 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
         !widget.config.readOnly && state.selectedUser == null && widget.newRequest && widget.currentGroup != null;
 
     if (requiresUserSelection || _changingUser) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (!_userSelectionFocusNode.hasFocus) {
-          _userSelectionFocusNode.requestFocus();
-        }
-      });
       return UserSelection(
         currentGroup: widget.currentGroup!,
         controller: _controller,
@@ -111,9 +113,6 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
           setState(() {
             widget.prayerRequest.user = contactAndGroupPair.contact;
             widget.prayerRequest.group = contactAndGroupPair.groupPair;
-          });
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            _editFocusNode.requestFocus();
           });
         },
         focusNode: _userSelectionFocusNode,
