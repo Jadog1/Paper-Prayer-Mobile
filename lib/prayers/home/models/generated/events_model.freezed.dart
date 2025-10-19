@@ -579,13 +579,222 @@ abstract class _PrayerCollectionEventLink implements PrayerCollectionEventLink {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+EventWithCollection _$EventWithCollectionFromJson(Map<String, dynamic> json) {
+  return _EventWithCollection.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EventWithCollection {
+  PrayerCollectionEvent get event => throw _privateConstructorUsedError;
+  Collection get collection => throw _privateConstructorUsedError;
+
+  /// Serializes this EventWithCollection to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $EventWithCollectionCopyWith<EventWithCollection> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EventWithCollectionCopyWith<$Res> {
+  factory $EventWithCollectionCopyWith(
+          EventWithCollection value, $Res Function(EventWithCollection) then) =
+      _$EventWithCollectionCopyWithImpl<$Res, EventWithCollection>;
+  @useResult
+  $Res call({PrayerCollectionEvent event, Collection collection});
+
+  $PrayerCollectionEventCopyWith<$Res> get event;
+  $CollectionCopyWith<$Res> get collection;
+}
+
+/// @nodoc
+class _$EventWithCollectionCopyWithImpl<$Res, $Val extends EventWithCollection>
+    implements $EventWithCollectionCopyWith<$Res> {
+  _$EventWithCollectionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? event = null,
+    Object? collection = null,
+  }) {
+    return _then(_value.copyWith(
+      event: null == event
+          ? _value.event
+          : event // ignore: cast_nullable_to_non_nullable
+              as PrayerCollectionEvent,
+      collection: null == collection
+          ? _value.collection
+          : collection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+    ) as $Val);
+  }
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PrayerCollectionEventCopyWith<$Res> get event {
+    return $PrayerCollectionEventCopyWith<$Res>(_value.event, (value) {
+      return _then(_value.copyWith(event: value) as $Val);
+    });
+  }
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $CollectionCopyWith<$Res> get collection {
+    return $CollectionCopyWith<$Res>(_value.collection, (value) {
+      return _then(_value.copyWith(collection: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$EventWithCollectionImplCopyWith<$Res>
+    implements $EventWithCollectionCopyWith<$Res> {
+  factory _$$EventWithCollectionImplCopyWith(_$EventWithCollectionImpl value,
+          $Res Function(_$EventWithCollectionImpl) then) =
+      __$$EventWithCollectionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({PrayerCollectionEvent event, Collection collection});
+
+  @override
+  $PrayerCollectionEventCopyWith<$Res> get event;
+  @override
+  $CollectionCopyWith<$Res> get collection;
+}
+
+/// @nodoc
+class __$$EventWithCollectionImplCopyWithImpl<$Res>
+    extends _$EventWithCollectionCopyWithImpl<$Res, _$EventWithCollectionImpl>
+    implements _$$EventWithCollectionImplCopyWith<$Res> {
+  __$$EventWithCollectionImplCopyWithImpl(_$EventWithCollectionImpl _value,
+      $Res Function(_$EventWithCollectionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? event = null,
+    Object? collection = null,
+  }) {
+    return _then(_$EventWithCollectionImpl(
+      event: null == event
+          ? _value.event
+          : event // ignore: cast_nullable_to_non_nullable
+              as PrayerCollectionEvent,
+      collection: null == collection
+          ? _value.collection
+          : collection // ignore: cast_nullable_to_non_nullable
+              as Collection,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EventWithCollectionImpl
+    with DiagnosticableTreeMixin
+    implements _EventWithCollection {
+  const _$EventWithCollectionImpl(
+      {required this.event, required this.collection});
+
+  factory _$EventWithCollectionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EventWithCollectionImplFromJson(json);
+
+  @override
+  final PrayerCollectionEvent event;
+  @override
+  final Collection collection;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'EventWithCollection(event: $event, collection: $collection)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'EventWithCollection'))
+      ..add(DiagnosticsProperty('event', event))
+      ..add(DiagnosticsProperty('collection', collection));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EventWithCollectionImpl &&
+            (identical(other.event, event) || other.event == event) &&
+            (identical(other.collection, collection) ||
+                other.collection == collection));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, event, collection);
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EventWithCollectionImplCopyWith<_$EventWithCollectionImpl> get copyWith =>
+      __$$EventWithCollectionImplCopyWithImpl<_$EventWithCollectionImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EventWithCollectionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EventWithCollection implements EventWithCollection {
+  const factory _EventWithCollection(
+      {required final PrayerCollectionEvent event,
+      required final Collection collection}) = _$EventWithCollectionImpl;
+
+  factory _EventWithCollection.fromJson(Map<String, dynamic> json) =
+      _$EventWithCollectionImpl.fromJson;
+
+  @override
+  PrayerCollectionEvent get event;
+  @override
+  Collection get collection;
+
+  /// Create a copy of EventWithCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$EventWithCollectionImplCopyWith<_$EventWithCollectionImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 PaginatedEvents _$PaginatedEventsFromJson(Map<String, dynamic> json) {
   return _PaginatedEvents.fromJson(json);
 }
 
 /// @nodoc
 mixin _$PaginatedEvents {
-  List<PrayerCollectionEvent> get events => throw _privateConstructorUsedError;
+  List<EventWithCollection> get events => throw _privateConstructorUsedError;
   CursorPagination get pagination => throw _privateConstructorUsedError;
   @JsonKey(name: "has_next")
   bool get hasNext => throw _privateConstructorUsedError;
@@ -607,7 +816,7 @@ abstract class $PaginatedEventsCopyWith<$Res> {
       _$PaginatedEventsCopyWithImpl<$Res, PaginatedEvents>;
   @useResult
   $Res call(
-      {List<PrayerCollectionEvent> events,
+      {List<EventWithCollection> events,
       CursorPagination pagination,
       @JsonKey(name: "has_next") bool hasNext});
 
@@ -637,7 +846,7 @@ class _$PaginatedEventsCopyWithImpl<$Res, $Val extends PaginatedEvents>
       events: null == events
           ? _value.events
           : events // ignore: cast_nullable_to_non_nullable
-              as List<PrayerCollectionEvent>,
+              as List<EventWithCollection>,
       pagination: null == pagination
           ? _value.pagination
           : pagination // ignore: cast_nullable_to_non_nullable
@@ -669,7 +878,7 @@ abstract class _$$PaginatedEventsImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<PrayerCollectionEvent> events,
+      {List<EventWithCollection> events,
       CursorPagination pagination,
       @JsonKey(name: "has_next") bool hasNext});
 
@@ -698,7 +907,7 @@ class __$$PaginatedEventsImplCopyWithImpl<$Res>
       events: null == events
           ? _value._events
           : events // ignore: cast_nullable_to_non_nullable
-              as List<PrayerCollectionEvent>,
+              as List<EventWithCollection>,
       pagination: null == pagination
           ? _value.pagination
           : pagination // ignore: cast_nullable_to_non_nullable
@@ -717,7 +926,7 @@ class _$PaginatedEventsImpl
     with DiagnosticableTreeMixin
     implements _PaginatedEvents {
   const _$PaginatedEventsImpl(
-      {required final List<PrayerCollectionEvent> events,
+      {required final List<EventWithCollection> events,
       required this.pagination,
       @JsonKey(name: "has_next") this.hasNext = false})
       : _events = events;
@@ -725,9 +934,9 @@ class _$PaginatedEventsImpl
   factory _$PaginatedEventsImpl.fromJson(Map<String, dynamic> json) =>
       _$$PaginatedEventsImplFromJson(json);
 
-  final List<PrayerCollectionEvent> _events;
+  final List<EventWithCollection> _events;
   @override
-  List<PrayerCollectionEvent> get events {
+  List<EventWithCollection> get events {
     if (_events is EqualUnmodifiableListView) return _events;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_events);
@@ -789,7 +998,7 @@ class _$PaginatedEventsImpl
 
 abstract class _PaginatedEvents implements PaginatedEvents {
   const factory _PaginatedEvents(
-      {required final List<PrayerCollectionEvent> events,
+      {required final List<EventWithCollection> events,
       required final CursorPagination pagination,
       @JsonKey(name: "has_next") final bool hasNext}) = _$PaginatedEventsImpl;
 
@@ -797,7 +1006,7 @@ abstract class _PaginatedEvents implements PaginatedEvents {
       _$PaginatedEventsImpl.fromJson;
 
   @override
-  List<PrayerCollectionEvent> get events;
+  List<EventWithCollection> get events;
   @override
   CursorPagination get pagination;
   @override

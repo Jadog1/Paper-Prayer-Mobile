@@ -40,7 +40,7 @@ Future<PaginatedEvents> fetchEventsInRange(
 /// Paginated events notifier for calendar views
 @riverpod
 class PaginatedEventsNotifier extends _$PaginatedEventsNotifier
-    with CursorPagingNotifierMixin<PrayerCollectionEvent> {
+    with CursorPagingNotifierMixin<EventWithCollection> {
   @override
   late int limit;
   @override
@@ -54,7 +54,7 @@ class PaginatedEventsNotifier extends _$PaginatedEventsNotifier
 
   /// Builds the initial state of the provider by fetching data with a null cursor.
   @override
-  Future<CursorPagingData<PrayerCollectionEvent>> build(
+  Future<CursorPagingData<EventWithCollection>> build(
     int limit,
     String startDate,
     String endDate,
@@ -70,7 +70,7 @@ class PaginatedEventsNotifier extends _$PaginatedEventsNotifier
 
   /// Fetches paginated data based on the provided [cursor].
   @override
-  Future<CursorPagingData<PrayerCollectionEvent>> fetch({
+  Future<CursorPagingData<EventWithCollection>> fetch({
     required String? cursor,
   }) async {
     final repository = await ref.read(

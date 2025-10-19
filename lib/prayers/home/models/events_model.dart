@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/shared.dart';
 
 part 'generated/events_model.freezed.dart';
@@ -32,10 +33,21 @@ class PrayerCollectionEventLink with _$PrayerCollectionEventLink {
   factory PrayerCollectionEventLink.fromJson(Map<String, dynamic> json) => _$PrayerCollectionEventLinkFromJson(json);
 }
 
+
+@freezed
+class EventWithCollection with _$EventWithCollection {
+  const factory EventWithCollection({
+    required PrayerCollectionEvent event,
+    required Collection collection,
+  }) = _EventWithCollection;
+
+  factory EventWithCollection.fromJson(Map<String, dynamic> json) => _$EventWithCollectionFromJson(json);
+}
+
 @freezed
 class PaginatedEvents with _$PaginatedEvents {
   const factory PaginatedEvents({
-    required List<PrayerCollectionEvent> events,
+    required List<EventWithCollection> events,
     required CursorPagination pagination,
     @JsonKey(name: "has_next") @Default(false) bool hasNext,
   }) = _PaginatedEvents;

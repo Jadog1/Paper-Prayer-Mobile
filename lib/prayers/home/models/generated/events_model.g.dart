@@ -49,11 +49,27 @@ Map<String, dynamic> _$$PrayerCollectionEventLinkImplToJson(
       'updated_at': instance.updatedAt,
     };
 
+_$EventWithCollectionImpl _$$EventWithCollectionImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EventWithCollectionImpl(
+      event:
+          PrayerCollectionEvent.fromJson(json['event'] as Map<String, dynamic>),
+      collection:
+          Collection.fromJson(json['collection'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$EventWithCollectionImplToJson(
+        _$EventWithCollectionImpl instance) =>
+    <String, dynamic>{
+      'event': instance.event,
+      'collection': instance.collection,
+    };
+
 _$PaginatedEventsImpl _$$PaginatedEventsImplFromJson(
         Map<String, dynamic> json) =>
     _$PaginatedEventsImpl(
       events: (json['events'] as List<dynamic>)
-          .map((e) => PrayerCollectionEvent.fromJson(e as Map<String, dynamic>))
+          .map((e) => EventWithCollection.fromJson(e as Map<String, dynamic>))
           .toList(),
       pagination:
           CursorPagination.fromJson(json['pagination'] as Map<String, dynamic>),

@@ -452,18 +452,18 @@ class _FetchEventsInRangeProviderElement
 }
 
 String _$paginatedEventsNotifierHash() =>
-    r'5479028790ae558d8aec7fa16cf0d3ca54416a2f';
+    r'622b1c13009a32519f03621f7ab39ab19c29fa94';
 
 abstract class _$PaginatedEventsNotifier
     extends BuildlessAutoDisposeAsyncNotifier<
-        CursorPagingData<PrayerCollectionEvent>> {
+        CursorPagingData<EventWithCollection>> {
   late final int limit;
   late final String startDate;
   late final String endDate;
   late final int? contactId;
   late final int? collectionId;
 
-  FutureOr<CursorPagingData<PrayerCollectionEvent>> build(
+  FutureOr<CursorPagingData<EventWithCollection>> build(
     int limit,
     String startDate,
     String endDate, {
@@ -482,7 +482,7 @@ const paginatedEventsNotifierProvider = PaginatedEventsNotifierFamily();
 ///
 /// Copied from [PaginatedEventsNotifier].
 class PaginatedEventsNotifierFamily
-    extends Family<AsyncValue<CursorPagingData<PrayerCollectionEvent>>> {
+    extends Family<AsyncValue<CursorPagingData<EventWithCollection>>> {
   /// Paginated events notifier for calendar views
   ///
   /// Copied from [PaginatedEventsNotifier].
@@ -540,7 +540,7 @@ class PaginatedEventsNotifierFamily
 /// Copied from [PaginatedEventsNotifier].
 class PaginatedEventsNotifierProvider
     extends AutoDisposeAsyncNotifierProviderImpl<PaginatedEventsNotifier,
-        CursorPagingData<PrayerCollectionEvent>> {
+        CursorPagingData<EventWithCollection>> {
   /// Paginated events notifier for calendar views
   ///
   /// Copied from [PaginatedEventsNotifier].
@@ -594,7 +594,7 @@ class PaginatedEventsNotifierProvider
   final int? collectionId;
 
   @override
-  FutureOr<CursorPagingData<PrayerCollectionEvent>> runNotifierBuild(
+  FutureOr<CursorPagingData<EventWithCollection>> runNotifierBuild(
     covariant PaginatedEventsNotifier notifier,
   ) {
     return notifier.build(
@@ -633,7 +633,7 @@ class PaginatedEventsNotifierProvider
 
   @override
   AutoDisposeAsyncNotifierProviderElement<PaginatedEventsNotifier,
-      CursorPagingData<PrayerCollectionEvent>> createElement() {
+      CursorPagingData<EventWithCollection>> createElement() {
     return _PaginatedEventsNotifierProviderElement(this);
   }
 
@@ -663,7 +663,7 @@ class PaginatedEventsNotifierProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin PaginatedEventsNotifierRef on AutoDisposeAsyncNotifierProviderRef<
-    CursorPagingData<PrayerCollectionEvent>> {
+    CursorPagingData<EventWithCollection>> {
   /// The parameter `limit` of this provider.
   int get limit;
 
@@ -682,8 +682,7 @@ mixin PaginatedEventsNotifierRef on AutoDisposeAsyncNotifierProviderRef<
 
 class _PaginatedEventsNotifierProviderElement
     extends AutoDisposeAsyncNotifierProviderElement<PaginatedEventsNotifier,
-        CursorPagingData<PrayerCollectionEvent>>
-    with PaginatedEventsNotifierRef {
+        CursorPagingData<EventWithCollection>> with PaginatedEventsNotifierRef {
   _PaginatedEventsNotifierProviderElement(super.provider);
 
   @override
