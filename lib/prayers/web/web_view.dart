@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/shared/config.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:prayer_ml/prayers/web/repos/mobile_auth_repo.dart';
 
-class WebViewPage extends StatefulWidget {
+const String BASE_URL = websiteUrl; // e.g., 'http://localhost:5173/'
+
+class WebViewPage extends ConsumerStatefulWidget {
   const WebViewPage({super.key});
 
   @override
-  State<WebViewPage> createState() => _WebViewPageState();
+  ConsumerState<WebViewPage> createState() => _WebViewPageState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _WebViewPageState extends ConsumerState<WebViewPage> {
   WebViewController? controller;
   bool isLoading = true;
   String? errorMessage;
@@ -21,6 +26,19 @@ class _WebViewPageState extends State<WebViewPage> {
 
   Future<void> _initializeController() async {
     try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+      
+      // Step 1 & 2: Get Firebase ID token and exchange for session ID using Riverpod
+      final sessionAsyncValue = await ref.read(exchangeFirebaseTokenProvider.future);
+      
+      // Step 3: Build URL with session_id and platform
+      final platform = Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
+      final webViewUrl = Uri.parse('$BASE_URL/?mobile_session_id=${sessionAsyncValue.sessionId}&platform=$platform');
+      
+      // Step 4: Initialize WebView controller
       final newController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(
@@ -50,13 +68,14 @@ class _WebViewPageState extends State<WebViewPage> {
             },
           ),
         )
-        ..loadRequest(Uri.parse('https://paper-prayer-af73d35b1629.herokuapp.com/'));
+        ..loadRequest(webViewUrl);
 
       if (mounted) {
         setState(() {
           controller = newController;
         });
       }
+      
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -71,7 +90,7 @@ class _WebViewPageState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Web Portal'),
+        title: const Text('Bible Studies'),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
         actions: [
@@ -79,7 +98,7 @@ class _WebViewPageState extends State<WebViewPage> {
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
-                controller?.reload();
+                _initializeController(); // Re-run full auth flow on refresh
               },
             ),
         ],

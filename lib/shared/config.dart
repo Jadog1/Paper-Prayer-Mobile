@@ -2,12 +2,14 @@ import 'package:http/http.dart' as http;
 import 'package:prayer_ml/api/account_api.dart';
 import 'package:prayer_ml/api/events_api.dart';
 import 'package:prayer_ml/api/firebase_auth_client.dart';
+import 'package:prayer_ml/api/mobile_auth_api.dart';
 import 'package:prayer_ml/api/notebook_api.dart';
 import 'package:prayer_ml/api/prayer_api.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
 import 'package:prayer_ml/api/related_contacts_api.dart';
 
 const backendUrl = String.fromEnvironment('backend_url', defaultValue: '10.0.0.46:8000');
+const websiteUrl = String.fromEnvironment('website_url', defaultValue: 'http://localhost:5173/');
 class Config {
   // prod: https://paper-prayer-af73d35b1629.herokuapp.com/
   String apiUrl = backendUrl; // From phone: 10.0.0.46:8000 -- Emulator: 10.0.2.2:8000
@@ -19,6 +21,7 @@ class Config {
   late AccountApiClient accountApiClient;
   late EventsApiClient eventsApiClient;
   late RelatedContactsApiClient relatedContactsApiClient;
+  late MobileAuthApiClient mobileAuthApiClient;
 
   Config() {
     var sharedClient = http.Client();
@@ -32,6 +35,7 @@ class Config {
     accountApiClient = AccountApiClient(authClient: authClient, baseUrl: apiUrl);
     eventsApiClient = EventsApiClient(authClient: authClient, baseUrl: apiUrl);
     relatedContactsApiClient = RelatedContactsApiClient(authClient: authClient, baseUrl: apiUrl);
+    mobileAuthApiClient = MobileAuthApiClient(httpClient: sharedClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {
