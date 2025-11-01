@@ -84,7 +84,7 @@ class _PaperModeState extends ConsumerState<PaperMode> {
     }
 
     // If no groupContacts but have groupId, fetch from repo
-    if (effectiveGroupContacts == null && widget.config.groupId != null) {
+    if (effectiveGroupContacts == null && widget.config.effectiveGroupId != null) {
       final groupContactsAsync = ref.watch(groupContactsRepoProvider);
       
       return switch (groupContactsAsync) {
@@ -104,7 +104,7 @@ class _PaperModeState extends ConsumerState<PaperMode> {
   }
 
   Widget _buildGroupIfGroupExists(List<GroupWithMembers> groups) {
-    final matchingGroup = groups.where((group) => group.group.id == widget.config.groupId).firstOrNull;
+    final matchingGroup = groups.where((group) => group.group.id == widget.config.effectiveGroupId).firstOrNull;
     if (matchingGroup != null) {
       return _buildWithGroupContacts(matchingGroup);
     } else {
@@ -126,6 +126,26 @@ class _PaperModeState extends ConsumerState<PaperMode> {
     }
 
     final padding = effectiveConfig.noPadding ? EdgeInsets.zero : const EdgeInsets.fromLTRB(8, 0, 8, 0);
+    
+    // When shrinkWrap is enabled, avoid Expanded and use mainAxisSize.min
+    if (effectiveConfig.shrinkWrap) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (effectiveConfig.showHeader) OptionsHeader(config: effectiveConfig),
+          Padding(
+            padding: padding,
+            child: Paper(
+              config: effectiveConfig,
+              onRequestsLoaded: _onRequestsLoaded,
+            ),
+          ),
+          ExportActionBar(allRequests: _loadedRequests),
+        ],
+      );
+    }
+    
+    // Normal mode with Expanded for full-screen contexts
     return Column(
       children: [
         if (effectiveConfig.showHeader) OptionsHeader(config: effectiveConfig),

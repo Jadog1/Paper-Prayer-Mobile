@@ -8,7 +8,7 @@ class PrayerNotesWidget extends StatelessWidget {
     required this.groupId,
     this.collectionId,
     this.contactId,
-    this.height = 400,
+    this.maxHeight = 400,
     this.showHeader = true,
     this.title = "Prayer Notes",
   }) : assert(collectionId != null || contactId != null,
@@ -17,14 +17,13 @@ class PrayerNotesWidget extends StatelessWidget {
   final int groupId;
   final int? collectionId;
   final int? contactId;
-  final double height;
+  final double maxHeight;
   final bool showHeader;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -37,6 +36,7 @@ class PrayerNotesWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Header
           if (showHeader)
@@ -58,23 +58,24 @@ class PrayerNotesWidget extends StatelessWidget {
             ),
 
           // PaperMode content
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                bottomLeft: const Radius.circular(12),
-                bottomRight: const Radius.circular(12),
-                topLeft: showHeader ? Radius.zero : const Radius.circular(12),
-                topRight: showHeader ? Radius.zero : const Radius.circular(12),
-              ),
-              child: PaperMode(
-                config: PaperModeConfig.editable(
-                  groupId: groupId,
-                  collectionId: collectionId,
-                  contactId: contactId,
-                  showHeader: false,
-                  skipKeyboardFocusOnLoad: true,
-                  noPadding: true,
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              bottomLeft: const Radius.circular(12),
+              bottomRight: const Radius.circular(12),
+              topLeft: showHeader ? Radius.zero : const Radius.circular(12),
+              topRight: showHeader ? Radius.zero : const Radius.circular(12),
+            ),
+            child: PaperMode(
+              config: PaperModeConfig.editable(
+                groupId: groupId,
+                collectionId: collectionId,
+                contactId: contactId,
+                showHeader: false,
+                skipKeyboardFocusOnLoad: true,
+                noPadding: true,
+                maxHeight: maxHeight,
+                shrinkWrap: true,
+                disablePullToRefresh: true,
               ),
             ),
           ),

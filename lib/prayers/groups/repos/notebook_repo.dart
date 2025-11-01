@@ -9,10 +9,10 @@ import 'package:prayer_ml/prayers/groups/models/shared.dart';
 part 'generated/notebook_repo.g.dart';
 
 @riverpod
-Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(Ref ref, CursorPagination pagination, int? groupId, int? contactId, {int? eventId, int? collectionId}) async {
+Future<PaginatedPrayerRequests> fetchNotebookRequestsAt(Ref ref, CursorPagination pagination, int? groupId, int? contactId, {int? eventId, int? collectionId, int? relatedContactId}) async {
   var config = Config();
   var api = config.notebookApiClient;
-  return await api.fetchNotebookRequestsAt(pagination, groupId, contactId, eventId: eventId, collectionId: collectionId);
+  return await api.fetchNotebookRequestsAt(pagination, groupId, contactId, eventId: eventId, collectionId: collectionId, relatedContactId: relatedContactId);
 }
 
 @riverpod
@@ -35,14 +35,16 @@ class PaginatedPrayerRequestsNotifier extends _$PaginatedPrayerRequestsNotifier
   late int? eventId;
   @override
   late int? collectionId;
+  late int? relatedContactId;
   /// Builds the initial state of the provider by fetching data with a null cursor.
   @override
-  Future<CursorPagingData<PrayerRequest>> build(int limit, int? groupId, int? contactId, {int? eventId, int? collectionId}) {
+  Future<CursorPagingData<PrayerRequest>> build(int limit, int? groupId, int? contactId, {int? eventId, int? collectionId, int? relatedContactId}) {
     this.limit = limit;
     this.groupId = groupId;
     this.contactId = contactId;
     this.eventId = eventId;
     this.collectionId = collectionId;
+    this.relatedContactId = relatedContactId;
     return fetch(cursor: null);
   }
 
@@ -57,7 +59,7 @@ class PaginatedPrayerRequestsNotifier extends _$PaginatedPrayerRequestsNotifier
       limit: limit,
       cursor: cursor,
     );
-    final repository = await ref.read(fetchNotebookRequestsAtProvider(pagination, groupId, contactId, eventId: eventId, collectionId: collectionId).future);
+    final repository = await ref.read(fetchNotebookRequestsAtProvider(pagination, groupId, contactId, eventId: eventId, collectionId: collectionId, relatedContactId: relatedContactId).future);
 
     return CursorPagingData(
       items: repository.prayerRequests,

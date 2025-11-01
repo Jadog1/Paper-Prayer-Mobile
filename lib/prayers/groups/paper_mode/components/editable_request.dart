@@ -182,7 +182,7 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
                   focusNode: widget.focusNode,
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: _onChanged,
-                  
+                  autofillHints: null,
                   maxLines: null,
                   enabled: !widget.isExportMode,
                   decoration: InputDecoration(

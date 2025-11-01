@@ -5,6 +5,7 @@ import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/api/notebook_api.dart';
 import 'package:prayer_ml/api/prayer_api.dart';
 import 'package:prayer_ml/api/recommendations_api.dart';
+import 'package:prayer_ml/api/related_contacts_api.dart';
 
 const backendUrl = String.fromEnvironment('backend_url', defaultValue: '10.0.0.46:8000');
 class Config {
@@ -17,6 +18,7 @@ class Config {
   late NotebookApiClient notebookApiClient;
   late AccountApiClient accountApiClient;
   late EventsApiClient eventsApiClient;
+  late RelatedContactsApiClient relatedContactsApiClient;
 
   Config() {
     var sharedClient = http.Client();
@@ -29,6 +31,7 @@ class Config {
     notebookApiClient = NotebookApiClient(authClient: authClient, baseUrl: apiUrl);
     accountApiClient = AccountApiClient(authClient: authClient, baseUrl: apiUrl);
     eventsApiClient = EventsApiClient(authClient: authClient, baseUrl: apiUrl);
+    relatedContactsApiClient = RelatedContactsApiClient(authClient: authClient, baseUrl: apiUrl);
   }
 
   uri(String endpoint, [Map<String, dynamic>? queryParameters]) {

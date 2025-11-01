@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/contact_view.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/loadable_widgets.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/paper_margin_space.dart';
@@ -16,11 +17,13 @@ class ViewableRequest extends ConsumerWidget {
     required this.request,
     this.focusOnEdit,
     this.isExportMode = false,
+    this.groupId,
   });
 
   final PrayerRequest request;
   final VoidCallback? focusOnEdit;
   final bool isExportMode;
+  final int? groupId;
 
   void _showDetailSheet(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
@@ -92,6 +95,51 @@ class ViewableRequest extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       
+                      // Contact Button
+                      if (groupId != null)
+                        _buildSection(
+                          context,
+                          title: "Contact",
+                          icon: Icons.person,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ContactView(
+                                    contact: request.user,
+                                    groupId: groupId!,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.green[50],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.green[200]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person, color: Colors.green[700]),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      request.user.name,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(Icons.chevron_right, color: Colors.grey[400]),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (groupId != null) const SizedBox(height: 16),
+                      
                       // Description Section
                       _buildSection(
                         context,
@@ -116,6 +164,7 @@ class ViewableRequest extends ConsumerWidget {
                         child: LoadableRelatedContacts(
                           contactId: request.user.id,
                           relatedContactIds: request.relatedContactIds,
+                          groupId: groupId,
                         ),
                       ),
                       const SizedBox(height: 16),

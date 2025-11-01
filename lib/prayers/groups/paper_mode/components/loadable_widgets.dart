@@ -5,6 +5,7 @@ import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
+import 'package:prayer_ml/prayers/groups/related_contact_view.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
@@ -97,11 +98,16 @@ class BibleVerseList extends StatelessWidget {
 
 /// Loader widget for related contacts
 class LoadableRelatedContacts extends ConsumerWidget {
-  const LoadableRelatedContacts(
-      {super.key, required this.contactId, this.relatedContactIds});
+  const LoadableRelatedContacts({
+    super.key, 
+    required this.contactId, 
+    this.relatedContactIds,
+    this.groupId,
+  });
 
   final int contactId;
   final List<int>? relatedContactIds;
+  final int? groupId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -117,7 +123,9 @@ class LoadableRelatedContacts extends ConsumerWidget {
     var relatedContacts = ref.watch(fetchRelatedContactsProvider(contactId));
     return switch (relatedContacts) {
       AsyncData(:final value) => _RelatedContactsList(
-          contacts: findRelatedContacts(value, relatedContactIds!)),
+          contacts: findRelatedContacts(value, relatedContactIds!),
+          groupId: groupId,
+        ),
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "LoadableRelatedContacts",
           error: error,
@@ -130,8 +138,12 @@ class LoadableRelatedContacts extends ConsumerWidget {
 /// Displays a list of related contacts with chips
 class _RelatedContactsList extends StatelessWidget {
   final List<RelatedContact> contacts;
+  final int? groupId;
 
-  const _RelatedContactsList({required this.contacts});
+  const _RelatedContactsList({
+    required this.contacts,
+    this.groupId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -139,33 +151,47 @@ class _RelatedContactsList extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: contacts.map((contact) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Theme.of(context).primaryColor.withOpacity(0.3),
+        return InkWell(
+          onTap: groupId != null
+              ? () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => RelatedContactViewLoader(
+                        relatedContactId: contact.id,
+                        groupId: groupId!,
+                      ),
+                    ),
+                  );
+                }
+              : null,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).primaryColor.withOpacity(0.3),
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.person,
-                size: 16,
-                color: Theme.of(context).primaryColor,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                contact.name,
-                style: TextStyle(
-                  fontSize: 14,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.person,
+                  size: 16,
                   color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
-            ],
+                const SizedBox(width: 4),
+                Text(
+                  relatedContactAsString(contact),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       }).toList(),

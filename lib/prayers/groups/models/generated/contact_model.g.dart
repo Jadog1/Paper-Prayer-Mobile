@@ -68,3 +68,23 @@ Map<String, dynamic> _$$RelatedContactImplToJson(
       'name': instance.name,
       'label': instance.label,
     };
+
+_$RelatedContactUpdateImpl _$$RelatedContactUpdateImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RelatedContactUpdateImpl(
+      id: (json['id'] as num).toInt(),
+      highLevelRelationship: json['high_level_relationship'] as String?,
+      lowLevelRelationship: json['low_level_relationship'] as String?,
+      name: json['name'] as String?,
+      label: json['label'] as String?,
+    );
+
+Map<String, dynamic> _$$RelatedContactUpdateImplToJson(
+        _$RelatedContactUpdateImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'high_level_relationship': instance.highLevelRelationship,
+      'low_level_relationship': instance.lowLevelRelationship,
+      'name': instance.name,
+      'label': instance.label,
+    };

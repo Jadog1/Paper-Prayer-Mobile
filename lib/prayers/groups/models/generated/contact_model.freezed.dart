@@ -876,3 +876,264 @@ abstract class _RelatedContact implements RelatedContact {
   _$$RelatedContactImplCopyWith<_$RelatedContactImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+RelatedContactUpdate _$RelatedContactUpdateFromJson(Map<String, dynamic> json) {
+  return _RelatedContactUpdate.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RelatedContactUpdate {
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'high_level_relationship')
+  String? get highLevelRelationship => throw _privateConstructorUsedError;
+  @JsonKey(name: 'low_level_relationship')
+  String? get lowLevelRelationship => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get label => throw _privateConstructorUsedError;
+
+  /// Serializes this RelatedContactUpdate to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RelatedContactUpdate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RelatedContactUpdateCopyWith<RelatedContactUpdate> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RelatedContactUpdateCopyWith<$Res> {
+  factory $RelatedContactUpdateCopyWith(RelatedContactUpdate value,
+          $Res Function(RelatedContactUpdate) then) =
+      _$RelatedContactUpdateCopyWithImpl<$Res, RelatedContactUpdate>;
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
+      @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
+      String? name,
+      String? label});
+}
+
+/// @nodoc
+class _$RelatedContactUpdateCopyWithImpl<$Res,
+        $Val extends RelatedContactUpdate>
+    implements $RelatedContactUpdateCopyWith<$Res> {
+  _$RelatedContactUpdateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RelatedContactUpdate
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? highLevelRelationship = freezed,
+    Object? lowLevelRelationship = freezed,
+    Object? name = freezed,
+    Object? label = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      highLevelRelationship: freezed == highLevelRelationship
+          ? _value.highLevelRelationship
+          : highLevelRelationship // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lowLevelRelationship: freezed == lowLevelRelationship
+          ? _value.lowLevelRelationship
+          : lowLevelRelationship // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RelatedContactUpdateImplCopyWith<$Res>
+    implements $RelatedContactUpdateCopyWith<$Res> {
+  factory _$$RelatedContactUpdateImplCopyWith(_$RelatedContactUpdateImpl value,
+          $Res Function(_$RelatedContactUpdateImpl) then) =
+      __$$RelatedContactUpdateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
+      @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
+      String? name,
+      String? label});
+}
+
+/// @nodoc
+class __$$RelatedContactUpdateImplCopyWithImpl<$Res>
+    extends _$RelatedContactUpdateCopyWithImpl<$Res, _$RelatedContactUpdateImpl>
+    implements _$$RelatedContactUpdateImplCopyWith<$Res> {
+  __$$RelatedContactUpdateImplCopyWithImpl(_$RelatedContactUpdateImpl _value,
+      $Res Function(_$RelatedContactUpdateImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RelatedContactUpdate
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? highLevelRelationship = freezed,
+    Object? lowLevelRelationship = freezed,
+    Object? name = freezed,
+    Object? label = freezed,
+  }) {
+    return _then(_$RelatedContactUpdateImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      highLevelRelationship: freezed == highLevelRelationship
+          ? _value.highLevelRelationship
+          : highLevelRelationship // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lowLevelRelationship: freezed == lowLevelRelationship
+          ? _value.lowLevelRelationship
+          : lowLevelRelationship // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RelatedContactUpdateImpl
+    with DiagnosticableTreeMixin
+    implements _RelatedContactUpdate {
+  const _$RelatedContactUpdateImpl(
+      {required this.id,
+      @JsonKey(name: 'high_level_relationship') this.highLevelRelationship,
+      @JsonKey(name: 'low_level_relationship') this.lowLevelRelationship,
+      this.name,
+      this.label});
+
+  factory _$RelatedContactUpdateImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RelatedContactUpdateImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  @JsonKey(name: 'high_level_relationship')
+  final String? highLevelRelationship;
+  @override
+  @JsonKey(name: 'low_level_relationship')
+  final String? lowLevelRelationship;
+  @override
+  final String? name;
+  @override
+  final String? label;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'RelatedContactUpdate(id: $id, highLevelRelationship: $highLevelRelationship, lowLevelRelationship: $lowLevelRelationship, name: $name, label: $label)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'RelatedContactUpdate'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('highLevelRelationship', highLevelRelationship))
+      ..add(DiagnosticsProperty('lowLevelRelationship', lowLevelRelationship))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('label', label));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RelatedContactUpdateImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.highLevelRelationship, highLevelRelationship) ||
+                other.highLevelRelationship == highLevelRelationship) &&
+            (identical(other.lowLevelRelationship, lowLevelRelationship) ||
+                other.lowLevelRelationship == lowLevelRelationship) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.label, label) || other.label == label));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, highLevelRelationship,
+      lowLevelRelationship, name, label);
+
+  /// Create a copy of RelatedContactUpdate
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RelatedContactUpdateImplCopyWith<_$RelatedContactUpdateImpl>
+      get copyWith =>
+          __$$RelatedContactUpdateImplCopyWithImpl<_$RelatedContactUpdateImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RelatedContactUpdateImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RelatedContactUpdate implements RelatedContactUpdate {
+  const factory _RelatedContactUpdate(
+      {required final int id,
+      @JsonKey(name: 'high_level_relationship')
+      final String? highLevelRelationship,
+      @JsonKey(name: 'low_level_relationship')
+      final String? lowLevelRelationship,
+      final String? name,
+      final String? label}) = _$RelatedContactUpdateImpl;
+
+  factory _RelatedContactUpdate.fromJson(Map<String, dynamic> json) =
+      _$RelatedContactUpdateImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  @JsonKey(name: 'high_level_relationship')
+  String? get highLevelRelationship;
+  @override
+  @JsonKey(name: 'low_level_relationship')
+  String? get lowLevelRelationship;
+  @override
+  String? get name;
+  @override
+  String? get label;
+
+  /// Create a copy of RelatedContactUpdate
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RelatedContactUpdateImplCopyWith<_$RelatedContactUpdateImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

@@ -30,16 +30,17 @@ class _PaperState extends ConsumerState<Paper> {
   Widget build(BuildContext context) {
     final provider = paginatedPrayerRequestsNotifierProvider(
       widget.config.pageSize,
-      widget.config.groupId,
+      widget.config.effectiveGroupId,
       widget.config.contactId,
       eventId: widget.config.eventId,
-      collectionId: widget.config.collectionId
+      collectionId: widget.config.collectionId,
+      relatedContactId: widget.config.relatedContactId,
     );
     
     final stateNotifier = ref.watch(paperModeStateProvider);
     final state = stateNotifier.state;
     
-    return PagingHelperView(
+    Widget pagingView = PagingHelperView(
       provider: provider,
       futureRefreshable: provider.future,
       notifierRefreshable: provider.notifier,
@@ -54,19 +55,52 @@ class _PaperState extends ConsumerState<Paper> {
         if (widget.onRequestsLoaded != null) {
           widget.onRequestsLoaded!(filteredItems);
         }
+
+        // Empty state
+        if (filteredItems.isEmpty && widget.config.readOnly) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Text(
+                'No prayer requests',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ),
+          );
+        }
             
         return ListView.builder(
           itemCount: filteredItems.length + 1,
           reverse: true,
+          shrinkWrap: widget.config.shrinkWrap,
+          physics: (widget.config.disablePullToRefresh 
+                  ? const ClampingScrollPhysics() 
+                  : const AlwaysScrollableScrollPhysics()),
           itemBuilder: (context, index) {
             if (index == filteredItems.length) {
               if (filteredItems.isEmpty) {
                 return widget.config.readOnly || widget.config.groupContacts == null
                     ? const SizedBox.shrink()
-                    : NewRequestsManager(
-                        previousRequest: null,
-                        currentGroup: widget.config.groupContacts!,
-                        config: widget.config,
+                    : Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Text(
+                              'No prayer requests yet',
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          NewRequestsManager(
+                            previousRequest: null,
+                            currentGroup: widget.config.groupContacts!,
+                            config: widget.config,
+                          ),
+                        ],
                       );
               }
               
@@ -86,23 +120,37 @@ class _PaperState extends ConsumerState<Paper> {
                       DateTime.parse(lastDate)) == 0)
                   .toList();
               
+              // Skip date break at top when in shrinkWrap mode (card context)
+              final breakWidgets = widget.config.shrinkWrap 
+                  ? <Widget>[
+                      usernameBreak(
+                        context, 
+                        filteredItems.last,
+                        userRequests: lastUserRequests,
+                        ref: ref,
+                      ),
+                    ]
+                  : <Widget>[
+                      dateBreak(
+                        filteredItems.last.createdAt, 
+                        formatTimestamp,
+                        dateRequests: lastDateRequests,
+                        ref: ref,
+                        context: context,
+                      ),
+                      usernameBreak(
+                        context, 
+                        filteredItems.last,
+                        userRequests: lastUserRequests,
+                        ref: ref,
+                      ),
+                    ];
+              
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   endItemView,
-                  dateBreak(
-                    filteredItems.last.createdAt, 
-                    formatTimestamp,
-                    dateRequests: lastDateRequests,
-                    ref: ref,
-                    context: context,
-                  ),
-                  usernameBreak(
-                    context, 
-                    filteredItems.last,
-                    userRequests: lastUserRequests,
-                    ref: ref,
-                  ),
+                  ...breakWidgets,
                 ],
               );
             }
@@ -209,5 +257,15 @@ class _PaperState extends ConsumerState<Paper> {
         );
       },
     );
+    
+    // Wrap with maxHeight constraint if specified
+    if (widget.config.maxHeight != null) {
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: widget.config.maxHeight!),
+        child: pagingView,
+      );
+    }
+    
+    return pagingView;
   }
 }

@@ -18,6 +18,10 @@ class PaperModeConfig {
     this.noPadding = false,
     this.pageSize = 10,
     this.collectionId,
+    this.relatedContactId,
+    this.maxHeight,
+    this.shrinkWrap = false,
+    this.disablePullToRefresh = false,
   }) : assert(
           (groupContacts == null && groupId == null) == false || readOnly,
           'Either groupContacts or groupId must be provided when not in readOnly mode',
@@ -53,11 +57,23 @@ class PaperModeConfig {
   /// Optional collection ID to filter prayer requests
   final int? collectionId;
 
+  /// Optional related contact ID to filter prayer requests
+  final int? relatedContactId;
+
   /// Whether to skip focusing the keyboard on load (for embedded use cases)
   final bool skipKeyboardFocusOnLoad;
 
   /// Whether to remove padding around the paper content
   final bool noPadding;
+
+  /// Maximum height for the paper content (enables dynamic sizing)
+  final double? maxHeight;
+
+  /// Whether to shrink wrap content instead of filling available space
+  final bool shrinkWrap;
+
+  /// Whether to disable pull-to-refresh gesture
+  final bool disablePullToRefresh;
 
   /// Get the effective group ID from either groupContacts or groupId
   int? get effectiveGroupId => groupContacts?.group.id ?? groupId;
@@ -79,6 +95,10 @@ class PaperModeConfig {
     bool? noPadding,
     int? pageSize,
     int? collectionId,
+    int? relatedContactId,
+    double? maxHeight,
+    bool? shrinkWrap,
+    bool? disablePullToRefresh,
   }) {
     return PaperModeConfig(
       readOnly: readOnly ?? this.readOnly,
@@ -92,6 +112,10 @@ class PaperModeConfig {
       aiModeDefault: aiModeDefault ?? this.aiModeDefault,
       pageSize: pageSize ?? this.pageSize,
       collectionId: collectionId ?? this.collectionId,
+      relatedContactId: relatedContactId ?? this.relatedContactId,
+      maxHeight: maxHeight ?? this.maxHeight,
+      shrinkWrap: shrinkWrap ?? this.shrinkWrap,
+      disablePullToRefresh: disablePullToRefresh ?? this.disablePullToRefresh,
       skipKeyboardFocusOnLoad: skipKeyboardFocusOnLoad,
       noPadding: noPadding ?? this.noPadding,
     );
@@ -104,7 +128,11 @@ class PaperModeConfig {
     bool showHeader = false,
     GroupWithMembers? groupContacts,
     int? collectionId,
+    int? relatedContactId,
     bool noPadding = false,
+    double? maxHeight,
+    bool shrinkWrap = false,
+    bool disablePullToRefresh = false,
   }) {
     return PaperModeConfig(
       readOnly: true,
@@ -113,7 +141,11 @@ class PaperModeConfig {
       eventId: eventId,
       groupContacts: groupContacts,
       collectionId: collectionId,
+      relatedContactId: relatedContactId,
       noPadding: noPadding,
+      maxHeight: maxHeight,
+      shrinkWrap: shrinkWrap,
+      disablePullToRefresh: disablePullToRefresh,
     );
   }
 
@@ -125,8 +157,12 @@ class PaperModeConfig {
     int? contactId,
     int? eventId,
     int? collectionId,
+    int? relatedContactId,
     bool skipKeyboardFocusOnLoad = false,
     bool noPadding = false,
+    double? maxHeight,
+    bool shrinkWrap = false,
+    bool disablePullToRefresh = false,
   }) {
     return PaperModeConfig(
       readOnly: false,
@@ -135,9 +171,13 @@ class PaperModeConfig {
       contactId: contactId,
       eventId: eventId,
       collectionId: collectionId,
+      relatedContactId: relatedContactId,
       groupId: groupId,
       skipKeyboardFocusOnLoad: skipKeyboardFocusOnLoad,
       noPadding: noPadding,
+      maxHeight: maxHeight,
+      shrinkWrap: shrinkWrap,
+      disablePullToRefresh: disablePullToRefresh,
     );
   }
 }

@@ -130,6 +130,7 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
         request: widget.prayerRequest,
         focusOnEdit: widget.config.readOnly ? null : focusOnEdit,
         isExportMode: exportState.isExportMode,
+        groupId: widget.config.effectiveGroupId,
       );
     } else {
       content = EditableRequest(

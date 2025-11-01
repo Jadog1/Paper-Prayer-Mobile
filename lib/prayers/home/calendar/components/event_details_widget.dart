@@ -67,22 +67,35 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
   }
 
   Widget _buildContent(BuildContext context, Collection collection) {
-    final content = Column(
-      children: [
-        // Event summary header
-        _buildEventHeader(collection),
-        
-        // Paper mode with event or collection filter (read-only)
-        Expanded(
-          child: PaperMode(
-            config: PaperModeConfig.readOnly(
-              showHeader: false,
-              eventId: _showingEventOnly ? widget.event.id : null,
-              collectionId: !_showingEventOnly ? collection.id : null,
-            ),
+    final content = Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blue[50]!,
+            Colors.white,
+          ],
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Event details card
+              _buildEventCard(collection),
+              
+              const SizedBox(height: 16),
+              
+              // Prayer requests card
+              _buildPrayerRequestsCard(collection),
+              
+              const SizedBox(height: 16),
+            ],
           ),
         ),
-      ],
+      ),
     );
 
     if (!widget.config.showAppBar) {
@@ -99,57 +112,322 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
     );
   }
 
-  Widget _buildEventHeader(Collection collection) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        border: Border(
-          bottom: BorderSide(color: Colors.blue[200]!, width: 1),
+  Widget _buildEventCard(Collection collection) {
+    return Card(
+      elevation: 3,
+      shadowColor: Colors.blue.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.blue[50]!.withOpacity(0.3),
+            ],
+          ),
         ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Event title with decorative element
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blueAccent.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.event,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.event.summary != null && widget.event.summary!.isNotEmpty)
+                          Text(
+                            widget.event.summary!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              height: 1.2,
+                            ),
+                          )
+                        else
+                          const Text(
+                            'Event Details',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Prayer Collection Event',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Date range with modern styling
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue[100]!),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.calendar_today, size: 18, color: Colors.blue[700]),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Event Date',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _formatEventDate(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Collection link
+              if (widget.config.showCollectionLink) ...[
+                const SizedBox(height: 12),
+                _buildCollectionLink(collection),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrayerRequestsCard(Collection collection) {
+    return Card(
+      elevation: 3,
+      shadowColor: Colors.blue.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Event title/summary
-          if (widget.event.summary != null && widget.event.summary!.isNotEmpty)
-            Text(
-              widget.event.summary!,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+          // Card header with gradient
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.blue[600]!,
+                  Colors.blue[400]!,
+                ],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
             ),
-          const SizedBox(height: 8),
-          
-          // Date range
-          Row(
-            children: [
-              const Icon(Icons.calendar_today, size: 16, color: Colors.blueAccent),
-              const SizedBox(width: 6),
-              Text(
-                _formatEventDate(),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.auto_stories,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Prayer Requests',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                
+                // Filter toggle in header
+                if (widget.config.showFilterToggle) ...[
+                  const SizedBox(height: 16),
+                  _buildModernFilterToggle(),
+                ],
+              ],
+            ),
           ),
           
-          // Collection link
-          if (widget.config.showCollectionLink) ...[
-            const SizedBox(height: 12),
-            _buildCollectionLink(collection),
-          ],
-          
-          // Filter toggle
-          if (widget.config.showFilterToggle) ...[
-            const SizedBox(height: 12),
-            _buildFilterToggle(),
-          ],
+          // PaperMode content
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+            child: PaperMode(
+              config: PaperModeConfig.readOnly(
+                showHeader: false,
+                eventId: _showingEventOnly ? widget.event.id : null,
+                collectionId: !_showingEventOnly ? collection.id : null,
+                maxHeight: 600,
+                shrinkWrap: true,
+                disablePullToRefresh: true,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModernFilterToggle() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    _showingEventOnly ? Icons.filter_alt : Icons.filter_alt_off,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _showingEventOnly 
+                        ? 'Event Requests Only'
+                        : 'All Collection Requests',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _showingEventOnly = !_showingEventOnly;
+                });
+              },
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _showingEventOnly ? 'Show All' : 'Filter',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      _showingEventOnly ? Icons.unfold_more : Icons.unfold_less,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -171,10 +449,11 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
           );
         }
       },
+      borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.blue[50],
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.blue[200]!),
         ),
@@ -198,52 +477,6 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
             Icon(Icons.open_in_new, size: 16, color: Colors.grey[600]),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFilterToggle() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue[300]!),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.filter_list, size: 18, color: Colors.blueAccent),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _showingEventOnly 
-                ? 'Showing: Requested for Event Only'
-                : 'Showing: All requests in collection',
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          TextButton.icon(
-            onPressed: () {
-              setState(() {
-                _showingEventOnly = !_showingEventOnly;
-              });
-            },
-            icon: Icon(
-              _showingEventOnly ? Icons.unfold_more : Icons.unfold_less,
-              size: 18,
-            ),
-            label: Text(_showingEventOnly ? 'Show All' : 'Show Event Only'),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blueAccent,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            ),
-          ),
-        ],
       ),
     );
   }

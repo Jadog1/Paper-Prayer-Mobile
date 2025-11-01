@@ -57,20 +57,43 @@ List<RelatedContact> findRelatedContacts(List<RelatedContact> allRelated, List<i
 }
 
 String relatedContactsAsString(List<RelatedContact> relatedContacts) {
+  if (relatedContacts.isEmpty) return '';
+  
   List<String> contacts = [];
   for (var relatedContact in relatedContacts) {
-    String relatedContactString = relatedContact.name;
-    if (relatedContactString.isEmpty && relatedContact.lowLevelRelationship != null && relatedContact.lowLevelRelationship!.isNotEmpty) {
-      relatedContactString = relatedContact.lowLevelRelationship!;
-    } 
-    
-    if (relatedContact.highLevelRelationship != null && relatedContact.highLevelRelationship!.isNotEmpty && relatedContact.highLevelRelationship != 'other') {
-      relatedContactString = "$relatedContactString (${relatedContact.highLevelRelationship!})";
-    }  
-    if (relatedContact.label != null && relatedContact.label!.isNotEmpty) {
-      relatedContactString = "$relatedContactString [${relatedContact.label}]";
-    }
-    contacts.add(relatedContactString.trim());
+    contacts.add(relatedContactAsString(relatedContact));
   }
-  return contacts.join(", ");
+  
+  // Format based on number of contacts
+  if (contacts.length == 1) {
+    return "For ${contacts[0]}";
+  } else if (contacts.length == 2) {
+    return "For ${contacts[0]} and ${contacts[1]}";
+  } else {
+    final lastContact = contacts.removeLast();
+    return "For ${contacts.join(', ')}, and $lastContact";
+  }
+}
+
+String relatedContactAsString(RelatedContact relatedContact) {
+  List<String> parts = [];
+  
+  String namePart = relatedContact.name;
+  if (namePart.isEmpty && relatedContact.lowLevelRelationship != null && relatedContact.lowLevelRelationship!.isNotEmpty) {
+    namePart = relatedContact.lowLevelRelationship!;
+  }
+  parts.add(namePart);
+  
+  if (relatedContact.highLevelRelationship != null && 
+      relatedContact.highLevelRelationship!.isNotEmpty && 
+      relatedContact.highLevelRelationship != 'other' &&
+      relatedContact.label == null) {
+    parts.add("(${relatedContact.highLevelRelationship!})");
+  }
+  
+  if (relatedContact.label != null && relatedContact.label!.isNotEmpty) {
+    parts.add("(${relatedContact.label})");
+  }
+  
+  return parts.join(' ').trim();
 }

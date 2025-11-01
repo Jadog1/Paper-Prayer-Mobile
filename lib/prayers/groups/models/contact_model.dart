@@ -49,3 +49,16 @@ class RelatedContact with _$RelatedContact {
 
   factory RelatedContact.fromJson(Map<String, dynamic> json) => _$RelatedContactFromJson(json);
 }
+
+@freezed
+class RelatedContactUpdate with _$RelatedContactUpdate {
+  const factory RelatedContactUpdate({
+    required int id,
+    @JsonKey(name: 'high_level_relationship') String? highLevelRelationship,
+    @JsonKey(name: 'low_level_relationship') String? lowLevelRelationship,
+    String? name,
+    String? label,
+  }) = _RelatedContactUpdate;
+
+  factory RelatedContactUpdate.fromJson(Map<String, dynamic> json) => _$RelatedContactUpdateFromJson(json);
+}

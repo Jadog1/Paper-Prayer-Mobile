@@ -6,6 +6,7 @@ import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
 import 'package:prayer_ml/prayers/groups/contact_view.dart';
+import 'package:prayer_ml/prayers/groups/related_contact_view.dart';
 import 'package:prayer_ml/prayers/groups/widgets/quick_info_bar.dart';
 import 'package:prayer_ml/prayers/groups/widgets/upcoming_events_widget.dart';
 import 'package:prayer_ml/prayers/groups/widgets/prayer_notes_widget.dart';
@@ -351,16 +352,51 @@ class _DetailsSection extends StatelessWidget {
           // Related Contacts
           if (relatedContacts.isNotEmpty) ...[
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.people, size: 18, color: Colors.blue[700]),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    relatedContactsAsString(relatedContacts),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: relatedContacts.map((rc) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RelatedContactViewLoader(
+                                relatedContactId: rc.id,
+                                groupId: collection.group.groupId,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue[50],
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.blue[200]!),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.person, size: 14, color: Colors.blue[700]),
+                              const SizedBox(width: 4),
+                              Text(
+                                _formatRelatedContact(rc),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blue[900],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -385,5 +421,24 @@ class _DetailsSection extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatRelatedContact(RelatedContact rc) {
+    String name = rc.name;
+    if (name.isEmpty && rc.lowLevelRelationship != null && rc.lowLevelRelationship!.isNotEmpty) {
+      name = rc.lowLevelRelationship!;
+    }
+    
+    if (rc.highLevelRelationship != null && 
+        rc.highLevelRelationship!.isNotEmpty && 
+        rc.highLevelRelationship != 'other') {
+      name = "$name (${rc.highLevelRelationship!})";
+    }
+    
+    if (rc.label != null && rc.label!.isNotEmpty) {
+      name = "$name [${rc.label}]";
+    }
+    
+    return name.trim();
   }
 }
