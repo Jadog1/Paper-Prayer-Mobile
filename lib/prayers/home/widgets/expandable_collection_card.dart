@@ -6,9 +6,9 @@ import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
-import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/prayers/home/widgets/add_collection_update_dialog.dart';
-import 'package:prayer_ml/shared/widgets.dart';
+import 'package:prayer_ml/prayers/home/widgets/collection_action_dialogs.dart';
+import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 
 /// Configuration for the expandable collection card's visual style
 class CollectionCardStyle {
@@ -51,6 +51,7 @@ class ExpandableCollectionCard extends ConsumerStatefulWidget {
   final CollectionCardStyle style;
   final Widget? headerWidget;
   final bool initiallyExpanded;
+  final bool showActions;
 
   const ExpandableCollectionCard({
     super.key,
@@ -58,6 +59,7 @@ class ExpandableCollectionCard extends ConsumerStatefulWidget {
     required this.style,
     this.headerWidget,
     this.initiallyExpanded = false,
+    this.showActions = true,
   });
 
   @override
@@ -71,6 +73,117 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
   void initState() {
     super.initState();
     _isExpanded = widget.initiallyExpanded;
+  }
+
+  Future<void> _handleAction(String action) async {
+    final collection = widget.collection;
+    
+    try {
+      switch (action) {
+        case 'prayed':
+          // Mark as prayed without snooze
+          await ref.read(recommendationRepoProvider.notifier).updateAction(
+            collection.id,
+            CollectionRecommendationAction.prayed,
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Marked as prayed'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          break;
+          
+        case 'snooze':
+          // Show snooze date picker
+          final snoozeUntil = await showSnoozeDialog(context);
+          if (snoozeUntil != null && mounted) {
+            await ref.read(recommendationRepoProvider.notifier).updateAction(
+              collection.id,
+              CollectionRecommendationAction.prayed,
+              snoozeUntil: snoozeUntil,
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Snoozed until ${_formatDate(snoozeUntil)}'),
+                  backgroundColor: Colors.blue[700],
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          }
+          break;
+          
+        case 'resolved':
+          // Show confirmation and mark as resolved
+          final confirmed = await showResolvedConfirmation(
+            context,
+            collection.title ?? "this collection",
+          );
+          if (confirmed && mounted) {
+            await ref.read(recommendationRepoProvider.notifier).updateAction(
+              collection.id,
+              CollectionRecommendationAction.resolved,
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Collection marked as resolved'),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          }
+          break;
+          
+        case 'not_relevant':
+          // Show confirmation and mark as not relevant
+          final confirmed = await showNotRelevantConfirmation(context);
+          if (confirmed && mounted) {
+            await ref.read(recommendationRepoProvider.notifier).updateAction(
+              collection.id,
+              CollectionRecommendationAction.notRelevant,
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Marked as not relevant'),
+                  backgroundColor: Colors.orange[700],
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          }
+          break;
+      }
+    } catch (e) {
+      developer.log("Error handling action: ${e.toString()}");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update: ${e.toString()}'),
+            backgroundColor: Colors.red[700],
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  String _formatDate(String isoDate) {
+    try {
+      final date = DateTime.parse(isoDate);
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return '${months[date.month - 1]} ${date.day}';
+    } catch (e) {
+      return isoDate;
+    }
   }
 
   @override
@@ -148,34 +261,90 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               color: Colors.grey[700],
                               height: 1.4,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: _isExpanded ? null : 3,
+                            overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                           ),
                       ],
                     ),
                   ),
                   
-                  // Expand/collapse icon
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Icon(
-                      _isExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.grey[500],
-                      size: 20,
-                    ),
+                  // Action menu and expand/collapse icon
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Action menu (three dots)
+                      if (widget.showActions)
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Colors.grey[600],
+                            size: 20,
+                          ),
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'prayed',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.check_circle_outline, size: 18, color: Colors.green),
+                                  SizedBox(width: 8),
+                                  Text('Mark as prayed'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'snooze',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.schedule, size: 18, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text('Snooze'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'resolved',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.done_all, size: 18, color: Colors.green),
+                                  SizedBox(width: 8),
+                                  Text('Mark resolved'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'not_relevant',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.visibility_off, size: 18, color: Colors.orange),
+                                  SizedBox(width: 8),
+                                  Text('Not relevant'),
+                                ],
+                              ),
+                            ),
+                          ],
+                          onSelected: (value) => _handleAction(value),
+                        ),
+                      // Expand/collapse icon
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Icon(
+                          _isExpanded ? Icons.expand_less : Icons.expand_more,
+                          color: Colors.grey[500],
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             
-            // Expanded section with highlights
+            // Expanded section with action buttons
             if (_isExpanded)
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 8),
-                child: _HighlightsSection(
-                  collection: collection,
-                  accentColor: widget.style.accentColor,
-                ),
+                child: _ActionButtons(collection: collection),
               ),
             
             // Subtle divider between collections
@@ -234,154 +403,57 @@ class _PrayingForText extends StatelessWidget {
   }
 }
 
-class _HighlightsSection extends ConsumerWidget {
+class _ActionButtons extends StatelessWidget {
   final Collection collection;
-  final Color accentColor;
 
-  const _HighlightsSection({
+  const _ActionButtons({
     required this.collection,
-    required this.accentColor,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final highlightsAsync = ref.watch(recentPrayerRequestsProvider(collection.id, n: 5));
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        // Highlights list or loading indicator
-        highlightsAsync.when(
-          data: (prayerRequests) {
-            if (prayerRequests.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  "No recent prayer requests",
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey[500],
-                    fontSize: 13,
+        // Add Update button
+        Expanded(
+          child: TextButton.icon(
+            onPressed: () => _showAddUpdateDialog(context),
+            icon: const Icon(Icons.add_circle_outline, size: 16),
+            label: const Text("Add Update"),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.green[700],
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              alignment: Alignment.centerLeft,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        // View All Requests button
+        Expanded(
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => RequestDashboardLoader(
+                    collection: collection,
                   ),
                 ),
               );
-            }
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Recent highlights:",
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: accentColor,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                ...prayerRequests.map((request) {
-                  // Use highlight if available, otherwise use request description
-                  final text = request.features?.highlight ?? request.description;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 3.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6.0),
-                          child: Container(
-                            width: 5,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: Colors.amber[700],
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            text,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[800],
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            );
-          },
-          loading: () => const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.0),
-            child: Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+            },
+            icon: const Icon(Icons.open_in_new, size: 16),
+            label: const Text("View all requests"),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blueAccent,
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              alignment: Alignment.centerLeft,
             ),
           ),
-          error: (error, stackTrace) => PrintError(
-            caller: "_HighlightsSection",
-            error: error,
-            stackTrace: stackTrace,
-          ),
-        ),
-        
-        const SizedBox(height: 10),
-        
-        // Action buttons row
-        Row(
-          children: [
-            // Add Update button
-            Expanded(
-              child: TextButton.icon(
-                onPressed: () => _showAddUpdateDialog(context, ref),
-                icon: const Icon(Icons.add_circle_outline, size: 16),
-                label: const Text("Add Update"),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.green[700],
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                  alignment: Alignment.centerLeft,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            // View All Requests button
-            Expanded(
-              child: TextButton.icon(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => RequestDashboardLoader(
-                        collection: collection,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.open_in_new, size: 16),
-                label: const Text("View all requests"),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                  alignment: Alignment.centerLeft,
-                ),
-              ),
-            ),
-          ],
         ),
       ],
     );
   }
 
-  Future<void> _showAddUpdateDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showAddUpdateDialog(BuildContext context) async {
     final updateText = await showDialog<String>(
       context: context,
       builder: (context) => AddCollectionUpdateDialog(

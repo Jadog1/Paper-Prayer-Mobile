@@ -97,7 +97,12 @@ class _PrayersPageState extends State<PrayersPage> {
           onDestinationSelected: (value) {
             if (value == pageIndex) {
               // Pop to root if already selected
-              _navigatorKeys[value].currentState?.popUntil((route) => route.isFirst);
+              final navigatorState = _navigatorKeys[value].currentState;
+              if (navigatorState != null && navigatorState.canPop()) {
+                navigatorState.popUntil((route) => route.isFirst);
+              } else {
+                setState(() => pageIndex = value); // No-op to refresh the UI
+              }
             } else {
               setState(() => pageIndex = value);
             }

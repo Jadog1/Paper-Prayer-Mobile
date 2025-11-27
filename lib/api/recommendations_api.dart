@@ -7,7 +7,9 @@ import 'dart:convert';
 import 'package:prayer_ml/shared/config.dart';
 
 enum CollectionRecommendationAction {
-  prayed, notRelevant
+  prayed,
+  notRelevant,
+  resolved,
 }
 
 String actionToServerString(CollectionRecommendationAction action) {
@@ -16,6 +18,8 @@ String actionToServerString(CollectionRecommendationAction action) {
       return "Prayed";
     case CollectionRecommendationAction.notRelevant:
       return "Not relevant";
+    case CollectionRecommendationAction.resolved:
+      return "Resolved";
   }
 }
 
@@ -26,7 +30,10 @@ class RecommendationApiClient{
   RecommendationApiClient({required this.authClient, required this.baseUrl});
 
   Future<List<RecommendationGroup>> getRecommendationGroups() async {
-    final response = await authClient.get(config.uri("/recommendation_groups/"));
+    Map<String, dynamic> queryParams = {
+      "client_date": DateTime.now().toIso8601String().split('T')[0],
+    };
+    final response = await authClient.get(config.uri("/recommendation_groups/", queryParams));
 
     if (response.statusCode != 200) {
       throw Exception("Error getting recommendations: ${response.statusCode} - ${response.body}");
@@ -36,9 +43,21 @@ class RecommendationApiClient{
     return jsonResponse.map((group) => RecommendationGroup.fromJson(group)).toList();
   }
 
-  Future<void> updateAction(int collectionId, CollectionRecommendationAction action, String snoozeUntil) async {
-    final response = await authClient.post(config.uri("/recommendation_groups/recommendations/action"), 
-      body: jsonEncode({"collection_id": collectionId, "action": actionToServerString(action), "snooze_until": snoozeUntil}), headers: {"Content-Type": "application/json"});
+  Future<void> updateAction(int collectionId, CollectionRecommendationAction action, {String? snoozeUntil}) async {
+    final body = {
+      "collection_id": collectionId,
+      "action": actionToServerString(action),
+    };
+    
+    if (snoozeUntil != null) {
+      body["snooze_until"] = snoozeUntil;
+    }
+    
+    final response = await authClient.post(
+      config.uri("/recommendations/action"), 
+      body: jsonEncode(body),
+      headers: {"Content-Type": "application/json"},
+    );
 
     if (response.statusCode != 200) {
       throw Exception("Error updating action: ${response.statusCode} - ${response.body}");
@@ -49,6 +68,8 @@ class RecommendationApiClient{
     Map<String, dynamic> queryParams = {
       "group_type": recommendationGroup.groupType,
       "limit": pagination.limit.toString(),
+      // Date only
+      "client_date": DateTime.now().toIso8601String().split('T')[0],
     };
     if (recommendationGroup.id != null) {
       queryParams["id"] = recommendationGroup.id.toString();

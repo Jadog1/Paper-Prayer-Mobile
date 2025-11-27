@@ -25,10 +25,14 @@ class RecommendationRepo extends _$RecommendationRepo {
     return await recommendationsApi.getRecommendationGroups();
   }
 
-  Future<void> updateAction(int collectionId, CollectionRecommendationAction action, String snoozeUntil) async {
+  Future<void> updateAction(int collectionId, CollectionRecommendationAction action, {String? snoozeUntil}) async {
     var recommendationsApi = config.recommendationsApiClient;
-    await recommendationsApi.updateAction(collectionId, action, snoozeUntil);
+    await recommendationsApi.updateAction(collectionId, action, snoozeUntil: snoozeUntil);
+    // Invalidate all recommendation-related providers to refresh the UI
     ref.invalidateSelf();
+    ref.invalidate(paginatedCollectionRecommendationNotifierProvider);
+    ref.invalidate(paginatedHistoricalRecommendationNotifierProvider);
+    ref.invalidate(paginatedUnresolvedFollowupsNotifierProvider);
   }
 }
 
