@@ -51,7 +51,7 @@ void main() {
       });
 
       test('should skip empty lines', () {
-        final content = '''
+        const content = '''
 Prayer request 1
 
 Prayer request 2
@@ -65,7 +65,7 @@ Prayer request 3
       });
 
       test('should remove bullet points from lines', () {
-        final content = '''
+        const content = '''
 - Prayer request 1
 * Prayer request 2
 • Prayer request 3
@@ -83,7 +83,7 @@ Prayer request 3
       });
 
       test('should detect exact contact name match', () {
-        final content = '''
+        const content = '''
 John Doe
 Prayer for healing
 Jane Smith
@@ -99,9 +99,51 @@ Prayer for wisdom
         expect(result[2].contact?.name, equals('Jane Smith'));
         expect(result[3].isPrayerRequest, isTrue);
       });
+      test('Names having other special characters should be treated as contacts', () {
+        const content = '''
+- John Doe:
+Prayer for healing
+Jane Smith?
+Prayer for wisdom
+Bob : 
+Prayer for guidance
+FakeName:
+Prayer for fake guidance
+''';
+        final result = ContentParser.parseToItems(content, testGroup);
+        expect(result.length, equals(8));
+        expect(result[0].isContact, isTrue);
+        expect(result[0].contact?.name, equals('John Doe'));
+        expect(result[1].isPrayerRequest, isTrue);
+        expect(result[2].isContact, isTrue);
+        expect(result[2].contact?.name, equals('Jane Smith'));
+        expect(result[3].isPrayerRequest, isTrue);
+        expect(result[4].isContact, isTrue);
+        expect(result[4].contact?.name, equals('Bob Johnson'));
+        expect(result[5].isPrayerRequest, isTrue);
+        expect(result[5].content, equals('Prayer for guidance'));
+        expect(result[6].isPrayerRequest, isTrue);
+        expect(result[7].isPrayerRequest, isTrue);
+        expect(result[7].content, equals('Prayer for fake guidance'));
+      });
+      test('Names starting at the beginning of the line should be treated as contacts', () {
+        const content = '''
+John Doe: Prayer for healing
+Jane Smith - Prayer for wisdom
+''';
+        final result = ContentParser.parseToItems(content, testGroup);
+        expect(result.length, equals(4));
+        expect(result[0].isContact, isTrue);
+        expect(result[0].contact?.name, equals('John Doe'));
+        expect(result[1].isPrayerRequest, isTrue);
+        expect(result[2].isContact, isTrue);
+        expect(result[2].contact?.name, equals('Jane Smith'));
+        expect(result[3].isPrayerRequest, isTrue);
+      });
+
 
       test('should detect partial contact name match', () {
-        final content = '''
+        const content = '''
 John
 Prayer for healing
 Jane
@@ -132,7 +174,7 @@ Prayer for wisdom
           memberWithContactGroupPairs: [],
         );
 
-        final content = 'John';
+        const content = 'John';
         final result = ContentParser.parseToItems(content, group);
         
         // "John" could match both "John Doe" and "John Smith"
@@ -144,7 +186,7 @@ Prayer for wisdom
       });
 
       test('should treat long lines as prayer requests', () {
-        final content = '''
+        const content = '''
 This is a very long line that exceeds 150 characters and should be treated as a prayer request even if it contains a name like John because it has too much other text in it
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
@@ -154,7 +196,7 @@ This is a very long line that exceeds 150 characters and should be treated as a 
       });
 
       test('should treat lines with names but extra text as prayer requests', () {
-        final content = 'Please pray for John Doe who is sick';
+        const content = 'Please pray for John Doe who is sick';
         final result = ContentParser.parseToItems(content, testGroup);
         
         expect(result.length, equals(1));
@@ -258,7 +300,7 @@ This is a very long line that exceeds 150 characters and should be treated as a 
     });
     group('round-trip conversion', () {
       test('should maintain data through parse and convert cycle', () {
-        final originalContent = '''
+        const originalContent = '''
 John Doe
 ----------
 - Prayer for healing

@@ -14,10 +14,11 @@ class ContentParser {
   /// - Empty lines are skipped
   /// - Lines are trimmed of trailing/leading spaces
   /// - Lines starting with bullet points (-, *, •) or numbers (1., 2.) have them removed
-  /// - Lines < 150 characters are checked for contact names
-  /// - If a name is detected and matches exactly one contact, create a contact item
+  /// - Lines with format "Name: text" or "Name - text" are split if Name exactly matches a contact
+  /// - Trailing special characters (:?!;,.) are removed when matching contact names
+  /// - Lines < 150 characters are checked for contact names (exact or partial match)
+  /// - If a name matches exactly one contact, create a contact item
   /// - If a name matches multiple contacts, create an ambiguous contact item
-  /// - If a name is detected but has other text, treat as prayer request
   /// - All other lines are prayer requests
   static List<BatchContentItem> parseToItems(
     String rawContent,
@@ -38,6 +39,28 @@ class ContentParser {
 
       // Remove bullet points and numbers
       trimmedLine = _removeBulletPoints(trimmedLine);
+
+      // Try to split line if it contains a contact name followed by separator
+      final splitResult = _trySplitContactAndText(trimmedLine, groupContacts.members);
+      if (splitResult != null) {
+        // Add the contact
+        items.add(BatchContentItem(
+          id: _uuid.v4(),
+          type: BatchContentItemType.contact,
+          content: splitResult.contactName,
+          contact: splitResult.contact,
+        ));
+        
+        // Add the prayer request if there's additional text
+        if (splitResult.remainingText.isNotEmpty) {
+          items.add(BatchContentItem(
+            id: _uuid.v4(),
+            type: BatchContentItemType.prayerRequest,
+            content: splitResult.remainingText,
+          ));
+        }
+        continue;
+      }
 
       // Check if this could be a contact (< 150 characters)
       if (trimmedLine.length < 150) {
@@ -121,22 +144,72 @@ class ContentParser {
     return result.trim();
   }
 
+  /// Try to split a line into contact name and remaining text
+  /// Returns null if no split is possible
+  static _SplitResult? _trySplitContactAndText(String line, List<Contact> contacts) {
+    // Try splitting by common separators: : - | / ~
+    // These indicate a name followed by additional content
+    final separatorMatch = RegExp(r'^(.+?)[:\-|/~]\s*(.*)$').firstMatch(line);
+    
+    if (separatorMatch != null) {
+      final potentialName = separatorMatch.group(1)!.trim();
+      final remainingText = separatorMatch.group(2)!.trim();
+      
+      // For line splitting, we require an EXACT match (not partial)
+      // This ensures "John Doe: text" splits only if "John Doe" exactly matches a contact
+      final contactMatch = _findContactMatchesExactOnly(potentialName, contacts);
+      
+      if (contactMatch.isExactMatch) {
+        return _SplitResult(
+          contactName: potentialName,
+          contact: contactMatch.contacts.first,
+          remainingText: remainingText,
+        );
+      }
+    }
+    
+    return null;
+  }
+
+  /// Find matching contacts (exact only) - used for line splitting
+  static ContactMatch _findContactMatchesExactOnly(String line, List<Contact> contacts) {
+    final exactMatches = <Contact>[];
+    
+    // Remove trailing special characters for matching purposes
+    var cleanedLine = line.replaceAll(RegExp(r'[?:!;,.\s]+$'), '').trim();
+    
+    for (final contact in contacts) {
+      final contactName = contact.name.toLowerCase();
+      
+      // Check for exact match (case insensitive)
+      if (cleanedLine.toLowerCase() == contactName) {
+        exactMatches.add(contact);
+      }
+    }
+
+    return ContactMatch(contacts: exactMatches);
+  }
+
   /// Find matching contacts for a given line of text
+  /// Supports both exact and partial matches
   static ContactMatch _findContactMatches(String line, List<Contact> contacts) {
     final partialMatch = <Contact>[];
     final exactMatches = <Contact>[];
     
+    // Remove trailing special characters like : ? ! ; , for matching purposes
+    var cleanedLine = line.replaceAll(RegExp(r'[?:!;,.\s-]+$'), '').trim();
+    
     // Check if the line is ONLY a name (no other significant text)
     // We'll consider it "only a name" if it matches a contact and doesn't have
     // additional words that suggest it's a prayer request
-    final words = line.toLowerCase().split(RegExp(r'\s+'));
+    final words = cleanedLine.toLowerCase().split(RegExp(r'\s+'));
     
     for (final contact in contacts) {
       final contactName = contact.name.toLowerCase();
       final contactNameParts = contactName.split(RegExp(r'\s+'));
       
       // Check for exact match (case insensitive)
-      if (line.toLowerCase() == contactName) {
+      if (cleanedLine.toLowerCase() == contactName) {
         partialMatch.add(contact);
         exactMatches.add(contact);
         continue;
@@ -177,4 +250,17 @@ class ContactMatch {
   bool get isExactMatch => contacts.length == 1;
   bool get isAmbiguous => contacts.length > 1;
   bool get noMatch => contacts.isEmpty;
+}
+
+/// Result of splitting a line into contact and remaining text
+class _SplitResult {
+  const _SplitResult({
+    required this.contactName,
+    required this.contact,
+    required this.remainingText,
+  });
+
+  final String contactName;
+  final Contact contact;
+  final String remainingText;
 }
