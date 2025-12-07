@@ -23,6 +23,7 @@ class PrayersPage extends StatefulWidget {
 class _PrayersPageState extends State<PrayersPage> {
   int pageIndex = 0;
   final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
+  bool _isHandlingSharedText = false;
 
   @override
   void initState() {
@@ -39,7 +40,9 @@ class _PrayersPageState extends State<PrayersPage> {
   void didUpdateWidget(PrayersPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Handle new shared text
-    if (widget.sharedText != null && widget.sharedText != oldWidget.sharedText) {
+    if (widget.sharedText != null && 
+        widget.sharedText != oldWidget.sharedText &&
+        !_isHandlingSharedText) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _handleSharedText();
       });
@@ -47,19 +50,32 @@ class _PrayersPageState extends State<PrayersPage> {
   }
 
   void _handleSharedText() {
-    if (widget.sharedText == null || !mounted) return;
-    // Navigate to BatchPaperMode with the shared text
+    if (widget.sharedText == null || !mounted || _isHandlingSharedText) {
+      return;
+    }
+    
+    // Mark that we're handling this to prevent duplicate navigation
+    _isHandlingSharedText = true;
+    
+    // Capture the shared text before clearing it
+    final textToShare = widget.sharedText!;
+    
+    // Clear the shared text IMMEDIATELY before navigation
+    // This prevents re-triggering if the user returns to the app
+    widget.onSharedTextHandled?.call();
+    
+    // Navigate to BatchPaperMode with the captured shared text
     Navigator.of(context).push(
       MaterialPageRoute( 
         builder: (context) => BatchPaperMode(
           config: BatchPaperModeConfig.requiresGroupSelection(
-            prefillContent: widget.sharedText,
+            prefillContent: textToShare,
           ),
         ),
       ),
     ).then((_) {
-      // Clear the shared text after handling
-      widget.onSharedTextHandled?.call();
+      // Reset the handling flag
+      _isHandlingSharedText = false;
     });
   }
 

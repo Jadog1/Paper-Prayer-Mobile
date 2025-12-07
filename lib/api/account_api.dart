@@ -14,10 +14,11 @@ class AccountApiClient {
     final response = await authClient.get(config.uri("/account/"));
 
     if (response.statusCode != 200) {
-      throw Exception("Error getting account: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error getting account: ${response.statusCode} - ${response.body}");
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return Account.fromJson(json);
   }
 
@@ -29,10 +30,11 @@ class AccountApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Error updating account: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error updating account: ${response.statusCode} - ${response.body}");
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return Account.fromJson(json);
   }
 }

@@ -28,7 +28,7 @@ class NewHomePageConsumer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(recommendationRepoProvider);
-    
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -55,7 +55,7 @@ class NewHomePageConsumer extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               // Title
               const Text(
                 "Paper Prayer",
@@ -67,9 +67,9 @@ class NewHomePageConsumer extends ConsumerWidget {
                   letterSpacing: 1.2,
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // Subtitle/Description
               Text(
                 "Prayer requests to follow up on",
@@ -80,9 +80,9 @@ class NewHomePageConsumer extends ConsumerWidget {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Divider to separate header from content
               Divider(
                 height: 32,
@@ -91,7 +91,7 @@ class NewHomePageConsumer extends ConsumerWidget {
                 indent: 40,
                 endIndent: 40,
               ),
-              
+
               // Recommendations Section - Flexible with minimum height
               Flexible(
                 flex: 1,
@@ -106,7 +106,8 @@ class NewHomePageConsumer extends ConsumerWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => CurrentRecommendationsView(
+                                builder: (context) =>
+                                    CurrentRecommendationsView(
                                   recommendationGroup: group,
                                 ),
                               ),
@@ -124,17 +125,16 @@ class NewHomePageConsumer extends ConsumerWidget {
                   ),
                 ),
               ),
-              
+
               // Upcoming Events Preview Section - Limited height
               const Flexible(
                 flex: 2,
                 child: UpcomingEventsPreview(),
               ),
-              
+
               // Additional view buttons
               const SizedBox(height: 8),
               const _AdditionalViewButtons(),
-              
             ],
           ),
         ),
@@ -157,7 +157,8 @@ class _AdditionalViewButtons extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const UnresolvedFollowupsView(lookbackDays: 30),
+                    builder: (context) =>
+                        const UnresolvedFollowupsView(lookbackDays: 30),
                   ),
                 );
               },
@@ -225,7 +226,7 @@ class _RecommendationGroupButton extends StatelessWidget {
               size: 24,
             ),
             const SizedBox(width: 12),
-            
+
             // Title and description
             Expanded(
               child: Column(
@@ -252,7 +253,7 @@ class _RecommendationGroupButton extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Simple arrow
             Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
           ],

@@ -19,7 +19,8 @@ class RelatedContactViewLoader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dataAsync = ref.watch(fetchRelatedContactWithDataProvider(relatedContactId));
+    final dataAsync =
+        ref.watch(fetchRelatedContactWithDataProvider(relatedContactId));
 
     return switch (dataAsync) {
       AsyncData(:final value) => RelatedContactView(
@@ -74,12 +75,15 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.data.relatedContact.name);
-    _labelController = TextEditingController(text: widget.data.relatedContact.label ?? '');
+    _nameController =
+        TextEditingController(text: widget.data.relatedContact.name);
+    _labelController =
+        TextEditingController(text: widget.data.relatedContact.label ?? '');
     _lowLevelRelationshipController = TextEditingController(
       text: widget.data.relatedContact.lowLevelRelationship ?? '',
     );
-    _selectedHighLevelRelationship = widget.data.relatedContact.highLevelRelationship;
+    _selectedHighLevelRelationship =
+        widget.data.relatedContact.highLevelRelationship;
   }
 
   @override
@@ -95,17 +99,19 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
       id: widget.data.relatedContact.id,
       name: _nameController.text.isEmpty ? null : _nameController.text,
       label: _labelController.text.isEmpty ? null : _labelController.text,
-      lowLevelRelationship: _lowLevelRelationshipController.text.isEmpty 
-          ? null 
+      lowLevelRelationship: _lowLevelRelationshipController.text.isEmpty
+          ? null
           : _lowLevelRelationshipController.text,
       highLevelRelationship: _selectedHighLevelRelationship,
     );
 
     try {
-      await ref.read(
-        relatedContactsRepoProvider(widget.data.relatedContact.contactId).notifier
-      ).updateRelatedContact(update);
-      
+      await ref
+          .read(
+              relatedContactsRepoProvider(widget.data.relatedContact.contactId)
+                  .notifier)
+          .updateRelatedContact(update);
+
       if (mounted) {
         setState(() => _isEditing = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -126,7 +132,8 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Related Contact'),
-        content: const Text('Are you sure you want to delete this related contact? This action cannot be undone.'),
+        content: const Text(
+            'Are you sure you want to delete this related contact? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -143,10 +150,12 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
 
     if (confirmed == true && mounted) {
       try {
-        await ref.read(
-          relatedContactsRepoProvider(widget.data.relatedContact.contactId).notifier
-        ).deleteRelatedContact(widget.data.relatedContact.id);
-        
+        await ref
+            .read(relatedContactsRepoProvider(
+                    widget.data.relatedContact.contactId)
+                .notifier)
+            .deleteRelatedContact(widget.data.relatedContact.id);
+
         if (mounted) {
           Navigator.of(context).pop();
         }
@@ -182,8 +191,10 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
                     // Reset controllers
                     _nameController.text = relatedContact.name;
                     _labelController.text = relatedContact.label ?? '';
-                    _lowLevelRelationshipController.text = relatedContact.lowLevelRelationship ?? '';
-                    _selectedHighLevelRelationship = relatedContact.highLevelRelationship;
+                    _lowLevelRelationshipController.text =
+                        relatedContact.lowLevelRelationship ?? '';
+                    _selectedHighLevelRelationship =
+                        relatedContact.highLevelRelationship;
                   },
                 ),
                 IconButton(
@@ -204,9 +215,10 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 final isExpanded = constraints.maxHeight > kToolbarHeight + 20;
-                
+
                 return FlexibleSpaceBar(
-                  titlePadding: const EdgeInsets.only(left: 56, bottom: 16, right: 16),
+                  titlePadding:
+                      const EdgeInsets.only(left: 56, bottom: 16, right: 16),
                   title: Text(
                     relatedContact.name,
                     style: const TextStyle(
@@ -242,8 +254,10 @@ class _RelatedContactViewState extends ConsumerState<RelatedContactView> {
                     isEditing: _isEditing,
                     nameController: _nameController,
                     labelController: _labelController,
-                    lowLevelRelationshipController: _lowLevelRelationshipController,
-                    selectedHighLevelRelationship: _selectedHighLevelRelationship,
+                    lowLevelRelationshipController:
+                        _lowLevelRelationshipController,
+                    selectedHighLevelRelationship:
+                        _selectedHighLevelRelationship,
                     relationshipTypes: _relationshipTypes,
                     onHighLevelRelationshipChanged: (value) {
                       setState(() => _selectedHighLevelRelationship = value);
@@ -365,7 +379,10 @@ class _RelatedContactDetailsCard extends StatelessWidget {
           // High Level Relationship
           if (isEditing)
             DropdownButtonFormField<String>(
-              initialValue: selectedHighLevelRelationship,
+              initialValue:
+                  relationshipTypes.contains(selectedHighLevelRelationship)
+                      ? selectedHighLevelRelationship
+                      : null,
               decoration: const InputDecoration(
                 labelText: 'Relationship Type',
                 border: OutlineInputBorder(),
@@ -382,8 +399,8 @@ class _RelatedContactDetailsCard extends StatelessWidget {
             _DetailRow(
               icon: Icons.people,
               label: 'Relationship Type',
-              value: selectedHighLevelRelationship![0].toUpperCase() + 
-                     selectedHighLevelRelationship!.substring(1),
+              value: selectedHighLevelRelationship![0].toUpperCase() +
+                  selectedHighLevelRelationship!.substring(1),
             ),
           if (!isEditing && selectedHighLevelRelationship != null)
             const SizedBox(height: 12),
@@ -547,7 +564,6 @@ class _PrayerRequestsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

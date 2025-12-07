@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
-
-
 class AuthGate extends StatelessWidget {
   final Widget child;
 
@@ -60,7 +58,10 @@ class _SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      PrintError(caller: 'SignInPage._registerWithEmail', error: e, stackTrace: StackTrace.current);
+      PrintError(
+          caller: 'SignInPage._registerWithEmail',
+          error: e,
+          stackTrace: StackTrace.current);
     }
   }
 
@@ -85,7 +86,10 @@ class _SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      PrintError(caller: 'SignInPage._signInWithEmail', error: e, stackTrace: StackTrace.current);
+      PrintError(
+          caller: 'SignInPage._signInWithEmail',
+          error: e,
+          stackTrace: StackTrace.current);
     }
   }
 
@@ -112,7 +116,8 @@ class _SignInPageState extends State<SignInPage> {
                     children: [
                       TextField(
                         controller: _emailController,
-                        decoration: const InputDecoration(labelText: 'Email', hintText: 'Enter your email'),
+                        decoration: const InputDecoration(
+                            labelText: 'Email', hintText: 'Enter your email'),
                         keyboardType: TextInputType.emailAddress,
                         autofillHints: const [AutofillHints.email],
                         textInputAction: TextInputAction.next,
@@ -120,13 +125,15 @@ class _SignInPageState extends State<SignInPage> {
                       const SizedBox(height: 12),
                       TextField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(labelText: 'Password', hintText: 'Enter your password'),
+                        decoration: const InputDecoration(
+                            labelText: 'Password',
+                            hintText: 'Enter your password'),
                         keyboardType: TextInputType.visiblePassword,
                         autofillHints: const [AutofillHints.password],
                         obscureText: true,
                       ),
                     ],
-                  ),  
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -134,7 +141,8 @@ class _SignInPageState extends State<SignInPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.greenAccent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     elevation: 3,
                   ),
                   child: const Text('Register'),
@@ -145,7 +153,8 @@ class _SignInPageState extends State<SignInPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     elevation: 3,
                   ),
                   child: const Text('Sign In'),

@@ -23,27 +23,28 @@ class MobileAuthApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to exchange token: ${response.statusCode} - ${response.body}');
+      throw Exception(
+          'Failed to exchange token: ${response.statusCode} - ${response.body}');
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return MobileAuthSession.fromJson(json);
   }
 
   /// Get Firebase ID token from current user
   Future<String> getFirebaseIdToken() async {
     final user = FirebaseAuth.instance.currentUser;
-    
+
     if (user == null) {
       throw Exception('User not authenticated. Please sign in first.');
     }
-    
+
     final idToken = await user.getIdToken();
-    
+
     if (idToken == null) {
       throw Exception('Failed to get ID token from Firebase user.');
     }
-    
+
     return idToken;
   }
 }

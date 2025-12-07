@@ -35,10 +35,11 @@ class EventsApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Error getting paginated events: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error getting paginated events: ${response.statusCode} - ${response.body}");
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return PaginatedEvents.fromJson(json);
   }
 
@@ -66,10 +67,11 @@ class EventsApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Error getting future events: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error getting future events: ${response.statusCode} - ${response.body}");
     }
 
-    final json = jsonDecode(response.body) as List;
+    final json = jsonDecode(utf8.decode(response.bodyBytes)) as List;
     return json.map((event) => PrayerCollectionEvent.fromJson(event)).toList();
   }
 
@@ -81,10 +83,11 @@ class EventsApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Error getting collection for event: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error getting collection for event: ${response.statusCode} - ${response.body}");
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return Collection.fromJson(json);
   }
 
@@ -96,7 +99,8 @@ class EventsApiClient {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Error deleting event: ${response.statusCode} - ${response.body}");
+      throw Exception(
+          "Error deleting event: ${response.statusCode} - ${response.body}");
     }
   }
 }
