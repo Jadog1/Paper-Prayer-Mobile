@@ -181,7 +181,7 @@ class _RecentPrayerRequestsProviderElement
 }
 
 String _$recommendationRepoHash() =>
-    r'f0123de533b7b28f395b931d3f261ee5363e017b';
+    r'e58a87465339a42b5162d8f47fe299ab037af3a5';
 
 /// See also [RecommendationRepo].
 @ProviderFor(RecommendationRepo)

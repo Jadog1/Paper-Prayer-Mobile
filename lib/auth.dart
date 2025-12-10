@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:prayer_ml/shared/widgets.dart';
+import 'dart:developer' as developer;
+import 'package:stack_trace/stack_trace.dart';
 
 class AuthGate extends StatelessWidget {
   final Widget child;
@@ -58,10 +59,11 @@ class _SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      PrintError(
-          caller: 'SignInPage._registerWithEmail',
-          error: e,
-          stackTrace: StackTrace.current);
+      setState(() {
+        errorText = 'An unexpected error occurred. Please try again.';
+      });
+      developer.log('Error in SignInPage._registerWithEmail', error: e);
+      developer.log('StackTrace: ${StackTrace.current}');
     }
   }
 
@@ -86,10 +88,11 @@ class _SignInPageState extends State<SignInPage> {
         });
       }
     } catch (e) {
-      PrintError(
-          caller: 'SignInPage._signInWithEmail',
-          error: e,
-          stackTrace: StackTrace.current);
+      setState(() {
+        errorText = 'An unexpected error occurred. Please try again.';
+      });
+      developer.log('Error in SignInPage._signInWithEmail', error: e);
+      developer.log('StackTrace: ${StackTrace.current}');
     }
   }
 

@@ -12,6 +12,7 @@ _$AccountImpl _$$AccountImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
+      monthlySpendLimit: (json['monthly_spend_limit'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$AccountImplToJson(_$AccountImpl instance) =>
@@ -20,6 +21,7 @@ Map<String, dynamic> _$$AccountImplToJson(_$AccountImpl instance) =>
       'name': instance.name,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'monthly_spend_limit': instance.monthlySpendLimit,
     };
 
 _$AccountUpdateRequestImpl _$$AccountUpdateRequestImplFromJson(

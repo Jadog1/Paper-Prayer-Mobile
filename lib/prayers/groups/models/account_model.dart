@@ -11,9 +11,11 @@ class Account with _$Account {
     String? name,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
+    @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit,
   }) = _Account;
 
-  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  factory Account.fromJson(Map<String, dynamic> json) =>
+      _$AccountFromJson(json);
 }
 
 @freezed
@@ -23,5 +25,6 @@ class AccountUpdateRequest with _$AccountUpdateRequest {
     String? name,
   }) = _AccountUpdateRequest;
 
-  factory AccountUpdateRequest.fromJson(Map<String, dynamic> json) => _$AccountUpdateRequestFromJson(json);
+  factory AccountUpdateRequest.fromJson(Map<String, dynamic> json) =>
+      _$AccountUpdateRequestFromJson(json);
 }

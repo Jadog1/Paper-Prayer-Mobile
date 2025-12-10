@@ -8,9 +8,10 @@
             "name": "prayer_ml",
             "request": "launch",
             "type": "dart",
-            "args": ["--no-enable-impeller", "--dart-define=backend_url=10.0.0.227:8000", "--dart-define=website_url=http://localhost:5173/"],
+            "args": ["--no-enable-impeller", "--dart-define=backend_url=10.0.2.2:8000", "--dart-define=website_url=http://localhost:5173/"],
             // Local: 10.0.0.227:8000
             // Prod: paper-prayer-af73d35b1629.herokuapp.com
+            // Emulator localhost: 10.0.2.2
         },
         {
             "name": "prayer_ml (profile mode)",

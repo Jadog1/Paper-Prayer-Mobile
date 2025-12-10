@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prayer_ml/prayers/groups/models/account_model.dart';
 import 'package:prayer_ml/shared/config.dart';
+import 'package:prayer_ml/prayers/usage/usage_dashboard.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});
@@ -49,7 +50,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       final user = FirebaseAuth.instance.currentUser;
       setState(() {
         _errorMessage = 'Could not load account details';
-        _nameController.text = user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
+        _nameController.text =
+            user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
         _isLoadingAccount = false;
       });
       debugPrint('Failed to load account: $e');
@@ -72,9 +74,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         id: _account?.id ?? 0,
         name: _nameController.text.trim(),
       );
-      
-      final updatedAccount = await config.accountApiClient.updateAccount(updateRequest);
-      
+
+      final updatedAccount =
+          await config.accountApiClient.updateAccount(updateRequest);
+
       setState(() {
         _account = updatedAccount;
         _isLoading = false;
@@ -92,7 +95,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             ),
             backgroundColor: Colors.green[600],
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         );
       }
@@ -113,7 +117,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             ),
             backgroundColor: Colors.red[600],
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         );
       }
@@ -161,13 +166,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white.withOpacity(0.3), width: 3),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
+                                    width: 3),
                               ),
                               child: CircleAvatar(
                                 radius: 50,
                                 backgroundColor: Colors.white,
                                 child: Text(
-                                  _nameController.text.isNotEmpty 
+                                  _nameController.text.isNotEmpty
                                       ? _nameController.text[0].toUpperCase()
                                       : 'U',
                                   style: TextStyle(
@@ -180,8 +187,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              _nameController.text.isNotEmpty 
-                                  ? _nameController.text 
+                              _nameController.text.isNotEmpty
+                                  ? _nameController.text
                                   : 'User',
                               style: const TextStyle(
                                 fontSize: 24,
@@ -237,8 +244,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                       Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: theme.colorScheme.primary.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: Icon(
                                           Icons.person_outline,
@@ -249,7 +258,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                       const SizedBox(width: 12),
                                       Text(
                                         'Account Information',
-                                        style: theme.textTheme.titleMedium?.copyWith(
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -261,13 +271,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Display Name',
                                       hintText: 'Enter your name',
-                                      prefixIcon: const Icon(Icons.badge_outlined),
+                                      prefixIcon:
+                                          const Icon(Icons.badge_outlined),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: Colors.grey[300]!),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[300]!),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -280,7 +292,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                       fillColor: Colors.grey[50],
                                     ),
                                     validator: (value) {
-                                      if (value == null || value.trim().isEmpty) {
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
                                         return 'Please enter your name';
                                       }
                                       return null;
@@ -293,11 +306,14 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                       decoration: BoxDecoration(
                                         color: Colors.orange[50],
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.orange[200]!),
+                                        border: Border.all(
+                                            color: Colors.orange[200]!),
                                       ),
                                       child: Row(
                                         children: [
-                                          Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                                          Icon(Icons.info_outline,
+                                              color: Colors.orange[700],
+                                              size: 20),
                                           const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
@@ -316,13 +332,17 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                   SizedBox(
                                     width: double.infinity,
                                     child: ElevatedButton(
-                                      onPressed: _isLoading ? null : _updateAccount,
+                                      onPressed:
+                                          _isLoading ? null : _updateAccount,
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: theme.colorScheme.primary,
+                                        backgroundColor:
+                                            theme.colorScheme.primary,
                                         foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                         elevation: 0,
                                       ),
@@ -332,7 +352,9 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                               width: 20,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.white),
                                               ),
                                             )
                                           : const Text(
@@ -342,6 +364,82 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Divider
+                            Divider(height: 1, color: Colors.grey[200]),
+
+                            // Usage & Costs Section
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Icon(
+                                          Icons.analytics_outlined,
+                                          color: theme.colorScheme.primary,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        'Usage & Costs',
+                                        style: theme.textTheme.titleSmall
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Track your AI usage and spending',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const UsageDashboard(),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.bar_chart),
+                                      label: const Text('View Usage Dashboard'),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor:
+                                            theme.colorScheme.primary,
+                                        side: BorderSide(
+                                            color: theme.colorScheme.primary
+                                                .withOpacity(0.5)),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -365,23 +463,32 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                           decoration: BoxDecoration(
                                             color: user.emailVerified
                                                 ? Colors.green.withOpacity(0.1)
-                                                : Colors.orange.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(8),
+                                                : Colors.orange
+                                                    .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: Icon(
-                                            user.emailVerified ? Icons.verified : Icons.warning_amber,
-                                            color: user.emailVerified ? Colors.green : Colors.orange,
+                                            user.emailVerified
+                                                ? Icons.verified
+                                                : Icons.warning_amber,
+                                            color: user.emailVerified
+                                                ? Colors.green
+                                                : Colors.orange,
                                             size: 20,
                                           ),
                                         ),
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 'Email Verification',
-                                                style: theme.textTheme.titleSmall?.copyWith(
+                                                style: theme
+                                                    .textTheme.titleSmall
+                                                    ?.copyWith(
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -390,7 +497,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                                 user.emailVerified
                                                     ? 'Your email is verified'
                                                     : 'Verification pending',
-                                                style: theme.textTheme.bodySmall?.copyWith(
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
                                                   color: Colors.grey[600],
                                                 ),
                                               ),
@@ -405,14 +513,18 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                           decoration: BoxDecoration(
                                             color: user.emailVerified
                                                 ? Colors.green.withOpacity(0.15)
-                                                : Colors.orange.withOpacity(0.15),
-                                            borderRadius: BorderRadius.circular(20),
+                                                : Colors.orange
+                                                    .withOpacity(0.15),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                           child: Text(
-                                            user.emailVerified ? 'Verified' : 'Unverified',
+                                            user.emailVerified
+                                                ? 'Verified'
+                                                : 'Unverified',
                                             style: TextStyle(
-                                              color: user.emailVerified 
-                                                  ? Colors.green[700] 
+                                              color: user.emailVerified
+                                                  ? Colors.green[700]
                                                   : Colors.orange[700],
                                               fontWeight: FontWeight.w600,
                                               fontSize: 11,
@@ -429,32 +541,44 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                           onPressed: () async {
                                             await user.sendEmailVerification();
                                             if (mounted) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
                                                 SnackBar(
                                                   content: const Row(
                                                     children: [
-                                                      Icon(Icons.email, color: Colors.white),
+                                                      Icon(Icons.email,
+                                                          color: Colors.white),
                                                       SizedBox(width: 8),
-                                                      Text('Verification email sent!'),
+                                                      Text(
+                                                          'Verification email sent!'),
                                                     ],
                                                   ),
-                                                  backgroundColor: Colors.blue[600],
-                                                  behavior: SnackBarBehavior.floating,
+                                                  backgroundColor:
+                                                      Colors.blue[600],
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                   ),
                                                 ),
                                               );
                                             }
                                           },
-                                          icon: const Icon(Icons.email_outlined),
-                                          label: const Text('Send Verification Email'),
+                                          icon:
+                                              const Icon(Icons.email_outlined),
+                                          label: const Text(
+                                              'Send Verification Email'),
                                           style: OutlinedButton.styleFrom(
                                             foregroundColor: Colors.orange[700],
-                                            side: BorderSide(color: Colors.orange[300]!),
-                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                            side: BorderSide(
+                                                color: Colors.orange[300]!),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                           ),
                                         ),

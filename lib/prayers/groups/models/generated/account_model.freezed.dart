@@ -26,6 +26,8 @@ mixin _$Account {
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'monthly_spend_limit')
+  double? get monthlySpendLimit => throw _privateConstructorUsedError;
 
   /// Serializes this Account to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,7 +47,8 @@ abstract class $AccountCopyWith<$Res> {
       {int id,
       String? name,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'updated_at') String? updatedAt});
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit});
 }
 
 /// @nodoc
@@ -67,6 +70,7 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
     Object? name = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? monthlySpendLimit = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -85,6 +89,10 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      monthlySpendLimit: freezed == monthlySpendLimit
+          ? _value.monthlySpendLimit
+          : monthlySpendLimit // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
   }
 }
@@ -100,7 +108,8 @@ abstract class _$$AccountImplCopyWith<$Res> implements $AccountCopyWith<$Res> {
       {int id,
       String? name,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'updated_at') String? updatedAt});
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit});
 }
 
 /// @nodoc
@@ -120,6 +129,7 @@ class __$$AccountImplCopyWithImpl<$Res>
     Object? name = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? monthlySpendLimit = freezed,
   }) {
     return _then(_$AccountImpl(
       id: null == id
@@ -138,6 +148,10 @@ class __$$AccountImplCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      monthlySpendLimit: freezed == monthlySpendLimit
+          ? _value.monthlySpendLimit
+          : monthlySpendLimit // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -149,7 +163,8 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
       {required this.id,
       this.name,
       @JsonKey(name: 'created_at') this.createdAt,
-      @JsonKey(name: 'updated_at') this.updatedAt});
+      @JsonKey(name: 'updated_at') this.updatedAt,
+      @JsonKey(name: 'monthly_spend_limit') this.monthlySpendLimit});
 
   factory _$AccountImpl.fromJson(Map<String, dynamic> json) =>
       _$$AccountImplFromJson(json);
@@ -164,10 +179,13 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
   @override
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
+  @override
+  @JsonKey(name: 'monthly_spend_limit')
+  final double? monthlySpendLimit;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Account(id: $id, name: $name, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Account(id: $id, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, monthlySpendLimit: $monthlySpendLimit)';
   }
 
   @override
@@ -178,7 +196,8 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('createdAt', createdAt))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt));
+      ..add(DiagnosticsProperty('updatedAt', updatedAt))
+      ..add(DiagnosticsProperty('monthlySpendLimit', monthlySpendLimit));
   }
 
   @override
@@ -191,12 +210,15 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.monthlySpendLimit, monthlySpendLimit) ||
+                other.monthlySpendLimit == monthlySpendLimit));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, createdAt, updatedAt, monthlySpendLimit);
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.
@@ -219,7 +241,9 @@ abstract class _Account implements Account {
       {required final int id,
       final String? name,
       @JsonKey(name: 'created_at') final String? createdAt,
-      @JsonKey(name: 'updated_at') final String? updatedAt}) = _$AccountImpl;
+      @JsonKey(name: 'updated_at') final String? updatedAt,
+      @JsonKey(name: 'monthly_spend_limit')
+      final double? monthlySpendLimit}) = _$AccountImpl;
 
   factory _Account.fromJson(Map<String, dynamic> json) = _$AccountImpl.fromJson;
 
@@ -233,6 +257,9 @@ abstract class _Account implements Account {
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+  @override
+  @JsonKey(name: 'monthly_spend_limit')
+  double? get monthlySpendLimit;
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.
