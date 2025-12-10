@@ -33,6 +33,8 @@ class RelatedContactViewLoader extends ConsumerWidget {
             caller: "RelatedContactViewLoader",
             error: error,
             stackTrace: stackTrace,
+            onRetry: () => ref.invalidate(
+                fetchRelatedContactWithDataProvider(relatedContactId)),
           ),
         ),
       _ => const Scaffold(

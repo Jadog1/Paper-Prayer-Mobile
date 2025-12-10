@@ -185,6 +185,18 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         caller: "CalendarWidget",
         error: error,
         stackTrace: stackTrace,
+        onRetry: () {
+          final dateRange = _getDateRange();
+          final startDate = dateRange['start']!.toIso8601String();
+          final endDate = dateRange['end']!.toIso8601String();
+          ref.invalidate(fetchEventsInRangeProvider(
+            startDate: startDate,
+            endDate: endDate,
+            limit: widget.config.eventLimit,
+            contactId: widget.config.contactId,
+            collectionId: widget.config.collectionId,
+          ));
+        },
       ),
     );
   }

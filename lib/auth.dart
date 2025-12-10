@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
-import 'package:stack_trace/stack_trace.dart';
 
 class AuthGate extends StatelessWidget {
   final Widget child;

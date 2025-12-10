@@ -34,7 +34,10 @@ class GroupConsumer extends ConsumerWidget {
     return switch (viewModel) {
       AsyncData(:final value) => GroupView(groupContacts: value),
       AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "GroupConsumer", error: error, stackTrace: stackTrace),
+          caller: "GroupConsumer",
+          error: error,
+          stackTrace: stackTrace,
+          onRetry: () => ref.invalidate(groupContactsRepoProvider)),
       _ => const GroupViewSkeleton(),
     };
   }
@@ -265,7 +268,8 @@ class GroupNotebook extends ConsumerWidget {
 
             // Content
             Padding(
-              padding: const EdgeInsets.only(left: 32, right: 12, top: 12, bottom: 8),
+              padding: const EdgeInsets.only(
+                  left: 32, right: 12, top: 12, bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -274,10 +278,9 @@ class GroupNotebook extends ConsumerWidget {
                     child: GestureDetector(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>
-                              PaperMode(config: PaperModeConfig.editable(
-                                    groupContacts: groupContacts))
-                        ),
+                            builder: (context) => PaperMode(
+                                config: PaperModeConfig.editable(
+                                    groupContacts: groupContacts))),
                       ),
                       child: Container(
                         color: Colors.transparent,
@@ -351,8 +354,8 @@ class GroupNotebook extends ConsumerWidget {
                               case 'settings':
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        GroupSettings(groupContacts: groupContacts),
+                                    builder: (context) => GroupSettings(
+                                        groupContacts: groupContacts),
                                   ),
                                 );
                                 break;
@@ -361,12 +364,14 @@ class GroupNotebook extends ConsumerWidget {
                                 break;
                             }
                           },
-                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<String>>[
                             PopupMenuItem<String>(
                               value: 'batch_insert',
                               child: Row(
                                 children: [
-                                  Icon(Icons.playlist_add, size: 20, color: Colors.grey.shade700),
+                                  Icon(Icons.playlist_add,
+                                      size: 20, color: Colors.grey.shade700),
                                   const SizedBox(width: 12),
                                   const Text('Batch Insert'),
                                 ],
@@ -376,7 +381,8 @@ class GroupNotebook extends ConsumerWidget {
                               value: 'members',
                               child: Row(
                                 children: [
-                                  Icon(Icons.people, size: 20, color: Colors.grey.shade700),
+                                  Icon(Icons.people,
+                                      size: 20, color: Colors.grey.shade700),
                                   const SizedBox(width: 12),
                                   const Text('View Members'),
                                 ],
@@ -386,7 +392,8 @@ class GroupNotebook extends ConsumerWidget {
                               value: 'settings',
                               child: Row(
                                 children: [
-                                  Icon(Icons.settings, size: 20, color: Colors.grey.shade700),
+                                  Icon(Icons.settings,
+                                      size: 20, color: Colors.grey.shade700),
                                   const SizedBox(width: 12),
                                   const Text('Settings'),
                                 ],
@@ -406,8 +413,7 @@ class GroupNotebook extends ConsumerWidget {
     );
   }
 
-  void _showMembersModal(
-      BuildContext context, GroupWithMembers groupContacts) {
+  void _showMembersModal(BuildContext context, GroupWithMembers groupContacts) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -433,7 +439,7 @@ class GroupNotebook extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  
+
                   // Header
                   Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -478,9 +484,9 @@ class GroupNotebook extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  
+
                   Divider(height: 1, color: Colors.grey[200]),
-                  
+
                   // Members list
                   Expanded(
                     child: ListView.builder(
@@ -489,14 +495,16 @@ class GroupNotebook extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final member = groupContacts.members[index];
                         return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.grey[50],
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.grey[200]!),
                           ),
                           child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             onTap: () {
                               Navigator.of(context).pop(); // Close modal
                               Navigator.of(context).push(
@@ -517,7 +525,10 @@ class GroupNotebook extends ConsumerWidget {
                                   gradient: LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
-                                    colors: [Colors.green[400]!, Colors.green[600]!],
+                                    colors: [
+                                      Colors.green[400]!,
+                                      Colors.green[600]!
+                                    ],
                                   ),
                                   shape: BoxShape.circle,
                                 ),
@@ -535,7 +546,8 @@ class GroupNotebook extends ConsumerWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            subtitle: member.description != null && member.description!.isNotEmpty
+                            subtitle: member.description != null &&
+                                    member.description!.isNotEmpty
                                 ? Text(
                                     member.description!,
                                     maxLines: 2,
@@ -547,7 +559,8 @@ class GroupNotebook extends ConsumerWidget {
                                   )
                                 : null,
                             trailing: IconButton(
-                              icon: Icon(Icons.edit_outlined, color: Colors.grey[600]),
+                              icon: Icon(Icons.edit_outlined,
+                                  color: Colors.grey[600]),
                               onPressed: () {
                                 Navigator.of(context).pop(); // Close modal
                                 Navigator.of(context).push(
@@ -829,7 +842,8 @@ class _NotebookSkeletonState extends State<NotebookSkeleton>
           ),
           // Content with shimmer
           Padding(
-            padding: const EdgeInsets.only(left: 32, right: 12, top: 12, bottom: 8),
+            padding:
+                const EdgeInsets.only(left: 32, right: 12, top: 12, bottom: 8),
             child: AnimatedBuilder(
               animation: _animation,
               builder: (context, child) {

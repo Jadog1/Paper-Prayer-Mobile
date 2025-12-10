@@ -11,7 +11,8 @@ class UpcomingEventsPreview extends ConsumerStatefulWidget {
   const UpcomingEventsPreview({super.key});
 
   @override
-  ConsumerState<UpcomingEventsPreview> createState() => _UpcomingEventsPreviewState();
+  ConsumerState<UpcomingEventsPreview> createState() =>
+      _UpcomingEventsPreviewState();
 }
 
 class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
@@ -34,7 +35,7 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
   void _handleScroll() {
     // Show indicator if we can scroll down
     if (_scrollController.hasClients) {
-      final canScrollDown = _scrollController.position.pixels < 
+      final canScrollDown = _scrollController.position.pixels <
           _scrollController.position.maxScrollExtent - 10;
       if (canScrollDown != _showScrollIndicator) {
         setState(() {
@@ -60,7 +61,8 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
 
   @override
   Widget build(BuildContext context) {
-    final futureEventsAsync = ref.watch(fetchFutureEventsProvider(limit: 5, maxDays: 30));
+    final futureEventsAsync =
+        ref.watch(fetchFutureEventsProvider(limit: 5, maxDays: 30));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +87,7 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
                   ),
                 ],
               ),
-              
+
               // View All button
               TextButton.icon(
                 onPressed: () {
@@ -114,10 +116,11 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
               futureEventsAsync.when(
                 data: (events) {
                   _checkIfScrollable();
-                  
+
                   if (events.isEmpty) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4.0, vertical: 16.0),
                       child: Center(
                         child: Text(
                           "No upcoming events in the next 30 days",
@@ -147,9 +150,12 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
                   caller: "UpcomingEventsPreview",
                   error: error,
                   stackTrace: stackTrace,
+                  onRetry: () => ref.invalidate(
+                      fetchFutureEventsProvider(limit: 5, maxDays: 30)),
+                  compact: true,
                 ),
               ),
-              
+
               // Scroll indicator at bottom
               if (_showScrollIndicator)
                 Positioned(
@@ -180,7 +186,7 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
       ],
     );
@@ -298,7 +304,20 @@ class _UpcomingEventCard extends StatelessWidget {
   String _getMonth() {
     try {
       final date = DateTime.parse(event.eventStart);
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
       return months[date.month - 1];
     } catch (e) {
       return "";

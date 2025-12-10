@@ -167,14 +167,14 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
 
   Widget _buildUsageContent(BuildContext context, UsageCostSummary usage) {
     final theme = Theme.of(context);
-    
+
     // Calculate the effective spend limit based on the selected time period
-    final monthsInPeriod = _selectedPreset == DateRangePreset.thisYear || 
-                           _selectedPreset == DateRangePreset.lastYear 
-        ? 12 
+    final monthsInPeriod = _selectedPreset == DateRangePreset.thisYear ||
+            _selectedPreset == DateRangePreset.lastYear
+        ? 12
         : 1;
     final effectiveSpendLimit = usage.monthlySpendLimit * monthsInPeriod;
-    
+
     final spendPercentage = effectiveSpendLimit > 0
         ? (usage.totalCost / effectiveSpendLimit * 100).clamp(0, 100)
         : 0.0;
@@ -224,9 +224,9 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
               Expanded(
                 child: _buildSummaryCard(
                   context,
-                  _selectedPreset == DateRangePreset.thisYear || 
-                  _selectedPreset == DateRangePreset.lastYear 
-                      ? 'Annual Limit' 
+                  _selectedPreset == DateRangePreset.thisYear ||
+                          _selectedPreset == DateRangePreset.lastYear
+                      ? 'Annual Limit'
                       : 'Monthly Limit',
                   '\$${effectiveSpendLimit.toStringAsFixed(0)}',
                   Icons.credit_card,
@@ -260,9 +260,9 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _selectedPreset == DateRangePreset.thisYear || 
-                        _selectedPreset == DateRangePreset.lastYear 
-                            ? 'Annual Spend' 
+                        _selectedPreset == DateRangePreset.thisYear ||
+                                _selectedPreset == DateRangePreset.lastYear
+                            ? 'Annual Spend'
                             : 'Monthly Spend',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -331,9 +331,10 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              _selectedPreset == DateRangePreset.thisYear || 
-                              _selectedPreset == DateRangePreset.lastYear 
-                                  ? 'Approaching annual spending limit' 
+                              _selectedPreset == DateRangePreset.thisYear ||
+                                      _selectedPreset ==
+                                          DateRangePreset.lastYear
+                                  ? 'Approaching annual spending limit'
                                   : 'Approaching monthly spending limit',
                               style: TextStyle(
                                 color: Colors.red[900],
@@ -433,9 +434,10 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                   Divider(height: 1, color: Colors.grey[200]),
                   Builder(
                     builder: (context) {
-                      final sortedBreakdown = List<UsageCostBreakdown>.from(usage.breakdown)
+                      final sortedBreakdown = List<UsageCostBreakdown>.from(
+                          usage.breakdown)
                         ..sort((a, b) => b.totalCost.compareTo(a.totalCost));
-                      
+
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

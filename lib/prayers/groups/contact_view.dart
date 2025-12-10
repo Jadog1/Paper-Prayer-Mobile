@@ -36,10 +36,12 @@ class ContactView extends ConsumerWidget {
               pinned: true,
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  final isExpanded = constraints.maxHeight > kToolbarHeight + 20;
-                  
+                  final isExpanded =
+                      constraints.maxHeight > kToolbarHeight + 20;
+
                   return FlexibleSpaceBar(
-                    titlePadding: const EdgeInsets.only(left: 56, bottom: 16, right: 16),
+                    titlePadding:
+                        const EdgeInsets.only(left: 56, bottom: 16, right: 16),
                     title: Text(
                       contact.name,
                       style: const TextStyle(
@@ -71,17 +73,20 @@ class ContactView extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Contact Info Section
-                    if (contact.description != null && contact.description!.isNotEmpty)
+                    if (contact.description != null &&
+                        contact.description!.isNotEmpty)
                       _ContactInfoSection(contact: contact),
-                    
-                    if (contact.description != null && contact.description!.isNotEmpty)
+
+                    if (contact.description != null &&
+                        contact.description!.isNotEmpty)
                       const SizedBox(height: 12),
 
                     // Upcoming Events Section
                     UpcomingEventsWidget(
                       contactId: contact.id,
                       title: "Upcoming Events",
-                      subtitle: "Events for ${contact.name} in the next 30 days",
+                      subtitle:
+                          "Events for ${contact.name} in the next 30 days",
                       onViewAll: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -138,6 +143,7 @@ class ContactView extends ConsumerWidget {
           caller: "ContactView",
           error: error,
           stackTrace: stack,
+          onRetry: () => ref.invalidate(fetchGroupWithMembersProvider(groupId)),
         ),
       ),
     );
@@ -204,7 +210,7 @@ class ContactViewLoader extends ConsumerWidget {
     this.contactId,
     required this.groupId,
   }) : assert(contact != null || contactId != null,
-              'Either contact or contactId must be provided');
+            'Either contact or contactId must be provided');
 
   final Contact? contact;
   final int? contactId;
@@ -218,7 +224,7 @@ class ContactViewLoader extends ConsumerWidget {
 
     // Fetch contact by ID
     final contactsAsync = ref.watch(fetchRelatedContactsProvider(contactId!));
-    
+
     return contactsAsync.when(
       data: (contacts) {
         // Find the main contact from the list
@@ -226,7 +232,7 @@ class ContactViewLoader extends ConsumerWidget {
           (c) => c.contactId == contactId,
           orElse: () => contacts.first,
         );
-        
+
         // Convert RelatedContact to Contact
         final contact = Contact(
           id: mainContact.contactId,
@@ -235,7 +241,7 @@ class ContactViewLoader extends ConsumerWidget {
           description: null,
           createdAt: mainContact.createdAt,
         );
-        
+
         return ContactView(contact: contact, groupId: groupId);
       },
       loading: () => const Scaffold(
@@ -246,6 +252,8 @@ class ContactViewLoader extends ConsumerWidget {
           caller: "ContactViewLoader",
           error: error,
           stackTrace: stack,
+          onRetry: () =>
+              ref.invalidate(fetchRelatedContactsProvider(contactId!)),
         ),
       ),
     );
@@ -264,7 +272,8 @@ class _RelatedContactsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final relatedContactsAsync = ref.watch(fetchRelatedContactsForContactProvider(contactId));
+    final relatedContactsAsync =
+        ref.watch(fetchRelatedContactsForContactProvider(contactId));
 
     return Container(
       decoration: BoxDecoration(
@@ -318,7 +327,8 @@ class _RelatedContactsSection extends ConsumerWidget {
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: relatedContacts.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
@@ -327,7 +337,8 @@ class _RelatedContactsSection extends ConsumerWidget {
                     relatedContact: relatedContact,
                     groupId: groupId,
                     allRelatedContacts: relatedContacts,
-                    onMerge: () => ref.invalidate(fetchRelatedContactsForContactProvider(contactId)),
+                    onMerge: () => ref.invalidate(
+                        fetchRelatedContactsForContactProvider(contactId)),
                   );
                 },
               );
@@ -419,10 +430,11 @@ class _RelatedContactCard extends ConsumerWidget {
 
     if (confirmed == true && selectedTarget != null) {
       try {
-        await ref.read(
-          relatedContactsRepoProvider(relatedContact.contactId).notifier
-        ).mergeRelatedContacts(relatedContact.id, selectedTarget!.id);
-        
+        await ref
+            .read(
+                relatedContactsRepoProvider(relatedContact.contactId).notifier)
+            .mergeRelatedContacts(relatedContact.id, selectedTarget!.id);
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Contacts merged successfully')),
@@ -442,9 +454,9 @@ class _RelatedContactCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final displayName = relatedContact.name;
-    final relationship = relatedContact.highLevelRelationship ?? 
-                        relatedContact.lowLevelRelationship ?? 
-                        'Related Contact';
+    final relationship = relatedContact.highLevelRelationship ??
+        relatedContact.lowLevelRelationship ??
+        'Related Contact';
     final label = relatedContact.label;
 
     return InkWell(
@@ -473,7 +485,8 @@ class _RelatedContactCard extends ConsumerWidget {
                 color: Colors.purple[50],
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(Icons.person_outline, color: Colors.purple[700], size: 20),
+              child: Icon(Icons.person_outline,
+                  color: Colors.purple[700], size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -500,7 +513,8 @@ class _RelatedContactCard extends ConsumerWidget {
                       if (label != null && label.isNotEmpty) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.purple[100],
                             borderRadius: BorderRadius.circular(4),
@@ -534,4 +548,3 @@ class _RelatedContactCard extends ConsumerWidget {
     );
   }
 }
-

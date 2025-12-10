@@ -14,6 +14,7 @@ class PrintError extends StatelessWidget {
     this.serverMessage,
     this.title,
     this.message,
+    this.compact = false,
   });
 
   final String caller;
@@ -23,6 +24,7 @@ class PrintError extends StatelessWidget {
   final String? serverMessage;
   final String? title;
   final String? message;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -31,146 +33,201 @@ class PrintError extends StatelessWidget {
     developer.log('Error in $caller', error: error);
     developer.log('StackTrace: $limitedStackTrace');
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Error Icon
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.red[50],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red[400],
-              ),
-            ),
-            const SizedBox(height: 24),
+    // Use LayoutBuilder to detect available space
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Auto-detect compact mode if height is constrained
+        final shouldUseCompact = compact ||
+            (constraints.maxHeight < 300 &&
+                constraints.maxHeight != double.infinity);
 
-            // Title
-            Text(
-              title ?? 'Oops! Something went wrong',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              textAlign: TextAlign.center,
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: shouldUseCompact ? 0 : constraints.maxHeight,
             ),
-            const SizedBox(height: 12),
-
-            // User-friendly message
-            Text(
-              message ??
-                  'We encountered an unexpected error. Please try again.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-
-            // Server message if provided
-            if (serverMessage != null && serverMessage!.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange[200]!),
-                ),
-                child: Row(
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: EdgeInsets.all(shouldUseCompact ? 12.0 : 24.0),
+                child: Column(
+                  mainAxisAlignment: shouldUseCompact
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.info_outline,
-                        color: Colors.orange[700], size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        serverMessage!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.orange[900],
-                        ),
+                    // Error Icon
+                    Container(
+                      padding: EdgeInsets.all(shouldUseCompact ? 8 : 16),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.error_outline,
+                        size: shouldUseCompact ? 32 : 64,
+                        color: Colors.red[400],
                       ),
                     ),
+                    SizedBox(height: shouldUseCompact ? 12 : 24),
+
+                    // Title
+                    Text(
+                      title ?? 'Oops! Something went wrong',
+                      style: TextStyle(
+                        fontSize: shouldUseCompact ? 16 : 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: shouldUseCompact ? 2 : null,
+                      overflow: shouldUseCompact ? TextOverflow.ellipsis : null,
+                    ),
+                    SizedBox(height: shouldUseCompact ? 8 : 12),
+
+                    // User-friendly message
+                    Text(
+                      message ??
+                          'We encountered an unexpected error. Please try again.',
+                      style: TextStyle(
+                        fontSize: shouldUseCompact ? 13 : 16,
+                        color: Colors.grey[700],
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: shouldUseCompact ? 3 : null,
+                      overflow: shouldUseCompact ? TextOverflow.ellipsis : null,
+                    ),
+
+                    // Server message if provided
+                    if (serverMessage != null && serverMessage!.isNotEmpty) ...[
+                      SizedBox(height: shouldUseCompact ? 8 : 16),
+                      Container(
+                        padding: EdgeInsets.all(shouldUseCompact ? 8 : 12),
+                        decoration: BoxDecoration(
+                          color: Colors.orange[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.orange[200]!),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.orange[700],
+                              size: shouldUseCompact ? 16 : 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                serverMessage!,
+                                style: TextStyle(
+                                  fontSize: shouldUseCompact ? 12 : 14,
+                                  color: Colors.orange[900],
+                                ),
+                                maxLines: shouldUseCompact ? 2 : null,
+                                overflow: shouldUseCompact
+                                    ? TextOverflow.ellipsis
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    SizedBox(height: shouldUseCompact ? 12 : 24),
+
+                    // Retry Button
+                    if (onRetry != null)
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: onRetry,
+                          icon: Icon(
+                            Icons.refresh,
+                            size: shouldUseCompact ? 18 : 24,
+                          ),
+                          label: Text(
+                            'Try Again',
+                            style: TextStyle(
+                              fontSize: shouldUseCompact ? 13 : 16,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[600],
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: shouldUseCompact ? 10 : 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Debugging info (only shown in debug mode)
+                    if (const bool.fromEnvironment('dart.vm.product') ==
+                        false) ...[
+                      SizedBox(height: shouldUseCompact ? 8 : 16),
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                          dividerColor: Colors.transparent,
+                        ),
+                        child: ExpansionTile(
+                          tilePadding: EdgeInsets.zero,
+                          childrenPadding: EdgeInsets.zero,
+                          title: Text(
+                            'Debug Information',
+                            style: TextStyle(
+                              fontSize: shouldUseCompact ? 11 : 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          children: [
+                            Container(
+                              padding:
+                                  EdgeInsets.all(shouldUseCompact ? 8 : 12),
+                              width: double.infinity,
+                              color: Colors.grey[100],
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Location: $caller',
+                                    style: TextStyle(
+                                      fontSize: shouldUseCompact ? 10 : 11,
+                                      fontFamily: 'monospace',
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Error: $error',
+                                    style: TextStyle(
+                                      fontSize: shouldUseCompact ? 10 : 11,
+                                      fontFamily: 'monospace',
+                                      color: Colors.red[700],
+                                    ),
+                                    maxLines: shouldUseCompact ? 5 : null,
+                                    overflow: shouldUseCompact
+                                        ? TextOverflow.ellipsis
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
-            ],
-
-            const SizedBox(height: 24),
-
-            // Retry Button
-            if (onRetry != null)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: onRetry,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Try Again'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-
-            // Debugging info (only shown in debug mode)
-            if (const bool.fromEnvironment('dart.vm.product') == false) ...[
-              const SizedBox(height: 16),
-              ExpansionTile(
-                title: Text(
-                  'Debug Information',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    width: double.infinity,
-                    color: Colors.grey[100],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Location: $caller',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontFamily: 'monospace',
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Error: $error',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontFamily: 'monospace',
-                            color: Colors.red[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

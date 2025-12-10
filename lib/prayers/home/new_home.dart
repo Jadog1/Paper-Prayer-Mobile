@@ -122,6 +122,8 @@ class NewHomePageConsumer extends ConsumerWidget {
                     caller: "NewHomePage",
                     error: error,
                     stackTrace: stackTrace,
+                    onRetry: () => ref.invalidate(recommendationRepoProvider),
+                    compact: true,
                   ),
                 ),
               ),

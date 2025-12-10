@@ -24,7 +24,8 @@ class GroupSelector extends ConsumerWidget {
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "GroupSelector",
           error: error,
-          stackTrace: stackTrace),
+          stackTrace: stackTrace,
+          onRetry: () => ref.invalidate(groupContactsRepoProvider)),
       _ => const Center(child: CircularProgressIndicator()),
     };
   }
@@ -82,7 +83,8 @@ class GroupSelector extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.inbox_outlined, size: 64, color: Colors.grey.shade400),
+                      Icon(Icons.inbox_outlined,
+                          size: 64, color: Colors.grey.shade400),
                       const SizedBox(height: 16),
                       Text(
                         'No notebooks available',
@@ -121,7 +123,8 @@ class GroupSelector extends ConsumerWidget {
                                 width: 48,
                                 height: 48,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF8B7355).withOpacity(0.15),
+                                  color:
+                                      const Color(0xFF8B7355).withOpacity(0.15),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -145,7 +148,8 @@ class GroupSelector extends ConsumerWidget {
                                       ),
                                     ),
                                     if (group.group.description != null &&
-                                        group.group.description!.isNotEmpty) ...[
+                                        group
+                                            .group.description!.isNotEmpty) ...[
                                       const SizedBox(height: 4),
                                       Text(
                                         group.group.description!,

@@ -1,18 +1,18 @@
 /// Paper Mode - A modular prayer request viewing and editing interface
-/// 
+///
 /// This library provides a paper-like interface for viewing and editing
 /// prayer requests with AI-powered summaries and recommendations.
-/// 
+///
 /// ## Usage
-/// 
+///
 /// ```dart
 /// import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
-/// 
+///
 /// // Read-only mode
 /// PaperMode(
 ///   config: PaperModeConfig.readOnly(contactId: 123),
 /// )
-/// 
+///
 /// // Editable mode
 /// PaperMode(
 ///   config: PaperModeConfig.editable(
@@ -43,7 +43,7 @@ export 'models/paper_mode_state.dart';
 export 'providers/paper_mode_provider.dart';
 
 /// Main PaperMode widget
-/// 
+///
 /// Displays a paper-like interface for prayer requests with support for
 /// both read-only viewing and interactive editing.
 class PaperMode extends ConsumerStatefulWidget {
@@ -84,15 +84,17 @@ class _PaperModeState extends ConsumerState<PaperMode> {
     }
 
     // If no groupContacts but have groupId, fetch from repo
-    if (effectiveGroupContacts == null && widget.config.effectiveGroupId != null) {
+    if (effectiveGroupContacts == null &&
+        widget.config.effectiveGroupId != null) {
       final groupContactsAsync = ref.watch(groupContactsRepoProvider);
-      
+
       return switch (groupContactsAsync) {
         AsyncData(:final value) => _buildGroupIfGroupExists(value),
         AsyncError(:final error, :final stackTrace) => PrintError(
             caller: "PaperMode",
             error: error,
-            stackTrace: stackTrace),
+            stackTrace: stackTrace,
+            onRetry: () => ref.invalidate(groupContactsRepoProvider)),
         _ => const Center(child: CircularProgressIndicator()),
       };
     }
@@ -104,7 +106,9 @@ class _PaperModeState extends ConsumerState<PaperMode> {
   }
 
   Widget _buildGroupIfGroupExists(List<GroupWithMembers> groups) {
-    final matchingGroup = groups.where((group) => group.group.id == widget.config.effectiveGroupId).firstOrNull;
+    final matchingGroup = groups
+        .where((group) => group.group.id == widget.config.effectiveGroupId)
+        .firstOrNull;
     if (matchingGroup != null) {
       return _buildWithGroupContacts(matchingGroup);
     } else {
@@ -112,27 +116,33 @@ class _PaperModeState extends ConsumerState<PaperMode> {
         child: Text('Group not found'),
       );
     }
-  } 
+  }
 
   Widget _buildWithGroupContacts(GroupWithMembers? groupContacts) {
-    final effectiveConfig = widget.config.copyWith(groupContacts: groupContacts);
+    final effectiveConfig =
+        widget.config.copyWith(groupContacts: groupContacts);
 
     // Start background feature checking if enabled
-    if (effectiveConfig.enableBackgroundFeatureCheck && effectiveConfig.groupContacts != null && !_backgroundFeatureChecked) {
+    if (effectiveConfig.enableBackgroundFeatureCheck &&
+        effectiveConfig.groupContacts != null &&
+        !_backgroundFeatureChecked) {
       ref.read(paperModeStateProvider).startBackgroundFeatureCheck(
-        fetchUpdatedPrayerRequest,
-      );
+            fetchUpdatedPrayerRequest,
+          );
       _backgroundFeatureChecked = true;
     }
 
-    final padding = effectiveConfig.noPadding ? EdgeInsets.zero : const EdgeInsets.fromLTRB(8, 0, 8, 0);
-    
+    final padding = effectiveConfig.noPadding
+        ? EdgeInsets.zero
+        : const EdgeInsets.fromLTRB(8, 0, 8, 0);
+
     // When shrinkWrap is enabled, avoid Expanded and use mainAxisSize.min
     if (effectiveConfig.shrinkWrap) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (effectiveConfig.showHeader) OptionsHeader(config: effectiveConfig),
+          if (effectiveConfig.showHeader)
+            OptionsHeader(config: effectiveConfig),
           Padding(
             padding: padding,
             child: Paper(
@@ -144,7 +154,7 @@ class _PaperModeState extends ConsumerState<PaperMode> {
         ],
       );
     }
-    
+
     // Normal mode with Expanded for full-screen contexts
     return Column(
       children: [

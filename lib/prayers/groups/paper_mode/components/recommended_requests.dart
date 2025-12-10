@@ -9,18 +9,22 @@ import 'package:prayer_ml/shared/widgets.dart';
 /// Loader widget that fetches and displays recommended prayer requests
 class RecommendedPrayerRequestsLoader extends ConsumerWidget {
   const RecommendedPrayerRequestsLoader({super.key, required this.contact});
-  
+
   final Contact contact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var recommendedRequests = ref.watch(fetchRecommendationsProvider(contact.id));
+    var recommendedRequests =
+        ref.watch(fetchRecommendationsProvider(contact.id));
     return switch (recommendedRequests) {
-      AsyncData(:final value) => RecommendedPrayerRequestsView(collections: value),
+      AsyncData(:final value) =>
+        RecommendedPrayerRequestsView(collections: value),
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "PrayerRequestConsumer",
           error: error,
-          stackTrace: stackTrace),
+          stackTrace: stackTrace,
+          onRetry: () =>
+              ref.invalidate(fetchRecommendationsProvider(contact.id))),
       _ => const CircularProgressIndicator(),
     };
   }
@@ -109,7 +113,7 @@ class RecommendedPrayerRequestsView extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // List of recommendations
           Expanded(
             child: collections.isEmpty
@@ -246,7 +250,7 @@ class _RecommendationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  
+
                   // Content
                   Expanded(
                     child: Column(
@@ -302,7 +306,7 @@ class _RecommendationCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Arrow icon
                   Icon(
                     Icons.arrow_forward_ios,

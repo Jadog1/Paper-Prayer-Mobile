@@ -25,7 +25,10 @@ class LoadableBibleVerses extends ConsumerWidget {
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "LoadableBibleVerses",
           error: error,
-          stackTrace: stackTrace),
+          stackTrace: stackTrace,
+          onRetry: () => ref
+              .invalidate(fetchBibleVersesForPrayerRequestProvider(requestId)),
+          compact: true),
       _ => const Text("Loading Bible verses..."),
     };
   }
@@ -99,8 +102,8 @@ class BibleVerseList extends StatelessWidget {
 /// Loader widget for related contacts
 class LoadableRelatedContacts extends ConsumerWidget {
   const LoadableRelatedContacts({
-    super.key, 
-    required this.contactId, 
+    super.key,
+    required this.contactId,
     this.relatedContactIds,
     this.groupId,
   });
@@ -129,7 +132,10 @@ class LoadableRelatedContacts extends ConsumerWidget {
       AsyncError(:final error, :final stackTrace) => PrintError(
           caller: "LoadableRelatedContacts",
           error: error,
-          stackTrace: stackTrace),
+          stackTrace: stackTrace,
+          onRetry: () =>
+              ref.invalidate(fetchRelatedContactsProvider(contactId)),
+          compact: true),
       _ => const Text("Loading related contacts..."),
     };
   }
@@ -218,9 +224,8 @@ class LoadableCollection extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.folder, 
-                        size: 20, 
-                        color: Theme.of(context).primaryColor),
+                    Icon(Icons.folder,
+                        size: 20, color: Theme.of(context).primaryColor),
                     const SizedBox(width: 8),
                     const Text(
                       "Collection",
@@ -268,7 +273,8 @@ class LoadableCollection extends ConsumerWidget {
                           runSpacing: 6,
                           children: findRelatedContacts(
                             value.relatedContacts,
-                            getRelatedContactIds(value.collection.relatedContacts),
+                            getRelatedContactIds(
+                                value.collection.relatedContacts),
                           ).map((contact) {
                             return Container(
                               padding: const EdgeInsets.symmetric(
@@ -300,7 +306,12 @@ class LoadableCollection extends ConsumerWidget {
             )
           : const SizedBox.shrink(),
       AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "LoadableCollection", error: error, stackTrace: stackTrace),
+          caller: "LoadableCollection",
+          error: error,
+          stackTrace: stackTrace,
+          onRetry: () => ref.invalidate(
+              fetchCollectionFromRequestProvider(requestId, contactId)),
+          compact: true),
       _ => const Text("Loading collection..."),
     };
   }

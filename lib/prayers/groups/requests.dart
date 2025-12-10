@@ -76,9 +76,10 @@ class RequestDashboardLoader extends ConsumerWidget {
     this.userId,
     this.relatedContacts,
   }) : assert(
-    (collection != null && relatedContacts != null) || (collectionId != null && userId != null) || collection != null,
-    'Either (collection and relatedContacts), collectionId and userId, or just collection must be provided'
-  );
+            (collection != null && relatedContacts != null) ||
+                (collectionId != null && userId != null) ||
+                collection != null,
+            'Either (collection and relatedContacts), collectionId and userId, or just collection must be provided');
 
   final Collection? collection;
   final int? collectionId;
@@ -92,7 +93,8 @@ class RequestDashboardLoader extends ConsumerWidget {
           prayerWithAll: PrayerRequestWithAll(
               collection: collection!, relatedContacts: relatedContacts!));
     } else if (collection != null) {
-      var viewModel = ref.watch(fetchRelatedContactsProvider(collection!.user.id));
+      var viewModel =
+          ref.watch(fetchRelatedContactsProvider(collection!.user.id));
       return switch (viewModel) {
         AsyncData(:final value) => RequestDashboard(
             prayerWithAll: PrayerRequestWithAll(
@@ -100,19 +102,25 @@ class RequestDashboardLoader extends ConsumerWidget {
         AsyncError(:final error, :final stackTrace) => PrintError(
             caller: "RequestDashboardLoader",
             error: error,
-            stackTrace: stackTrace),
+            stackTrace: stackTrace,
+            onRetry: () => ref
+                .invalidate(fetchRelatedContactsProvider(collection!.user.id))),
         _ => const CreativeLoadingScreen(),
       };
     } else {
-      var provider = ref.watch(fetchCollectionWithContactsProvider(collectionId!, userId!));
+      var provider = ref
+          .watch(fetchCollectionWithContactsProvider(collectionId!, userId!));
       return switch (provider) {
         AsyncData(:final value) => RequestDashboard(
             prayerWithAll: PrayerRequestWithAll(
-                collection: value.collection, relatedContacts: value.relatedContacts)),
+                collection: value.collection,
+                relatedContacts: value.relatedContacts)),
         AsyncError(:final error, :final stackTrace) => PrintError(
             caller: "RequestDashboardLoader",
             error: error,
-            stackTrace: stackTrace),
+            stackTrace: stackTrace,
+            onRetry: () => ref.invalidate(
+                fetchCollectionWithContactsProvider(collectionId!, userId!))),
         _ => const CreativeLoadingScreen(),
       };
     }
@@ -142,9 +150,10 @@ class RequestDashboard extends ConsumerWidget {
               builder: (BuildContext context, BoxConstraints constraints) {
                 // Check if app bar is expanded or collapsed
                 final isExpanded = constraints.maxHeight > kToolbarHeight + 20;
-                
+
                 return FlexibleSpaceBar(
-                  titlePadding: const EdgeInsets.only(left: 56, bottom: 16, right: 16),
+                  titlePadding:
+                      const EdgeInsets.only(left: 56, bottom: 16, right: 16),
                   title: Text(
                     collection.title ?? "Prayer Request",
                     style: const TextStyle(
@@ -193,14 +202,17 @@ class RequestDashboard extends ConsumerWidget {
                       const SizedBox(height: 12),
 
                       // Contact View Link
-                      _ContactViewLink(contact: collection.user, groupId: collection.group.groupId),
+                      _ContactViewLink(
+                          contact: collection.user,
+                          groupId: collection.group.groupId),
                       const SizedBox(height: 12),
 
                       // Upcoming Events Section
                       UpcomingEventsWidget(
                         collectionId: collection.id,
                         title: "Upcoming Events",
-                        subtitle: "Events for this collection in the next 30 days",
+                        subtitle:
+                            "Events for this collection in the next 30 days",
                         onViewAll: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -373,7 +385,8 @@ class _DetailsSection extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.blue[50],
                             borderRadius: BorderRadius.circular(16),
@@ -382,7 +395,8 @@ class _DetailsSection extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.person, size: 14, color: Colors.blue[700]),
+                              Icon(Icons.person,
+                                  size: 14, color: Colors.blue[700]),
                               const SizedBox(width: 4),
                               Text(
                                 _formatRelatedContact(rc),
@@ -425,20 +439,22 @@ class _DetailsSection extends StatelessWidget {
 
   String _formatRelatedContact(RelatedContact rc) {
     String name = rc.name;
-    if (name.isEmpty && rc.lowLevelRelationship != null && rc.lowLevelRelationship!.isNotEmpty) {
+    if (name.isEmpty &&
+        rc.lowLevelRelationship != null &&
+        rc.lowLevelRelationship!.isNotEmpty) {
       name = rc.lowLevelRelationship!;
     }
-    
-    if (rc.highLevelRelationship != null && 
-        rc.highLevelRelationship!.isNotEmpty && 
+
+    if (rc.highLevelRelationship != null &&
+        rc.highLevelRelationship!.isNotEmpty &&
         rc.highLevelRelationship != 'other') {
       name = "$name (${rc.highLevelRelationship!})";
     }
-    
+
     if (rc.label != null && rc.label!.isNotEmpty) {
       name = "$name [${rc.label}]";
     }
-    
+
     return name.trim();
   }
 }

@@ -34,7 +34,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final collectionAsync = ref.watch(fetchCollectionForEventProvider(widget.event.id));
+    final collectionAsync =
+        ref.watch(fetchCollectionForEventProvider(widget.event.id));
 
     return collectionAsync.when(
       data: (collection) => _buildContent(context, collection),
@@ -46,6 +47,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
           caller: "EventDetailsWidget",
           error: error,
           stackTrace: stackTrace,
+          onRetry: () =>
+              ref.invalidate(fetchCollectionForEventProvider(widget.event.id)),
         ),
       ),
     );
@@ -85,12 +88,12 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
             children: [
               // Event details card
               _buildEventCard(collection),
-              
+
               const SizedBox(height: 16),
-              
+
               // Prayer requests card
               _buildPrayerRequestsCard(collection),
-              
+
               const SizedBox(height: 16),
             ],
           ),
@@ -164,7 +167,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (widget.event.summary != null && widget.event.summary!.isNotEmpty)
+                        if (widget.event.summary != null &&
+                            widget.event.summary!.isNotEmpty)
                           Text(
                             widget.event.summary!,
                             style: const TextStyle(
@@ -198,9 +202,9 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Date range with modern styling
               Container(
                 padding: const EdgeInsets.all(12),
@@ -217,7 +221,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.calendar_today, size: 18, color: Colors.blue[700]),
+                      child: Icon(Icons.calendar_today,
+                          size: 18, color: Colors.blue[700]),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -247,7 +252,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                   ],
                 ),
               ),
-              
+
               // Collection link
               if (widget.config.showCollectionLink) ...[
                 const SizedBox(height: 12),
@@ -317,7 +322,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                     ),
                   ],
                 ),
-                
+
                 // Filter toggle in header
                 if (widget.config.showFilterToggle) ...[
                   const SizedBox(height: 16),
@@ -326,7 +331,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
               ],
             ),
           ),
-          
+
           // PaperMode content
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
@@ -371,9 +376,9 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _showingEventOnly 
-                        ? 'Event Requests Only'
-                        : 'All Collection Requests',
+                      _showingEventOnly
+                          ? 'Event Requests Only'
+                          : 'All Collection Requests',
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -398,7 +403,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                 bottomRight: Radius.circular(12),
               ),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: const BorderRadius.only(
@@ -459,7 +465,8 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
         ),
         child: Row(
           children: [
-            const Icon(Icons.folder_outlined, size: 16, color: Colors.blueAccent),
+            const Icon(Icons.folder_outlined,
+                size: 16, color: Colors.blueAccent),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
@@ -513,14 +520,15 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
   String _formatEventDate() {
     try {
       final startDate = DateTime.parse(widget.event.eventStart);
-      final startFormatted = "${startDate.month}/${startDate.day}/${startDate.year}";
-      
+      final startFormatted =
+          "${startDate.month}/${startDate.day}/${startDate.year}";
+
       if (widget.event.eventEnd != null && widget.event.eventEnd!.isNotEmpty) {
         final endDate = DateTime.parse(widget.event.eventEnd!);
         final endFormatted = "${endDate.month}/${endDate.day}/${endDate.year}";
         return "$startFormatted - $endFormatted";
       }
-      
+
       return startFormatted;
     } catch (e) {
       return widget.event.eventStart;
