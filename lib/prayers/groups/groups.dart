@@ -7,6 +7,7 @@ import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/paper_mode.dart';
+import 'package:prayer_ml/prayers/groups/group_access/group_access_page.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 // import 'view_model.dart';
 
@@ -351,6 +352,17 @@ class GroupNotebook extends ConsumerWidget {
                                   ),
                                 );
                                 break;
+                              case 'access':
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => GroupAccessPage(
+                                      groupId: groupContacts.group.id,
+                                      groupName: groupContacts.group.name,
+                                      mode: GroupAccessPageMode.add,
+                                    ),
+                                  ),
+                                );
+                                break;
                               case 'settings':
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
@@ -374,6 +386,17 @@ class GroupNotebook extends ConsumerWidget {
                                       size: 20, color: Colors.grey.shade700),
                                   const SizedBox(width: 12),
                                   const Text('Batch Insert'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'access',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person_add_alt_1,
+                                      size: 20, color: Colors.grey.shade700),
+                                  const SizedBox(width: 12),
+                                  const Text('Manage Access'),
                                 ],
                               ),
                             ),
