@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/contact_view.dart';
+import 'package:prayer_ml/prayers/groups/models/pipeline_status_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/loadable_widgets.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/paper_margin_space.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/components/pipeline_status_detail.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/components/pipeline_status_indicator.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provider.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
@@ -62,13 +65,14 @@ class ViewableRequest extends ConsumerWidget {
                       // Title Section
                       Text(
                         request.features?.title ?? "Prayer Request",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
                       ),
                       const SizedBox(height: 8),
-                      
+
                       // Metadata row
                       Row(
                         children: [
@@ -82,7 +86,8 @@ class ViewableRequest extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                          Icon(Icons.calendar_today,
+                              size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 4),
                           Text(
                             dateTimeToDate(request.createdAt),
@@ -94,7 +99,7 @@ class ViewableRequest extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Contact Button
                       if (groupId != null)
                         _buildSection(
@@ -132,14 +137,15 @@ class ViewableRequest extends ConsumerWidget {
                                       ),
                                     ),
                                   ),
-                                  Icon(Icons.chevron_right, color: Colors.grey[400]),
+                                  Icon(Icons.chevron_right,
+                                      color: Colors.grey[400]),
                                 ],
                               ),
                             ),
                           ),
                         ),
                       if (groupId != null) const SizedBox(height: 16),
-                      
+
                       // Description Section
                       _buildSection(
                         context,
@@ -155,7 +161,7 @@ class ViewableRequest extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Related Contacts Section
                       _buildSection(
                         context,
@@ -168,14 +174,25 @@ class ViewableRequest extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Collection Section
                       LoadableCollection(
                         requestId: request.id,
                         contactId: request.user.id,
                       ),
                       const SizedBox(height: 16),
-                      
+
+                      // Pipeline Status Section
+                      _buildSection(
+                        context,
+                        title: "AI Processing Status",
+                        icon: Icons.auto_awesome,
+                        child: LoadablePipelineStatus(
+                          requestId: request.id,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
                       // Bible Verses Section
                       _buildSection(
                         context,
@@ -237,6 +254,13 @@ class ViewableRequest extends ConsumerWidget {
         ? request.features!.title
         : request.description;
 
+    // Check if this request is being processed
+    final paperState = ref.watch(paperModeStateProvider);
+    final pipelineStatus = paperState.getPipelineStatusForRequest(request.id);
+    final isProcessing = pipelineStatus != null &&
+        !pipelineStatus.isComplete &&
+        !pipelineStatus.hasFailed;
+
     return InkWell(
       onTap: isExportMode ? null : () => _showDetailSheet(context, ref),
       onLongPress: (focusOnEdit != null && !isExportMode)
@@ -253,8 +277,9 @@ class ViewableRequest extends ConsumerWidget {
                           title: const Text('Edit'),
                           onTap: () {
                             Navigator.pop(modalContext);
-                            ref.read(paperModeStateProvider).setEditModeOverride(
-                                request.id, true);
+                            ref
+                                .read(paperModeStateProvider)
+                                .setEditModeOverride(request.id, true);
                             SchedulerBinding.instance.addPostFrameCallback((_) {
                               focusOnEdit!();
                             });
@@ -267,7 +292,8 @@ class ViewableRequest extends ConsumerWidget {
                             Navigator.pop(modalContext);
                             try {
                               await removeRequest(request);
-                              ref.read(paperModeStateProvider)
+                              ref
+                                  .read(paperModeStateProvider)
                                   .hidePrayerRequest(request.id);
                             } catch (_) {
                               if (context.mounted) {
@@ -290,10 +316,26 @@ class ViewableRequest extends ConsumerWidget {
           : null,
       child: PaperMarginSpace(
         paperLine: Expanded(
-          child: Text(
-            "• $summary",
-            textAlign: TextAlign.left,
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "• $summary",
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                      fontStyle: FontStyle.italic, fontSize: 16.0),
+                ),
+              ),
+              if (isProcessing) ...[
+                const SizedBox(width: 8),
+                InlinePipelineStatus(
+                  pipelineRun: pipelineStatus,
+                  onTap: isExportMode
+                      ? null
+                      : () => showPipelineStatusDetail(context, pipelineStatus),
+                ),
+              ],
+            ],
           ),
         ),
       ),

@@ -882,6 +882,151 @@ class _FetchBibleVersesForPrayerRequestProviderElement
       (origin as FetchBibleVersesForPrayerRequestProvider).requestId;
 }
 
+String _$fetchPipelineStatusHash() =>
+    r'80abb686e549b3f946e8bc796678abdc96297a00';
+
+/// Fetch pipeline processing status for a prayer request
+///
+/// Copied from [fetchPipelineStatus].
+@ProviderFor(fetchPipelineStatus)
+const fetchPipelineStatusProvider = FetchPipelineStatusFamily();
+
+/// Fetch pipeline processing status for a prayer request
+///
+/// Copied from [fetchPipelineStatus].
+class FetchPipelineStatusFamily extends Family<AsyncValue<PipelineRunDTO?>> {
+  /// Fetch pipeline processing status for a prayer request
+  ///
+  /// Copied from [fetchPipelineStatus].
+  const FetchPipelineStatusFamily();
+
+  /// Fetch pipeline processing status for a prayer request
+  ///
+  /// Copied from [fetchPipelineStatus].
+  FetchPipelineStatusProvider call(
+    int requestId,
+  ) {
+    return FetchPipelineStatusProvider(
+      requestId,
+    );
+  }
+
+  @override
+  FetchPipelineStatusProvider getProviderOverride(
+    covariant FetchPipelineStatusProvider provider,
+  ) {
+    return call(
+      provider.requestId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchPipelineStatusProvider';
+}
+
+/// Fetch pipeline processing status for a prayer request
+///
+/// Copied from [fetchPipelineStatus].
+class FetchPipelineStatusProvider
+    extends AutoDisposeFutureProvider<PipelineRunDTO?> {
+  /// Fetch pipeline processing status for a prayer request
+  ///
+  /// Copied from [fetchPipelineStatus].
+  FetchPipelineStatusProvider(
+    int requestId,
+  ) : this._internal(
+          (ref) => fetchPipelineStatus(
+            ref as FetchPipelineStatusRef,
+            requestId,
+          ),
+          from: fetchPipelineStatusProvider,
+          name: r'fetchPipelineStatusProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchPipelineStatusHash,
+          dependencies: FetchPipelineStatusFamily._dependencies,
+          allTransitiveDependencies:
+              FetchPipelineStatusFamily._allTransitiveDependencies,
+          requestId: requestId,
+        );
+
+  FetchPipelineStatusProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.requestId,
+  }) : super.internal();
+
+  final int requestId;
+
+  @override
+  Override overrideWith(
+    FutureOr<PipelineRunDTO?> Function(FetchPipelineStatusRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchPipelineStatusProvider._internal(
+        (ref) => create(ref as FetchPipelineStatusRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        requestId: requestId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<PipelineRunDTO?> createElement() {
+    return _FetchPipelineStatusProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchPipelineStatusProvider && other.requestId == requestId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, requestId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FetchPipelineStatusRef on AutoDisposeFutureProviderRef<PipelineRunDTO?> {
+  /// The parameter `requestId` of this provider.
+  int get requestId;
+}
+
+class _FetchPipelineStatusProviderElement
+    extends AutoDisposeFutureProviderElement<PipelineRunDTO?>
+    with FetchPipelineStatusRef {
+  _FetchPipelineStatusProviderElement(super.provider);
+
+  @override
+  int get requestId => (origin as FetchPipelineStatusProvider).requestId;
+}
+
 String _$groupContactsRepoHash() => r'93cc55f1855d12ceea40bc52eb7f042dadcbce79';
 
 /// See also [GroupContactsRepo].

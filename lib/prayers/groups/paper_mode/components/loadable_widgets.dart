@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/components/pipeline_status_detail.dart';
+import 'package:prayer_ml/prayers/groups/paper_mode/components/pipeline_status_indicator.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/requests.dart';
@@ -314,5 +316,107 @@ class LoadableCollection extends ConsumerWidget {
           compact: true),
       _ => const Text("Loading collection..."),
     };
+  }
+}
+
+/// Loader widget for pipeline status
+class LoadablePipelineStatus extends ConsumerWidget {
+  const LoadablePipelineStatus({
+    super.key,
+    required this.requestId,
+    this.onTap,
+  });
+
+  final int requestId;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pipelineStatusAsync =
+        ref.watch(fetchPipelineStatusProvider(requestId));
+
+    return pipelineStatusAsync.when(
+      data: (pipelineStatus) {
+        if (pipelineStatus != null) {
+          return PipelineStatusBadge(
+            pipelineRun: pipelineStatus,
+            onTap: () => showPipelineStatusDetail(context, pipelineStatus),
+          );
+        }
+        // No pipeline found - show friendly message
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20, color: Colors.grey[600]),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'No AI processing data',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'This prayer request may have been created before AI processing was enabled.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Loading processing status...',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+      error: (error, stackTrace) => PrintError(
+        caller: "LoadablePipelineStatus",
+        error: error,
+        stackTrace: stackTrace,
+        onRetry: () => ref.invalidate(fetchPipelineStatusProvider(requestId)),
+        compact: true,
+      ),
+    );
   }
 }

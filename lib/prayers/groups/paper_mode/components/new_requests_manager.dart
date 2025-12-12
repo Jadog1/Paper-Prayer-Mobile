@@ -9,7 +9,7 @@ import 'package:prayer_ml/prayers/groups/paper_mode/models/paper_mode_config.dar
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provider.dart';
 
 /// A widget that manages new requests created by the user at the bottom of the page.
-/// 
+///
 /// It handles the state of who the current request is for and displays all
 /// the newly created requests with proper username breaks.
 class NewRequestsManager extends ConsumerStatefulWidget {
@@ -31,7 +31,8 @@ class NewRequestsManager extends ConsumerStatefulWidget {
 class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
   final FocusNode _focusNode = FocusNode();
   final FocusNode _userSelectionFocusNode = FocusNode();
-  final TextEditingController _userSelectionController = TextEditingController();
+  final TextEditingController _userSelectionController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -54,7 +55,7 @@ class _NewRequestsManagerState extends ConsumerState<NewRequestsManager> {
     final stateNotifier = ref.watch(paperModeStateProvider);
     final state = stateNotifier.state;
     final newRequests = state.newRequests;
-    
+
     return Column(
       children: [
         for (var i = 0; i < newRequests.length; i++) ...[

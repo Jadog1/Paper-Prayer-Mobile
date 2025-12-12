@@ -344,6 +344,24 @@ class PrayerRequestApiClient {
     final json = jsonDecode(utf8.decode(response.bodyBytes)) as List;
     return json.map((request) => PrayerRequest.fromJson(request)).toList();
   }
+
+  Future<Map<String, dynamic>> fetchPipelineStatus(int requestId) async {
+    final response = await authClient
+        .get(config.uri("/prayer_requests/pipeline-status/$requestId"));
+
+    if (response.statusCode == 404) {
+      // No pipeline run found for this request yet
+      return {};
+    }
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          "Error getting pipeline status: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
+    return json as Map<String, dynamic>;
+  }
 }
 
 class CollectionsApiClient {

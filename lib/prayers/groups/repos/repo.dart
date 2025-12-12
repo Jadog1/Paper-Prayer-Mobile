@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
+import 'package:prayer_ml/prayers/groups/models/pipeline_status_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
@@ -15,9 +16,11 @@ Future<GroupWithMembers> fetchGroupWithMembers(Ref ref, int groupId) async {
   var contactApi = config.contactApiClient;
   final group = await contactApi.fetchGroupById(groupId);
   final contacts = await contactApi.fetchContactsInGroup(groupId);
-  final contactGroupPairs = await contactApi.fetchContactGroupByGroupId(groupId);
+  final contactGroupPairs =
+      await contactApi.fetchContactGroupByGroupId(groupId);
   var memberWithContactGroupPairs = contactGroupPairs.map((pair) {
-    var contact = contacts.firstWhere((contact) => contact.id == pair.contactId);
+    var contact =
+        contacts.firstWhere((contact) => contact.id == pair.contactId);
     return ContactAndGroupPair(contact: contact, groupPair: pair);
   }).toList();
   return GroupWithMembers(
@@ -38,24 +41,33 @@ class GroupContactsRepo extends _$GroupContactsRepo {
   // TODO: We need to make this fetchGroups logic to be paginated.
   // Then we can asynchronously build contacts for a group and other data.
   // Additionally, this whole process of building a specialized object is being overused
-  // and passed around a good amount. We should consider refactoring this so it's not 
+  // and passed around a good amount. We should consider refactoring this so it's not
   // so coupled.
   @override
   Future<List<GroupWithMembers>> build() async {
     var contactApi = config.contactApiClient;
     final groups = await contactApi.fetchGroups();
-    final contactResults = await contactApi.fetchContacts(); 
+    final contactResults = await contactApi.fetchContacts();
     final contactGroupPairs = await contactApi.fetchContactGroupPairs();
     var groupContacts = groups.map((group) {
-      var members = contactGroupPairs.where((contact) => contact.groupId == group.id).toList();
-      var contacts = members.map((member) => contactResults.firstWhere((contact) => contact.id == member.contactId)).toList();
+      var members = contactGroupPairs
+          .where((contact) => contact.groupId == group.id)
+          .toList();
+      var contacts = members
+          .map((member) => contactResults
+              .firstWhere((contact) => contact.id == member.contactId))
+          .toList();
       var memberWithContactGroupPairs = members.map((member) {
-        var contact = contactResults.firstWhere((contact) => contact.id == member.contactId);
+        var contact = contactResults
+            .firstWhere((contact) => contact.id == member.contactId);
         return ContactAndGroupPair(contact: contact, groupPair: member);
       }).toList();
-      return GroupWithMembers(group: group, members: contacts, memberWithContactGroupPairs: memberWithContactGroupPairs);
+      return GroupWithMembers(
+          group: group,
+          members: contacts,
+          memberWithContactGroupPairs: memberWithContactGroupPairs);
     }).toList();
-    
+
     return groupContacts;
   }
 
@@ -112,7 +124,8 @@ class GroupContactsRepo extends _$GroupContactsRepo {
 }
 
 @riverpod
-Future<ContactGroupPairs> fetchContactGroup(Ref ref, int contactId, int groupId) async {
+Future<ContactGroupPairs> fetchContactGroup(
+    Ref ref, int contactId, int groupId) async {
   var contactApi = config.contactApiClient;
   return await contactApi.fetchContactGroup(contactId, groupId);
 }
@@ -123,22 +136,33 @@ class UserCollectionsAndContacts {
   final List<RelatedContact> relatedContacts;
   final List<Collection> prayerRequests;
 
-  UserCollectionsAndContacts({required this.user, required this.relatedContacts, required this.prayerRequests, required this.contactGroup});
+  UserCollectionsAndContacts(
+      {required this.user,
+      required this.relatedContacts,
+      required this.prayerRequests,
+      required this.contactGroup});
 }
 
 @riverpod
-Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(Ref ref, Contact contact, Group group) async {
+Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(
+    Ref ref, Contact contact, Group group) async {
   var contactApi = config.contactApiClient;
-  var prayerRequests = await ref.read(collectionContactRepoProvider(contact.id).future);
+  var prayerRequests =
+      await ref.read(collectionContactRepoProvider(contact.id).future);
   var relatedContacts = await contactApi.fetchRelatedContacts(contact.id);
   var user = contact;
   var contactGroup = await contactApi.fetchContactGroup(contact.id, group.id);
 
-  return UserCollectionsAndContacts(user: user, relatedContacts: relatedContacts, prayerRequests: prayerRequests, contactGroup: contactGroup);
+  return UserCollectionsAndContacts(
+      user: user,
+      relatedContacts: relatedContacts,
+      prayerRequests: prayerRequests,
+      contactGroup: contactGroup);
 }
 
 @riverpod
-Future<List<RelatedContact>> fetchRelatedContacts(Ref ref, int contactId) async {
+Future<List<RelatedContact>> fetchRelatedContacts(
+    Ref ref, int contactId) async {
   var contactApi = config.contactApiClient;
   return await contactApi.fetchRelatedContacts(contactId);
 }
@@ -157,11 +181,13 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
     return prayerApi.fetchPrayerRequests(contactId);
   }
 
-  Future<PrayerRequest> saveRequest(PrayerRequest request, {int? enforcedCollectionId}) async {
+  Future<PrayerRequest> saveRequest(PrayerRequest request,
+      {int? enforcedCollectionId}) async {
     var prayerApi = config.prayerRequestApiClient;
     PrayerRequest newRequest;
     if (request.id == 0) {
-      newRequest = await prayerApi.saveRequest(request, enforcedCollectionId: enforcedCollectionId);
+      newRequest = await prayerApi.saveRequest(request,
+          enforcedCollectionId: enforcedCollectionId);
     } else {
       newRequest = await prayerApi.updateRequest(request);
     }
@@ -180,19 +206,22 @@ class PrayerRequestRepo extends _$PrayerRequestRepo {
 
     ref.invalidateSelf();
   }
-} 
+}
 
 @riverpod
-Future<List<PrayerRequestScore>> fetchSimilarRequests(Ref ref, int requestId) async {
+Future<List<PrayerRequestScore>> fetchSimilarRequests(
+    Ref ref, int requestId) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   return prayerApi.fetchSimilarRequests(requestId);
 }
 
-Future<PrayerRequest> saveNewRequest(PrayerRequest request, {int? enforcedCollectionId}) async {
+Future<PrayerRequest> saveNewRequest(PrayerRequest request,
+    {int? enforcedCollectionId}) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
-  return await prayerApi.saveRequest(request, enforcedCollectionId: enforcedCollectionId);
+  return await prayerApi.saveRequest(request,
+      enforcedCollectionId: enforcedCollectionId);
 }
 
 Future<PrayerRequest> updateRequest(PrayerRequest request) async {
@@ -214,7 +243,8 @@ Future<PrayerRequest> fetchUpdatedPrayerRequest(int requestId) async {
 }
 
 @riverpod
-Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(Ref ref, int requestId) async {
+Future<List<BibleReferenceAndText>> fetchBibleVersesForPrayerRequest(
+    Ref ref, int requestId) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   return await prayerApi.fetchBibleVersesForPrayerRequest(requestId);
@@ -230,4 +260,32 @@ Future<void> clearDebounceTimeout(int requestId) async {
   var config = Config();
   var prayerApi = config.prayerRequestApiClient;
   await prayerApi.clearDebounceTimeout(requestId);
+}
+
+/// Fetch pipeline processing status for a prayer request
+@riverpod
+Future<PipelineRunDTO?> fetchPipelineStatus(Ref ref, int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  final json = await prayerApi.fetchPipelineStatus(requestId);
+
+  // Return null if no pipeline run exists yet (404 case)
+  if (json.isEmpty) {
+    return null;
+  }
+
+  return PipelineRunDTO.fromJson(json);
+}
+
+/// Standalone function to fetch pipeline status without Riverpod
+Future<PipelineRunDTO?> getPipelineStatus(int requestId) async {
+  var config = Config();
+  var prayerApi = config.prayerRequestApiClient;
+  final json = await prayerApi.fetchPipelineStatus(requestId);
+
+  if (json.isEmpty) {
+    return null;
+  }
+
+  return PipelineRunDTO.fromJson(json);
 }

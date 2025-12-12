@@ -9,7 +9,7 @@ import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provide
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 
 /// Save state enum for visual feedback
-enum SaveState { saving, saved, failed, editing, noAction }
+enum SaveState { saving, saved, failed, editing, noAction, processing }
 
 /// An editable text field for a prayer request
 class EditableRequest extends ConsumerStatefulWidget {
@@ -55,7 +55,8 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
     setState(() => _saveState = SaveState.saving);
 
     _debounce?.cancel();
-    if (text.startsWith("@") || (text.isEmpty && widget.prayerRequest.id == 0)) {
+    if (text.startsWith("@") ||
+        (text.isEmpty && widget.prayerRequest.id == 0)) {
       setState(() => _saveState = SaveState.noAction);
       return;
     }
@@ -66,11 +67,17 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
         if (widget.prayerRequest.id == 0) {
           newRequest = await saveNewRequest(newRequest);
           widget.prayerRequest.id = newRequest.id;
+          // After creating a new request, mark it as processing
+          setState(() => _saveState = SaveState.processing);
+          // Start tracking pipeline status
+          ref
+              .read(paperModeStateProvider)
+              .startTrackingPipelineStatus(newRequest.id);
         } else {
           newRequest = await updateRequest(newRequest);
+          setState(() => _saveState = SaveState.saved);
         }
         widget.prayerRequest.description = newRequest.description;
-        setState(() => _saveState = SaveState.saved);
       } catch (_) {
         setState(() => _saveState = SaveState.failed);
       }
@@ -110,8 +117,9 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
           } catch (e) {
             log("Error clearing debounce timeout: $e");
           }
-          ref.read(paperModeStateProvider).setEditModeOverride(
-              widget.prayerRequest.id, false);
+          ref
+              .read(paperModeStateProvider)
+              .setEditModeOverride(widget.prayerRequest.id, false);
         }
       }
     });
@@ -163,6 +171,9 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
       case SaveState.editing:
         icon = const Icon(Icons.edit, size: 16, color: Colors.grey);
         break;
+      case SaveState.processing:
+        icon = const Icon(Icons.auto_awesome, size: 16, color: Colors.blue);
+        break;
       case SaveState.noAction:
         icon = null;
         break;
@@ -186,9 +197,9 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
                   maxLines: null,
                   enabled: !widget.isExportMode,
                   decoration: InputDecoration(
-                    hintText: "Enter prayer request or @ to select user",
-                    hintStyle: const TextStyle(
-                        color: Colors.grey, fontStyle: FontStyle.italic),
+                      hintText: "Enter prayer request or @ to select user",
+                      hintStyle: const TextStyle(
+                          color: Colors.grey, fontStyle: FontStyle.italic),
                       border: _isFocused
                           ? const UnderlineInputBorder()
                           : InputBorder.none),
