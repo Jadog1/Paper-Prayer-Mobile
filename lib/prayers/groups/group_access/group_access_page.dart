@@ -438,37 +438,38 @@ class _AddAccessTab extends ConsumerWidget {
                             ),
                           ),
                         ),
+                        selectedItemBuilder: (context) => roles
+                            .map((r) => Text(
+                                  r.label,
+                                  overflow: TextOverflow.ellipsis,
+                                ))
+                            .toList(),
                         items: roles
                             .map(
                               (r) => DropdownMenuItem<int>(
                                 value: r.role,
-                                child: ConstrainedBox(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 250),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      r.label,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (r.description.isNotEmpty)
                                       Text(
-                                        r.label,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
+                                        r.description,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[600],
                                         ),
                                         overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
                                       ),
-                                      if (r.description.isNotEmpty)
-                                        Text(
-                                          r.description,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey[600],
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                    ],
-                                  ),
+                                  ],
                                 ),
                               ),
                             )
