@@ -9,11 +9,11 @@ final assignableRolesProvider =
 });
 
 final accountSearchProvider = FutureProvider.autoDispose
-    .family<List<AccountSearchResult>, String>((ref, emailQuery) async {
-  final query = emailQuery.trim();
+    .family<List<AccountSearchResult>, String>((ref, codeQuery) async {
+  final query = codeQuery.trim();
   if (query.length < 2) return [];
   final api = Config().accountApiClient;
-  return api.searchAccountsByEmail(query);
+  return api.searchAccountsByUserCode(query);
 });
 
 final groupRoleMembersProvider = FutureProvider.autoDispose
@@ -26,7 +26,23 @@ class GroupAccessActions {
   GroupAccessActions(this.ref);
   final Ref ref;
 
-  Future<RoleAssignmentResult> assignRole({
+  Future<RoleAssignmentResult> assignRoleByUserCode({
+    required int groupId,
+    required String targetUserCode,
+    required int role,
+  }) async {
+    final api = Config().accountApiClient;
+    final result = await api.assignRoleToGroup(
+      groupId: groupId,
+      targetUserCode: targetUserCode,
+      role: role,
+    );
+
+    ref.invalidate(groupRoleMembersProvider(groupId));
+    return result;
+  }
+
+  Future<RoleAssignmentResult> assignRoleByEmail({
     required int groupId,
     required String targetEmail,
     required int role,
@@ -42,7 +58,21 @@ class GroupAccessActions {
     return result;
   }
 
-  Future<RoleRemovalResult> removeRole({
+  Future<RoleRemovalResult> removeRoleByUserCode({
+    required int groupId,
+    required String targetUserCode,
+  }) async {
+    final api = Config().accountApiClient;
+    final result = await api.removeRoleFromGroup(
+      groupId: groupId,
+      targetUserCode: targetUserCode,
+    );
+
+    ref.invalidate(groupRoleMembersProvider(groupId));
+    return result;
+  }
+
+  Future<RoleRemovalResult> removeRoleByEmail({
     required int groupId,
     required String targetEmail,
   }) async {

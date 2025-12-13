@@ -26,15 +26,19 @@ class GroupAccessPage extends ConsumerStatefulWidget {
 }
 
 class _GroupAccessPageState extends ConsumerState<GroupAccessPage> {
+  final TextEditingController _userCodeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   String _searchText = '';
+  String _selectedUserCode = '';
   String _selectedEmail = '';
   int? _selectedRole;
+  bool _inviteByEmail = false; // Toggle between user code and email
 
   @override
   void dispose() {
+    _userCodeController.dispose();
     _emailController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -65,34 +69,41 @@ class _GroupAccessPageState extends ConsumerState<GroupAccessPage> {
               groupId: widget.groupId,
               rolesAsync: rolesAsync,
               searchController: _searchController,
+              userCodeController: _userCodeController,
               emailController: _emailController,
               searchText: _searchText,
+              selectedUserCode: _selectedUserCode,
               selectedEmail: _selectedEmail,
               selectedRole: _selectedRole,
+              inviteByEmail: _inviteByEmail,
               onSearchChanged: (v) => setState(() => _searchText = v),
-              onSelectEmail: (email) {
+              onSelectUserCode: (userCode) {
                 setState(() {
-                  _selectedEmail = email;
-                  _emailController.text = email;
+                  _selectedUserCode = userCode;
+                  _userCodeController.text = userCode;
+                  _inviteByEmail = false;
                 });
               },
+              onUserCodeChanged: (v) =>
+                  setState(() => _selectedUserCode = v.trim()),
               onEmailChanged: (v) => setState(() => _selectedEmail = v.trim()),
               onSelectRole: (role) => setState(() => _selectedRole = role),
+              onToggleInviteByEmail: (v) => setState(() => _inviteByEmail = v),
             ),
             _ManageAccessTab(
               groupId: widget.groupId,
               rolesAsync: rolesAsync,
-              onAssignRole: (email, role) async {
-                await ref.read(groupAccessActionsProvider).assignRole(
+              onAssignRoleByEmail: (email, role) async {
+                await ref.read(groupAccessActionsProvider).assignRoleByEmail(
                       groupId: widget.groupId,
                       targetEmail: email,
                       role: role,
                     );
               },
-              onRemove: (email) async {
-                await ref.read(groupAccessActionsProvider).removeRole(
+              onRemove: (userCode) async {
+                await ref.read(groupAccessActionsProvider).removeRoleByUserCode(
                       groupId: widget.groupId,
-                      targetEmail: email,
+                      targetUserCode: userCode,
                     );
               },
             ),
@@ -108,29 +119,39 @@ class _AddAccessTab extends ConsumerWidget {
     required this.groupId,
     required this.rolesAsync,
     required this.searchController,
+    required this.userCodeController,
     required this.emailController,
     required this.searchText,
+    required this.selectedUserCode,
     required this.selectedEmail,
     required this.selectedRole,
+    required this.inviteByEmail,
     required this.onSearchChanged,
-    required this.onSelectEmail,
+    required this.onSelectUserCode,
+    required this.onUserCodeChanged,
     required this.onEmailChanged,
     required this.onSelectRole,
+    required this.onToggleInviteByEmail,
   });
 
   final int groupId;
   final AsyncValue<List<AssignableRole>> rolesAsync;
   final TextEditingController searchController;
+  final TextEditingController userCodeController;
   final TextEditingController emailController;
 
   final String searchText;
+  final String selectedUserCode;
   final String selectedEmail;
   final int? selectedRole;
+  final bool inviteByEmail;
 
   final ValueChanged<String> onSearchChanged;
-  final ValueChanged<String> onSelectEmail;
+  final ValueChanged<String> onSelectUserCode;
+  final ValueChanged<String> onUserCodeChanged;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<int?> onSelectRole;
+  final ValueChanged<bool> onToggleInviteByEmail;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -180,7 +201,7 @@ class _AddAccessTab extends ConsumerWidget {
                       const SizedBox(width: 12),
                       const Expanded(
                         child: Text(
-                          'Find User',
+                          'Find User by Code',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -196,7 +217,7 @@ class _AddAccessTab extends ConsumerWidget {
                     decoration: InputDecoration(
                       prefixIcon:
                           const Icon(Icons.search, color: Color(0xFF8B7355)),
-                      hintText: 'Search by email...',
+                      hintText: 'Search by user code...',
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       filled: true,
                       fillColor: Colors.white,
@@ -277,7 +298,9 @@ class _AddAccessTab extends ConsumerWidget {
                                 backgroundColor:
                                     const Color(0xFF8B7355).withOpacity(0.2),
                                 child: Text(
-                                  r.email[0].toUpperCase(),
+                                  r.name.isNotEmpty
+                                      ? r.name[0].toUpperCase()
+                                      : r.userCode[0].toUpperCase(),
                                   style: const TextStyle(
                                     color: Color(0xFF8B7355),
                                     fontWeight: FontWeight.bold,
@@ -285,28 +308,26 @@ class _AddAccessTab extends ConsumerWidget {
                                 ),
                               ),
                               title: Text(
-                                r.email,
+                                r.name.isNotEmpty ? r.name : r.userCode,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              subtitle: r.name.isNotEmpty
-                                  ? Text(
-                                      r.name,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                    )
-                                  : null,
+                              subtitle: Text(
+                                'Code: ${r.userCode}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
                               trailing: const Icon(
                                 Icons.arrow_forward_ios,
                                 size: 16,
                                 color: Color(0xFF8B7355),
                               ),
-                              onTap: () => onSelectEmail(r.email),
+                              onTap: () => onSelectUserCode(r.userCode),
                             );
                           },
                         );
@@ -318,6 +339,8 @@ class _AddAccessTab extends ConsumerWidget {
                         error: error,
                         stackTrace: stackTrace,
                         compact: true,
+                        onRetry: () =>
+                            ref.invalidate(accountSearchProvider(searchText)),
                       ),
                     ),
                   ),
@@ -374,37 +397,94 @@ class _AddAccessTab extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.email_outlined,
-                          color: Color(0xFF8B7355)),
-                      hintText: 'invitee@example.com',
-                      hintStyle: TextStyle(color: Colors.grey[400]),
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey[300]!,
-                          width: 1,
+                  // Toggle between user code and email
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('By User Code'),
+                          selected: !inviteByEmail,
+                          onSelected: (selected) {
+                            if (selected) onToggleInviteByEmail(false);
+                          },
                         ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Color(0xFF8B7355),
-                          width: 2,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('By Email'),
+                          selected: inviteByEmail,
+                          onSelected: (selected) {
+                            if (selected) onToggleInviteByEmail(true);
+                          },
                         ),
                       ),
-                    ),
-                    onChanged: onEmailChanged,
+                    ],
                   ),
+                  const SizedBox(height: 16),
+                  if (!inviteByEmail)
+                    TextField(
+                      controller: userCodeController,
+                      decoration: InputDecoration(
+                        prefixIcon:
+                            const Icon(Icons.tag, color: Color(0xFF8B7355)),
+                        hintText: 'Enter user code (e.g., a3B7kN9mP2)',
+                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B7355),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      onChanged: onUserCodeChanged,
+                    )
+                  else
+                    TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.email_outlined,
+                            color: Color(0xFF8B7355)),
+                        hintText: 'invitee@example.com',
+                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B7355),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      onChanged: onEmailChanged,
+                    ),
                   const SizedBox(height: 16),
                   rolesAsync.when(
                     data: (roles) {
@@ -483,6 +563,7 @@ class _AddAccessTab extends ConsumerWidget {
                       error: error,
                       stackTrace: stackTrace,
                       compact: true,
+                      onRetry: () => ref.invalidate(assignableRolesProvider),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -490,15 +571,6 @@ class _AddAccessTab extends ConsumerWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        final email = selectedEmail.trim();
-                        if (email.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Enter an email first.')),
-                          );
-                          return;
-                        }
-
                         final roles =
                             rolesAsync.value ?? const <AssignableRole>[];
                         final role = selectedRole ??
@@ -512,23 +584,60 @@ class _AddAccessTab extends ConsumerWidget {
                         }
 
                         try {
-                          await ref.read(groupAccessActionsProvider).assignRole(
-                                groupId: groupId,
-                                targetEmail: email,
-                                role: role,
+                          if (inviteByEmail) {
+                            final email = selectedEmail.trim();
+                            if (email.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Enter an email first.')),
                               );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('✓ Access granted to $email'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                          emailController.clear();
-                          onEmailChanged('');
+                              return;
+                            }
+                            await ref
+                                .read(groupAccessActionsProvider)
+                                .assignRoleByEmail(
+                                  groupId: groupId,
+                                  targetEmail: email,
+                                  role: role,
+                                );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('✓ Invite sent to $email'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            emailController.clear();
+                            onEmailChanged('');
+                          } else {
+                            final userCode = selectedUserCode.trim();
+                            if (userCode.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Enter a user code first.')),
+                              );
+                              return;
+                            }
+                            await ref
+                                .read(groupAccessActionsProvider)
+                                .assignRoleByUserCode(
+                                  groupId: groupId,
+                                  targetUserCode: userCode,
+                                  role: role,
+                                );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('✓ Invite sent to user $userCode'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            userCodeController.clear();
+                            onUserCodeChanged('');
+                          }
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Failed to grant access: $e'),
+                              content: Text('Failed to send invite: $e'),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -536,7 +645,7 @@ class _AddAccessTab extends ConsumerWidget {
                       },
                       icon: const Icon(Icons.person_add_alt_1, size: 20),
                       label: const Text(
-                        'Grant Access',
+                        'Send Invite',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -569,14 +678,14 @@ class _ManageAccessTab extends ConsumerWidget {
   const _ManageAccessTab({
     required this.groupId,
     required this.rolesAsync,
-    required this.onAssignRole,
+    required this.onAssignRoleByEmail,
     required this.onRemove,
   });
 
   final int groupId;
   final AsyncValue<List<AssignableRole>> rolesAsync;
-  final Future<void> Function(String email, int role) onAssignRole;
-  final Future<void> Function(String email) onRemove;
+  final Future<void> Function(String email, int role) onAssignRoleByEmail;
+  final Future<void> Function(String userCode) onRemove;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -630,13 +739,25 @@ class _ManageAccessTab extends ConsumerWidget {
                 final m = members[index];
                 final label = roleById[m.role]?.label ?? 'Role #${m.role}';
                 final roleDescription = roleById[m.role]?.description ?? '';
+                final statusColor = m.status == 'active'
+                    ? Colors.green
+                    : m.status == 'pending'
+                        ? Colors.orange
+                        : Colors.red;
+                final statusIcon = m.status == 'active'
+                    ? Icons.check_circle
+                    : m.status == 'pending'
+                        ? Icons.pending
+                        : Icons.cancel;
 
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.grey[300]!,
+                      color: m.status == 'active'
+                          ? Colors.grey[300]!
+                          : statusColor.withOpacity(0.3),
                       width: 1,
                     ),
                     boxShadow: [
@@ -659,7 +780,9 @@ class _ManageAccessTab extends ConsumerWidget {
                               backgroundColor:
                                   const Color(0xFF8B7355).withOpacity(0.2),
                               child: Text(
-                                label.isNotEmpty ? label[0] : '?',
+                                m.accountName.isNotEmpty
+                                    ? m.accountName[0].toUpperCase()
+                                    : m.userCode[0].toUpperCase(),
                                 style: const TextStyle(
                                   color: Color(0xFF8B7355),
                                   fontWeight: FontWeight.bold,
@@ -673,7 +796,9 @@ class _ManageAccessTab extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    m.accountEmail,
+                                    m.accountName.isNotEmpty
+                                        ? m.accountName
+                                        : 'User ${m.userCode}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -681,21 +806,46 @@ class _ManageAccessTab extends ConsumerWidget {
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
-                                  if (m.accountName.isNotEmpty)
-                                    Text(
-                                      m.accountName,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                  Text(
+                                    'Code: ${m.userCode}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ],
                               ),
                             ),
+                            Icon(
+                              statusIcon,
+                              color: statusColor,
+                              size: 20,
+                            ),
                           ],
                         ),
+                        if (m.status != 'active') ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              m.status == 'pending'
+                                  ? 'Pending Invite'
+                                  : 'Rejected',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: statusColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -734,190 +884,219 @@ class _ManageAccessTab extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              PopupMenuButton<int>(
-                                icon: Icon(
-                                  Icons.more_vert,
-                                  color: Colors.grey[600],
+                              if (m.status == 'active')
+                                PopupMenuButton<int>(
+                                  icon: Icon(
+                                    Icons.more_vert,
+                                    color: Colors.grey[600],
+                                  ),
+                                  tooltip: 'Change role',
+                                  onSelected: (newRole) async {
+                                    if (newRole == m.role) return;
+                                    try {
+                                      // For active members, use email to update
+                                      // Note: Backend may need user's email, which we don't have in the model
+                                      // This is a limitation - we might need to store email in GroupRoleMember
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Role updates are not supported in this view. Please remove and re-add the user.'),
+                                          backgroundColor: Colors.orange,
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text('Failed to update role: $e'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  itemBuilder: (context) => roles
+                                      .map(
+                                        (r) => PopupMenuItem<int>(
+                                          value: r.role,
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                r.role == m.role
+                                                    ? Icons.check_circle
+                                                    : Icons.circle_outlined,
+                                                size: 20,
+                                                color: r.role == m.role
+                                                    ? const Color(0xFF8B7355)
+                                                    : Colors.grey[400],
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      r.label,
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: r.role == m.role
+                                                            ? const Color(
+                                                                0xFF8B7355)
+                                                            : null,
+                                                      ),
+                                                    ),
+                                                    if (r
+                                                        .description.isNotEmpty)
+                                                      Text(
+                                                        r.description,
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                          color:
+                                                              Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
                                 ),
-                                tooltip: 'Change role',
-                                onSelected: (newRole) async {
-                                  if (newRole == m.role) return;
-                                  try {
-                                    await onAssignRole(m.accountEmail, newRole);
+                            ],
+                          ),
+                        ),
+                        if (m.status == 'active') ...[
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                final ok = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    title: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Colors.orange[700],
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text('Remove Access'),
+                                      ],
+                                    ),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                            'Are you sure you want to remove:'),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[100],
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                m.accountName.isNotEmpty
+                                                    ? m.accountName
+                                                    : 'User ${m.userCode}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Code: ${m.userCode}',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          'This action cannot be undone.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(true),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        child: const Text('Remove'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (ok != true) return;
+
+                                try {
+                                  await onRemove(m.userCode);
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                            '✓ Updated ${m.accountEmail} to ${roleById[newRole]?.label ?? newRole}'),
+                                            '✓ Removed ${m.accountName.isNotEmpty ? m.accountName : m.userCode}'),
                                         backgroundColor: Colors.green,
                                       ),
                                     );
-                                  } catch (e) {
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content:
-                                            Text('Failed to update role: $e'),
+                                        content: Text('Failed to remove: $e'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
                                   }
-                                },
-                                itemBuilder: (context) => roles
-                                    .map(
-                                      (r) => PopupMenuItem<int>(
-                                        value: r.role,
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              r.role == m.role
-                                                  ? Icons.check_circle
-                                                  : Icons.circle_outlined,
-                                              size: 20,
-                                              color: r.role == m.role
-                                                  ? const Color(0xFF8B7355)
-                                                  : Colors.grey[400],
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    r.label,
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: r.role == m.role
-                                                          ? const Color(
-                                                              0xFF8B7355)
-                                                          : null,
-                                                    ),
-                                                  ),
-                                                  if (r.description.isNotEmpty)
-                                                    Text(
-                                                      r.description,
-                                                      style: TextStyle(
-                                                        fontSize: 11,
-                                                        color: Colors.grey[600],
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              final ok = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.warning_amber_rounded,
-                                        color: Colors.orange[700],
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text('Remove Access'),
-                                    ],
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                          'Are you sure you want to remove:'),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          m.accountEmail,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        'This action cannot be undone.',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      child: const Text('Remove'),
-                                    ),
-                                  ],
+                                }
+                              },
+                              icon: const Icon(Icons.person_remove_alt_1,
+                                  size: 18),
+                              label: const Text('Remove Access'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                side: const BorderSide(color: Colors.red),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              );
-
-                              if (ok != true) return;
-
-                              try {
-                                await onRemove(m.accountEmail);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('✓ Removed ${m.accountEmail}'),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Failed to remove: $e'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            icon:
-                                const Icon(Icons.person_remove_alt_1, size: 18),
-                            label: const Text('Remove Access'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              side: const BorderSide(color: Colors.red),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -930,6 +1109,7 @@ class _ManageAccessTab extends ConsumerWidget {
             caller: 'GroupAccessPage(Manage) groupRoleMembersProvider',
             error: error,
             stackTrace: stackTrace,
+            onRetry: () => ref.invalidate(groupRoleMembersProvider(groupId)),
           ),
         );
       },
@@ -938,6 +1118,7 @@ class _ManageAccessTab extends ConsumerWidget {
         caller: 'GroupAccessPage(Manage) assignableRolesProvider',
         error: error,
         stackTrace: stackTrace,
+        onRetry: () => ref.invalidate(assignableRolesProvider),
       ),
     );
   }
