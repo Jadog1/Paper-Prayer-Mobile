@@ -246,6 +246,44 @@ class AccountApiClient {
     return InviteActionResult.fromJson(json as Map<String, dynamic>);
   }
 
+  /// POST /api/account/roles/revoke
+  Future<RevokeInviteResult> revokeInvite({
+    required int groupId,
+    String? targetUserCode,
+    String? targetEmail,
+  }) async {
+    if (targetUserCode == null && targetEmail == null) {
+      throw Exception('Either targetUserCode or targetEmail must be provided');
+    }
+    if (targetUserCode != null && targetEmail != null) {
+      throw Exception(
+          'Only one of targetUserCode or targetEmail should be provided');
+    }
+
+    final body = <String, dynamic>{
+      'group_id': groupId,
+    };
+    if (targetUserCode != null) {
+      body['target_user_code'] = targetUserCode;
+    } else {
+      body['target_email'] = targetEmail!;
+    }
+
+    final response = await authClient.post(
+      config.uri("/account/roles/revoke"),
+      body: jsonEncode(body),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          "Error revoking invite: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
+    return RevokeInviteResult.fromJson(json as Map<String, dynamic>);
+  }
+
   /// GET /api/account/notification-preferences
   Future<NotificationPreferences> getNotificationPreferences() async {
     final response =

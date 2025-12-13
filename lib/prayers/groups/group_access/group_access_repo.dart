@@ -85,6 +85,34 @@ class GroupAccessActions {
     ref.invalidate(groupRoleMembersProvider(groupId));
     return result;
   }
+
+  Future<RevokeInviteResult> revokeInviteByUserCode({
+    required int groupId,
+    required String targetUserCode,
+  }) async {
+    final api = Config().accountApiClient;
+    final result = await api.revokeInvite(
+      groupId: groupId,
+      targetUserCode: targetUserCode,
+    );
+
+    ref.invalidate(groupRoleMembersProvider(groupId));
+    return result;
+  }
+
+  Future<RevokeInviteResult> revokeInviteByEmail({
+    required int groupId,
+    required String targetEmail,
+  }) async {
+    final api = Config().accountApiClient;
+    final result = await api.revokeInvite(
+      groupId: groupId,
+      targetEmail: targetEmail,
+    );
+
+    ref.invalidate(groupRoleMembersProvider(groupId));
+    return result;
+  }
 }
 
 final groupAccessActionsProvider =

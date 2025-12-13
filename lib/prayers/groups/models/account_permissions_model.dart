@@ -98,6 +98,29 @@ class RoleRemovalResult {
   }
 }
 
+class RevokeInviteResult {
+  const RevokeInviteResult({
+    required this.revoked,
+    required this.targetAccountId,
+    required this.targetAccountEmail,
+    required this.groupId,
+  });
+
+  final bool revoked;
+  final int targetAccountId;
+  final String targetAccountEmail;
+  final int groupId;
+
+  factory RevokeInviteResult.fromJson(Map<String, dynamic> json) {
+    return RevokeInviteResult(
+      revoked: (json['revoked'] as bool?) ?? false,
+      targetAccountId: (json['target_account_id'] as num).toInt(),
+      targetAccountEmail: (json['target_account_email'] as String?) ?? '',
+      groupId: (json['group_id'] as num).toInt(),
+    );
+  }
+}
+
 class PendingInvite {
   const PendingInvite({
     required this.groupId,
