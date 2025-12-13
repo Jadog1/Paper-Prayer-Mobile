@@ -22,6 +22,7 @@ class PrayersPage extends StatefulWidget {
 
 class _PrayersPageState extends State<PrayersPage> {
   int pageIndex = 0;
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
   bool _isHandlingSharedText = false;
 
   @override
@@ -39,7 +40,7 @@ class _PrayersPageState extends State<PrayersPage> {
   void didUpdateWidget(PrayersPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Handle new shared text
-    if (widget.sharedText != null &&
+    if (widget.sharedText != null && 
         widget.sharedText != oldWidget.sharedText &&
         !_isHandlingSharedText) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -52,29 +53,27 @@ class _PrayersPageState extends State<PrayersPage> {
     if (widget.sharedText == null || !mounted || _isHandlingSharedText) {
       return;
     }
-
+    
     // Mark that we're handling this to prevent duplicate navigation
     _isHandlingSharedText = true;
-
+    
     // Capture the shared text before clearing it
     final textToShare = widget.sharedText!;
-
+    
     // Clear the shared text IMMEDIATELY before navigation
     // This prevents re-triggering if the user returns to the app
     widget.onSharedTextHandled?.call();
-
+    
     // Navigate to BatchPaperMode with the captured shared text
-    Navigator.of(context)
-        .push(
-      MaterialPageRoute(
+    Navigator.of(context).push(
+      MaterialPageRoute( 
         builder: (context) => BatchPaperMode(
           config: BatchPaperModeConfig.requiresGroupSelection(
             prefillContent: textToShare,
           ),
         ),
       ),
-    )
-        .then((_) {
+    ).then((_) {
       // Reset the handling flag
       _isHandlingSharedText = false;
     });
@@ -82,11 +81,13 @@ class _PrayersPageState extends State<PrayersPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return PopScope(
       canPop: false,
       child: Scaffold(
         bottomNavigationBar: NavigationBar(
-          destinations: const <Widget>[
+          destinations: const <Widget> [
             NavigationDestination(
               selectedIcon: Icon(Icons.home),
               icon: Icon(Icons.home_outlined),
@@ -110,26 +111,49 @@ class _PrayersPageState extends State<PrayersPage> {
           ],
           selectedIndex: pageIndex,
           onDestinationSelected: (value) {
-            setState(() => pageIndex = value);
+            if (value == pageIndex) {
+              // Pop to root if already selected
+              final navigatorState = _navigatorKeys[value].currentState;
+              if (navigatorState != null && navigatorState.canPop()) {
+                navigatorState.popUntil((route) => route.isFirst);
+              } else {
+                setState(() => pageIndex = value); // No-op to refresh the UI
+              }
+            } else {
+              setState(() => pageIndex = value);
+            }
           },
         ),
-        body: _buildCurrentPage(),
+        body: IndexedStack(
+          index: pageIndex,
+          children: [
+            Navigator(
+              key: _navigatorKeys[0],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const NewHomePage(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[1],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const Groups(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[2],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const WebViewPage(),
+              ),
+            ),
+            Navigator(
+              key: _navigatorKeys[3],
+              onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => const ChatPage(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
-  }
-
-  Widget _buildCurrentPage() {
-    switch (pageIndex) {
-      case 0:
-        return const NewHomePage();
-      case 1:
-        return const Groups();
-      case 2:
-        return const WebViewPage();
-      case 3:
-        return const ChatPage();
-      default:
-        return const NewHomePage();
-    }
   }
 }
