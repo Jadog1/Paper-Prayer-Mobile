@@ -385,7 +385,8 @@ class MemberListItem extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Are you sure you want to revoke the pending invite for:'),
+                            const Text(
+                                'Are you sure you want to revoke the pending invite for:'),
                             const SizedBox(height: 8),
                             Container(
                               padding: const EdgeInsets.all(12),

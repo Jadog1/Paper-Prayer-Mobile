@@ -107,7 +107,9 @@ class _GroupAccessPageState extends ConsumerState<GroupAccessPage> {
                     );
               },
               onRevoke: (userCode) async {
-                await ref.read(groupAccessActionsProvider).revokeInviteByUserCode(
+                await ref
+                    .read(groupAccessActionsProvider)
+                    .revokeInviteByUserCode(
                       groupId: widget.groupId,
                       targetUserCode: userCode,
                     );
