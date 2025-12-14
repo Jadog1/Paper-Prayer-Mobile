@@ -15,10 +15,11 @@ class GroupSettings extends ConsumerStatefulWidget {
   @override
   ConsumerState<GroupSettings> createState() => _GroupSettingsState();
 }
+
 class _GroupSettingsState extends ConsumerState<GroupSettings> {
   var _name = '';
   var _description = '';
-  
+
   @override
   void initState() {
     super.initState();
@@ -31,15 +32,14 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    var groupContacts = widget.groupContacts ?? 
-      const GroupWithMembers(
-        group: Group(id: 0, name: "", description: ""),
-        members: [],
-        memberWithContactGroupPairs: [],
-      );
+    var groupContacts = widget.groupContacts ??
+        const GroupWithMembers(
+          group: GroupWithPermissions(id: 0, name: "", description: ""),
+          members: [],
+          memberWithContactGroupPairs: [],
+        );
 
     final isNewGroup = widget.groupContacts == null;
 
@@ -54,7 +54,8 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
             IconButton(
               icon: const Icon(Icons.delete_outline),
               tooltip: 'Delete Notebook',
-              onPressed: () => _showDeleteGroupDialog(context, groupContacts.group.id),
+              onPressed: () =>
+                  _showDeleteGroupDialog(context, groupContacts.group.id),
             ),
         ],
       ),
@@ -65,18 +66,18 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
           children: [
             // Group Info Card
             _buildGroupInfoCard(groupContacts),
-            
+
             const SizedBox(height: 24),
-            
+
             // Members Section
             if (!isNewGroup) ...[
               _buildMembersHeader(context, groupContacts),
               const SizedBox(height: 12),
               _buildMembersList(groupContacts),
             ],
-            
+
             const SizedBox(height: 24),
-            
+
             // Action Buttons
             _buildActionButtons(context, groupContacts, isNewGroup),
           ],
@@ -146,7 +147,8 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildMembersHeader(BuildContext context, GroupWithMembers groupContacts) {
+  Widget _buildMembersHeader(
+      BuildContext context, GroupWithMembers groupContacts) {
     return Row(
       children: [
         Icon(Icons.people, color: Colors.grey[700], size: 22),
@@ -221,7 +223,8 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, GroupWithMembers groupContacts, bool isNewGroup) {
+  Widget _buildActionButtons(
+      BuildContext context, GroupWithMembers groupContacts, bool isNewGroup) {
     return Row(
       children: [
         Expanded(
@@ -245,9 +248,13 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
             customProvider: () async {
               var newGroup = groupContacts.group.copyWith(
                 name: _name.isEmpty ? groupContacts.group.name : _name,
-                description: _description.isEmpty ? groupContacts.group.description : _description,
+                description: _description.isEmpty
+                    ? groupContacts.group.description
+                    : _description,
               );
-              await ref.read(groupContactsRepoProvider.notifier).saveGroup(newGroup);
+              await ref
+                  .read(groupContactsRepoProvider.notifier)
+                  .saveGroup(newGroup);
             },
             buttonText: isNewGroup ? 'Create Notebook' : 'Save Changes',
             buttonStyle: ElevatedButton.styleFrom(
@@ -289,8 +296,9 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
             child: const Text('Cancel'),
           ),
           InteractiveLoadButton(
-            customProvider: () =>
-                ref.read(groupContactsRepoProvider.notifier).removeGroup(groupId),
+            customProvider: () => ref
+                .read(groupContactsRepoProvider.notifier)
+                .removeGroup(groupId),
             buttonText: 'Delete',
             buttonStyle: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -312,7 +320,7 @@ class EditUserForGroup extends ConsumerWidget {
   const EditUserForGroup({super.key, required this.user, required this.group});
 
   final Contact user;
-  final Group group;
+  final GroupWithPermissions group;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -325,7 +333,8 @@ class EditUserForGroup extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ContactPageSettings(contact: user, group: group),
+            builder: (context) =>
+                ContactPageSettings(contact: user, group: group),
           ),
         ),
         child: Padding(
@@ -352,7 +361,7 @@ class EditUserForGroup extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Name and description
               Expanded(
                 child: Column(
@@ -366,7 +375,8 @@ class EditUserForGroup extends ConsumerWidget {
                         color: Colors.black87,
                       ),
                     ),
-                    if (user.description != null && user.description!.isNotEmpty) ...[
+                    if (user.description != null &&
+                        user.description!.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
                         user.description!,
@@ -381,9 +391,9 @@ class EditUserForGroup extends ConsumerWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(width: 8),
-              
+
               // Action buttons
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -394,7 +404,8 @@ class EditUserForGroup extends ConsumerWidget {
                     tooltip: 'Edit',
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ContactPageSettings(contact: user, group: group),
+                        builder: (context) =>
+                            ContactPageSettings(contact: user, group: group),
                       ),
                     ),
                   ),
@@ -402,7 +413,8 @@ class EditUserForGroup extends ConsumerWidget {
                     icon: const Icon(Icons.delete_outline, size: 20),
                     color: Colors.red[400],
                     tooltip: 'Remove',
-                    onPressed: () => _showDeleteMemberDialog(context, ref, user),
+                    onPressed: () =>
+                        _showDeleteMemberDialog(context, ref, user),
                   ),
                 ],
               ),
@@ -413,7 +425,8 @@ class EditUserForGroup extends ConsumerWidget {
     );
   }
 
-  void _showDeleteMemberDialog(BuildContext context, WidgetRef ref, Contact user) {
+  void _showDeleteMemberDialog(
+      BuildContext context, WidgetRef ref, Contact user) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

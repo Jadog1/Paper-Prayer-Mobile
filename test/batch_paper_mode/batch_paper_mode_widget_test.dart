@@ -11,7 +11,8 @@ void main() {
 
     setUp(() {
       testGroup = const GroupWithMembers(
-        group: Group(id: 1, name: 'Test Group', description: 'Test Description'),
+        group: GroupWithPermissions(
+            id: 1, name: 'Test Group', description: 'Test Description'),
         members: [
           Contact(
             id: 1,
@@ -30,7 +31,8 @@ void main() {
       );
     });
 
-    testWidgets('should show batch insert mode title', (WidgetTester tester) async {
+    testWidgets('should show batch insert mode title',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -46,7 +48,8 @@ void main() {
       expect(find.text('Batch Insert Mode'), findsOneWidget);
     });
 
-    testWidgets('should skip group selection when group is provided', (WidgetTester tester) async {
+    testWidgets('should skip group selection when group is provided',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -85,7 +88,8 @@ void main() {
       expect(find.byType(TextField), findsOneWidget);
     });
 
-    testWidgets('should toggle between edit and read mode', (WidgetTester tester) async {
+    testWidgets('should toggle between edit and read mode',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -115,7 +119,8 @@ void main() {
       }
     });
 
-    testWidgets('should show cancel and submit buttons in read mode', (WidgetTester tester) async {
+    testWidgets('should show cancel and submit buttons in read mode',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -149,7 +154,8 @@ void main() {
       expect(find.text('Submit All'), findsOneWidget);
     });
 
-    testWidgets('should disable submit button when no content in read mode', (WidgetTester tester) async {
+    testWidgets('should disable submit button when no content in read mode',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -183,16 +189,17 @@ void main() {
         of: submitButtonFinder,
         matching: find.byType(ElevatedButton),
       );
-      
+
       if (submitButtons.evaluate().isNotEmpty) {
         final button = tester.widget<ElevatedButton>(submitButtons.first);
         expect(button.onPressed, isNotNull);
       }
     });
 
-    testWidgets('should show prefilled content in read mode', (WidgetTester tester) async {
+    testWidgets('should show prefilled content in read mode',
+        (WidgetTester tester) async {
       const prefillContent = 'John Doe\nPrayer for healing';
-      
+
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(

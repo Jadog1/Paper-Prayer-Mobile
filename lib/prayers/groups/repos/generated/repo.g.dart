@@ -312,7 +312,7 @@ class _FetchContactGroupProviderElement
 }
 
 String _$fetchCollectionsAndContactsHash() =>
-    r'5b34428a929183ffc2e722e09db7101ff1ab78ee';
+    r'8a179319cf11d958dd8bc632fe350ac784a4b7c4';
 
 /// See also [fetchCollectionsAndContacts].
 @ProviderFor(fetchCollectionsAndContacts)
@@ -327,7 +327,7 @@ class FetchCollectionsAndContactsFamily
   /// See also [fetchCollectionsAndContacts].
   FetchCollectionsAndContactsProvider call(
     Contact contact,
-    Group group,
+    GroupWithPermissions group,
   ) {
     return FetchCollectionsAndContactsProvider(
       contact,
@@ -366,7 +366,7 @@ class FetchCollectionsAndContactsProvider
   /// See also [fetchCollectionsAndContacts].
   FetchCollectionsAndContactsProvider(
     Contact contact,
-    Group group,
+    GroupWithPermissions group,
   ) : this._internal(
           (ref) => fetchCollectionsAndContacts(
             ref as FetchCollectionsAndContactsRef,
@@ -398,7 +398,7 @@ class FetchCollectionsAndContactsProvider
   }) : super.internal();
 
   final Contact contact;
-  final Group group;
+  final GroupWithPermissions group;
 
   @override
   Override overrideWith(
@@ -451,7 +451,7 @@ mixin FetchCollectionsAndContactsRef
   Contact get contact;
 
   /// The parameter `group` of this provider.
-  Group get group;
+  GroupWithPermissions get group;
 }
 
 class _FetchCollectionsAndContactsProviderElement
@@ -463,7 +463,8 @@ class _FetchCollectionsAndContactsProviderElement
   Contact get contact =>
       (origin as FetchCollectionsAndContactsProvider).contact;
   @override
-  Group get group => (origin as FetchCollectionsAndContactsProvider).group;
+  GroupWithPermissions get group =>
+      (origin as FetchCollectionsAndContactsProvider).group;
 }
 
 String _$fetchRelatedContactsHash() =>
@@ -1027,7 +1028,7 @@ class _FetchPipelineStatusProviderElement
   int get requestId => (origin as FetchPipelineStatusProvider).requestId;
 }
 
-String _$groupContactsRepoHash() => r'93cc55f1855d12ceea40bc52eb7f042dadcbce79';
+String _$groupContactsRepoHash() => r'b2750b240a9e63740e6240826437f7d3cb045f0c';
 
 /// See also [GroupContactsRepo].
 @ProviderFor(GroupContactsRepo)

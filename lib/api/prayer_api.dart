@@ -55,7 +55,7 @@ class ContactsApiClient {
     }
   }
 
-  Future<void> saveGroup(Group group) async {
+  Future<void> saveGroup(GroupWithPermissions group) async {
     final response = await authClient.post(config.uri("/contacts/groups"),
         body: jsonEncode(group.toJson()),
         headers: {"Content-Type": "application/json"});
@@ -66,7 +66,8 @@ class ContactsApiClient {
     }
   }
 
-  Future<Contact> saveContact(Contact contact, Group group) async {
+  Future<Contact> saveContact(
+      Contact contact, GroupWithPermissions group) async {
     final response = await authClient.post(config.uri("/contacts/"),
         body: jsonEncode({
           "contact": contact.toJson(),
@@ -109,7 +110,7 @@ class ContactsApiClient {
     return json.map((contact) => Contact.fromJson(contact)).toList();
   }
 
-  Future<List<Group>> fetchGroups() async {
+  Future<List<GroupWithPermissions>> fetchGroups() async {
     final response = await authClient.get(config.uri("/contacts/groups"));
 
     if (response.statusCode != 200) {
@@ -118,7 +119,7 @@ class ContactsApiClient {
     }
 
     final json = jsonDecode(utf8.decode(response.bodyBytes)) as List;
-    return json.map((group) => Group.fromJson(group)).toList();
+    return json.map((group) => GroupWithPermissions.fromJson(group)).toList();
   }
 
   Future<List<ContactGroupPairs>> fetchContactGroupPairs() async {
@@ -175,7 +176,7 @@ class ContactsApiClient {
     return json.map((contact) => Contact.fromJson(contact)).toList();
   }
 
-  Future<Group> fetchGroupById(int groupId) async {
+  Future<GroupWithPermissions> fetchGroupById(int groupId) async {
     final response =
         await authClient.get(config.uri("/contacts/groups/$groupId"));
 
@@ -185,7 +186,7 @@ class ContactsApiClient {
     }
 
     final json = jsonDecode(utf8.decode(response.bodyBytes));
-    return Group.fromJson(json);
+    return GroupWithPermissions.fromJson(json);
   }
 
   Future<List<RelatedContact>> fetchRelatedContacts(int contactId) async {

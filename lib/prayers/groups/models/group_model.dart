@@ -5,15 +5,31 @@ import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 part 'generated/group_model.freezed.dart';
 part 'generated/group_model.g.dart';
 
+// Create an enum of permissions
+enum Permission {
+  view("View"),
+  editGroup("Edit Group"),
+  editPrayers("Edit Prayers"),
+  deleteGroup("Delete Group"),
+  viewDocument("View Document"),
+  editDocument("Edit Document"),
+  deleteDocument("Delete Document");
+
+  const Permission(this.value);
+  final String value;
+}
+
 @freezed
-class Group with _$Group {
-  const factory Group({
+class GroupWithPermissions with _$GroupWithPermissions {
+  const factory GroupWithPermissions({
     @Default(0) int id,
     required String name,
     @Default("") String? description,
-  }) = _Group;
+    @Default([]) List<String> permissions,
+  }) = _GroupWithPermissions;
 
-  factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
+  factory GroupWithPermissions.fromJson(Map<String, dynamic> json) =>
+      _$GroupWithPermissionsFromJson(json);
 }
 
 class ContactAndGroupPair {
@@ -32,7 +48,7 @@ class GroupWithMembers {
     required this.memberWithContactGroupPairs,
   });
 
-  final Group group;
+  final GroupWithPermissions group;
   final List<Contact> members;
   final List<ContactAndGroupPair> memberWithContactGroupPairs;
 }

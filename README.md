@@ -19,4 +19,7 @@ dart run build_runner watch --delete-conflicting-outputs
 
 flutter build apk --dart-define=backend_url=paper-prayer-af73d35b1629.herokuapp.com --dart-define=website_url=https://paper-prayer-af73d35b1629.herokuapp.com && flutter install
 
+# Update icon
+# assets/icon
+dart run flutter_launcher_icons
 ```

@@ -38,7 +38,7 @@ void main() {
       ];
 
       testGroup = GroupWithMembers(
-        group: const Group(id: 1, name: 'Test Group'),
+        group: const GroupWithPermissions(id: 1, name: 'Test Group'),
         members: testContacts,
         memberWithContactGroupPairs: [],
       );
@@ -73,7 +73,7 @@ Prayer request 3
 2. Prayer request 5
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         expect(result.length, equals(5));
         expect(result[0].content, equals('Prayer request 1'));
         expect(result[1].content, equals('Prayer request 2'));
@@ -90,7 +90,7 @@ Jane Smith
 Prayer for wisdom
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         expect(result.length, equals(4));
         expect(result[0].isContact, isTrue);
         expect(result[0].contact?.name, equals('John Doe'));
@@ -99,7 +99,9 @@ Prayer for wisdom
         expect(result[2].contact?.name, equals('Jane Smith'));
         expect(result[3].isPrayerRequest, isTrue);
       });
-      test('Names having other special characters should be treated as contacts', () {
+      test(
+          'Names having other special characters should be treated as contacts',
+          () {
         const content = '''
 - John Doe:
 Prayer for healing
@@ -126,7 +128,9 @@ Prayer for fake guidance
         expect(result[7].isPrayerRequest, isTrue);
         expect(result[7].content, equals('Prayer for fake guidance'));
       });
-      test('Names starting at the beginning of the line should be treated as contacts', () {
+      test(
+          'Names starting at the beginning of the line should be treated as contacts',
+          () {
         const content = '''
 John Doe: Prayer for healing
 Jane Smith - Prayer for wisdom
@@ -141,7 +145,6 @@ Jane Smith - Prayer for wisdom
         expect(result[3].isPrayerRequest, isTrue);
       });
 
-
       test('should detect partial contact name match', () {
         const content = '''
 John
@@ -150,7 +153,7 @@ Jane
 Prayer for wisdom
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         // Should detect "John" as matching "John Doe" and "Jane" as matching "Jane Smith"
         expect(result[0].isContact || result[0].isAmbiguousContact, isTrue);
         expect(result[2].isContact || result[2].isAmbiguousContact, isTrue);
@@ -167,16 +170,16 @@ Prayer for wisdom
             createdAt: '2024-01-01T00:00:00Z',
           ),
         ];
-        
+
         final group = GroupWithMembers(
-          group: const Group(id: 1, name: 'Test Group'),
+          group: const GroupWithPermissions(id: 1, name: 'Test Group'),
           members: contacts,
           memberWithContactGroupPairs: [],
         );
 
         const content = 'John';
         final result = ContentParser.parseToItems(content, group);
-        
+
         // "John" could match both "John Doe" and "John Smith"
         expect(result.length, equals(1));
         // It might be ambiguous if both match
@@ -190,15 +193,16 @@ Prayer for wisdom
 This is a very long line that exceeds 150 characters and should be treated as a prayer request even if it contains a name like John because it has too much other text in it
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         expect(result.length, equals(1));
         expect(result[0].isPrayerRequest, isTrue);
       });
 
-      test('should treat lines with names but extra text as prayer requests', () {
+      test('should treat lines with names but extra text as prayer requests',
+          () {
         const content = 'Please pray for John Doe who is sick';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         expect(result.length, equals(1));
         // The line contains "John Doe" but has extra text, so it could be detected as contact
         // or prayer request depending on the parsing logic. Let's just verify it's parsed.
@@ -211,12 +215,13 @@ This is a very long line that exceeds 150 characters and should be treated as a 
 	Prayer request with tabs	
 ''';
         final result = ContentParser.parseToItems(content, testGroup);
-        
+
         expect(result.length, equals(2));
         expect(result[0].content, equals('Prayer request with leading spaces'));
         expect(result[1].content, equals('Prayer request with tabs'));
       });
-      test('Should ignore lines that do not have any alphabetic characters', () {
+      test('Should ignore lines that do not have any alphabetic characters',
+          () {
         const content = '''
           John Doe
           -----
@@ -262,7 +267,10 @@ This is a very long line that exceeds 150 characters and should be treated as a 
 
         final result = ContentParser.itemsToRawText(items);
 
-        expect(result, equals('John Doe\n----------\n- Prayer for healing\n\nJane Smith\n----------\n- Prayer for wisdom'));
+        expect(
+            result,
+            equals(
+                'John Doe\n----------\n- Prayer for healing\n\nJane Smith\n----------\n- Prayer for wisdom'));
       });
 
       test('should handle empty list', () {
@@ -290,7 +298,10 @@ This is a very long line that exceeds 150 characters and should be treated as a 
             id: '1',
             type: BatchContentItemType.ambiguousContact,
             content: 'John',
-            possibleContacts: [testContacts[0], testContacts[1]], // Multiple possible matches
+            possibleContacts: [
+              testContacts[0],
+              testContacts[1]
+            ], // Multiple possible matches
           ),
         ];
 
@@ -316,13 +327,13 @@ Bob Johnson
 
         // Parse to items
         final items = ContentParser.parseToItems(originalContent, testGroup);
-        
+
         // Convert back to text
         final convertedContent = ContentParser.itemsToRawText(items);
-        
+
         // Parse again
         final items2 = ContentParser.parseToItems(convertedContent, testGroup);
-        
+
         // Should have same structure
         expect(items.length, equals(items2.length));
         for (int i = 0; i < items.length; i++) {

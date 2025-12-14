@@ -99,14 +99,15 @@ class GroupContactsRepo extends _$GroupContactsRepo {
     ref.invalidateSelf();
   }
 
-  Future<void> saveGroup(Group group) async {
+  Future<void> saveGroup(GroupWithPermissions group) async {
     var contactApi = config.contactApiClient;
     await contactApi.saveGroup(group);
 
     ref.invalidateSelf();
   }
 
-  Future<Contact> saveContact(Contact contact, Group group) async {
+  Future<Contact> saveContact(
+      Contact contact, GroupWithPermissions group) async {
     var contactApi = config.contactApiClient;
     var newContact = await contactApi.saveContact(contact, group);
 
@@ -145,7 +146,7 @@ class UserCollectionsAndContacts {
 
 @riverpod
 Future<UserCollectionsAndContacts> fetchCollectionsAndContacts(
-    Ref ref, Contact contact, Group group) async {
+    Ref ref, Contact contact, GroupWithPermissions group) async {
   var contactApi = config.contactApiClient;
   var prayerRequests =
       await ref.read(collectionContactRepoProvider(contact.id).future);

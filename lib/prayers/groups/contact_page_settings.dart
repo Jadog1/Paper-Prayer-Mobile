@@ -8,19 +8,21 @@ import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class ContactPageSettings extends ConsumerStatefulWidget {
-  const ContactPageSettings({super.key, required this.contact, required this.group});
+  const ContactPageSettings(
+      {super.key, required this.contact, required this.group});
 
   final Contact contact;
-  final Group group;
+  final GroupWithPermissions group;
 
   @override
-  ConsumerState<ContactPageSettings> createState() => _ContactPageSettingsState();
+  ConsumerState<ContactPageSettings> createState() =>
+      _ContactPageSettingsState();
 }
 
 class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
   var _name = '';
   var _description = '';
-  
+
   @override
   void initState() {
     super.initState();
@@ -77,9 +79,9 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
           children: [
             // Contact Info Card
             _buildContactInfoCard(contact),
-            
+
             const SizedBox(height: 24),
-            
+
             // Action Buttons
             _buildActionButtons(context, newContact, isNewContact),
           ],
@@ -170,7 +172,8 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, Contact newContact, bool isNewContact) {
+  Widget _buildActionButtons(
+      BuildContext context, Contact newContact, bool isNewContact) {
     return Row(
       children: [
         Expanded(
@@ -193,9 +196,13 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
           child: InteractiveLoadButton(
             customProvider: () async {
               if (widget.contact.id == 0) {
-                await ref.read(groupContactsRepoProvider.notifier).saveContact(newContact, widget.group);
+                await ref
+                    .read(groupContactsRepoProvider.notifier)
+                    .saveContact(newContact, widget.group);
               } else {
-                await ref.read(groupContactsRepoProvider.notifier).updateContact(newContact);
+                await ref
+                    .read(groupContactsRepoProvider.notifier)
+                    .updateContact(newContact);
               }
             },
             buttonText: isNewContact ? 'Add Member' : 'Save Changes',
@@ -241,7 +248,9 @@ class _ContactPageSettingsState extends ConsumerState<ContactPageSettings> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await ref.read(groupContactsRepoProvider.notifier).removeContact(widget.contact.id);
+              await ref
+                  .read(groupContactsRepoProvider.notifier)
+                  .removeContact(widget.contact.id);
               if (context.mounted) {
                 var nav = Navigator.of(context);
                 nav.pop(); // Close dialog
@@ -278,7 +287,9 @@ class DeleteContactButton extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              ref.read(groupContactsRepoProvider.notifier).removeContact(contactId);
+              ref
+                  .read(groupContactsRepoProvider.notifier)
+                  .removeContact(contactId);
               var nav = Navigator.of(context);
               nav.pop();
               nav.pop();
