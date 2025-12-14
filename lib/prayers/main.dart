@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prayer_ml/prayers/home/new_home.dart';
 import 'package:prayer_ml/prayers/web/web_view.dart';
 import 'package:prayer_ml/prayers/chat/chat.dart';
-import './groups/groups.dart';
+import 'package:prayer_ml/prayers/groups/notebook_groups/notebook_groups.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
 
 class PrayersPage extends StatefulWidget {
@@ -22,7 +22,8 @@ class PrayersPage extends StatefulWidget {
 
 class _PrayersPageState extends State<PrayersPage> {
   int pageIndex = 0;
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
+  final List<GlobalKey<NavigatorState>> _navigatorKeys =
+      List.generate(4, (_) => GlobalKey<NavigatorState>());
   bool _isHandlingSharedText = false;
 
   @override
@@ -40,7 +41,7 @@ class _PrayersPageState extends State<PrayersPage> {
   void didUpdateWidget(PrayersPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Handle new shared text
-    if (widget.sharedText != null && 
+    if (widget.sharedText != null &&
         widget.sharedText != oldWidget.sharedText &&
         !_isHandlingSharedText) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -53,27 +54,29 @@ class _PrayersPageState extends State<PrayersPage> {
     if (widget.sharedText == null || !mounted || _isHandlingSharedText) {
       return;
     }
-    
+
     // Mark that we're handling this to prevent duplicate navigation
     _isHandlingSharedText = true;
-    
+
     // Capture the shared text before clearing it
     final textToShare = widget.sharedText!;
-    
+
     // Clear the shared text IMMEDIATELY before navigation
     // This prevents re-triggering if the user returns to the app
     widget.onSharedTextHandled?.call();
-    
+
     // Navigate to BatchPaperMode with the captured shared text
-    Navigator.of(context).push(
-      MaterialPageRoute( 
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
         builder: (context) => BatchPaperMode(
           config: BatchPaperModeConfig.requiresGroupSelection(
             prefillContent: textToShare,
           ),
         ),
       ),
-    ).then((_) {
+    )
+        .then((_) {
       // Reset the handling flag
       _isHandlingSharedText = false;
     });
@@ -81,13 +84,11 @@ class _PrayersPageState extends State<PrayersPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return PopScope(
       canPop: false,
       child: Scaffold(
         bottomNavigationBar: NavigationBar(
-          destinations: const <Widget> [
+          destinations: const <Widget>[
             NavigationDestination(
               selectedIcon: Icon(Icons.home),
               icon: Icon(Icons.home_outlined),
