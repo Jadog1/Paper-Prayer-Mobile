@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/view_model.dart';
@@ -16,9 +17,13 @@ import 'package:prayer_ml/shared/widgets.dart';
 class PrayerRequestWithAll {
   final Collection collection;
   final List<RelatedContact> relatedContacts;
+  final GroupWithMembers groupWithMembers;
 
-  PrayerRequestWithAll(
-      {required this.collection, required this.relatedContacts});
+  PrayerRequestWithAll({
+    required this.collection,
+    required this.relatedContacts,
+    required this.groupWithMembers,
+  });
 }
 
 class CompactRequestButtonGroup extends ConsumerWidget {
@@ -30,8 +35,6 @@ class CompactRequestButtonGroup extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prayerWithAll = PrayerRequestWithAll(
-        collection: request, relatedContacts: allRelatedContacts);
     return SizedBox(
       height: 26,
       child: Row(
@@ -49,8 +52,9 @@ class CompactRequestButtonGroup extends ConsumerWidget {
             icon: const Icon(Icons.dashboard_customize),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (context) =>
-                      RequestDashboard(prayerWithAll: prayerWithAll)),
+                  builder: (context) => RequestDashboardLoader(
+                      collection: request,
+                      relatedContacts: allRelatedContacts)),
             ),
           ),
           const Spacer(),
@@ -89,40 +93,83 @@ class RequestDashboardLoader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (collection != null && relatedContacts != null) {
-      return RequestDashboard(
+      // Fetch group with members
+      final groupAsync =
+          ref.watch(fetchGroupWithMembersProvider(collection!.group.groupId));
+      return groupAsync.when(
+        data: (groupWithMembers) => RequestDashboard(
           prayerWithAll: PrayerRequestWithAll(
-              collection: collection!, relatedContacts: relatedContacts!));
+            collection: collection!,
+            relatedContacts: relatedContacts!,
+            groupWithMembers: groupWithMembers,
+          ),
+        ),
+        loading: () => const CreativeLoadingScreen(),
+        error: (error, stackTrace) => PrintError(
+          caller: "RequestDashboardLoader - Group Fetch",
+          error: error,
+          stackTrace: stackTrace,
+          onRetry: () => ref.invalidate(
+              fetchGroupWithMembersProvider(collection!.group.groupId)),
+        ),
+      );
     } else if (collection != null) {
-      var viewModel =
+      final groupAsync =
+          ref.watch(fetchGroupWithMembersProvider(collection!.group.groupId));
+      var relatedContactsAsync =
           ref.watch(fetchRelatedContactsProvider(collection!.user.id));
-      return switch (viewModel) {
-        AsyncData(:final value) => RequestDashboard(
-            prayerWithAll: PrayerRequestWithAll(
-                collection: collection!, relatedContacts: value)),
-        AsyncError(:final error, :final stackTrace) => PrintError(
-            caller: "RequestDashboardLoader",
+      return switch ((relatedContactsAsync, groupAsync)) {
+        (AsyncData(:final value), AsyncData(value: final groupWithMembers)) =>
+          RequestDashboard(
+              prayerWithAll: PrayerRequestWithAll(
+                  collection: collection!,
+                  relatedContacts: value,
+                  groupWithMembers: groupWithMembers)),
+        (AsyncError(:final error, :final stackTrace), _) => PrintError(
+            caller: "RequestDashboardLoader - Related Contacts",
             error: error,
             stackTrace: stackTrace,
             onRetry: () => ref
                 .invalidate(fetchRelatedContactsProvider(collection!.user.id))),
+        (_, AsyncError(:final error, :final stackTrace)) => PrintError(
+            caller: "RequestDashboardLoader - Group Fetch",
+            error: error,
+            stackTrace: stackTrace,
+            onRetry: () => ref.invalidate(
+                fetchGroupWithMembersProvider(collection!.group.groupId))),
         _ => const CreativeLoadingScreen(),
       };
     } else {
-      var provider = ref
+      var collectionAsync = ref
           .watch(fetchCollectionWithContactsProvider(collectionId!, userId!));
-      return switch (provider) {
-        AsyncData(:final value) => RequestDashboard(
-            prayerWithAll: PrayerRequestWithAll(
-                collection: value.collection,
-                relatedContacts: value.relatedContacts)),
-        AsyncError(:final error, :final stackTrace) => PrintError(
-            caller: "RequestDashboardLoader",
+
+      return collectionAsync.when(
+        data: (collectionWithContacts) {
+          final groupAsync = ref.watch(fetchGroupWithMembersProvider(
+              collectionWithContacts.collection.group.groupId));
+          return groupAsync.when(
+            data: (groupWithMembers) => RequestDashboard(
+                prayerWithAll: PrayerRequestWithAll(
+                    collection: collectionWithContacts.collection,
+                    relatedContacts: collectionWithContacts.relatedContacts,
+                    groupWithMembers: groupWithMembers)),
+            loading: () => const CreativeLoadingScreen(),
+            error: (error, stackTrace) => PrintError(
+                caller: "RequestDashboardLoader - Group Fetch",
+                error: error,
+                stackTrace: stackTrace,
+                onRetry: () => ref.invalidate(fetchGroupWithMembersProvider(
+                    collectionWithContacts.collection.group.groupId))),
+          );
+        },
+        loading: () => const CreativeLoadingScreen(),
+        error: (error, stackTrace) => PrintError(
+            caller: "RequestDashboardLoader - Collection Fetch",
             error: error,
             stackTrace: stackTrace,
             onRetry: () => ref.invalidate(
                 fetchCollectionWithContactsProvider(collectionId!, userId!))),
-        _ => const CreativeLoadingScreen(),
-      };
+      );
     }
   }
 }
@@ -137,6 +184,7 @@ class RequestDashboard extends ConsumerWidget {
     var collection = prayerWithAll.collection;
     var relatedContacts = findRelatedContacts(prayerWithAll.relatedContacts,
         getRelatedContactIds(collection.relatedContacts));
+    var permissions = prayerWithAll.groupWithMembers.group.permissions;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -229,6 +277,8 @@ class RequestDashboard extends ConsumerWidget {
                       PrayerNotesWidget(
                         groupId: collection.group.groupId,
                         collectionId: collection.id,
+                        showHeader: false,
+                        permissions: permissions,
                       ),
                     ],
                   ),

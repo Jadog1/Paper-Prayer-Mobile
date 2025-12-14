@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
+import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/repos/related_contacts_repo.dart';
 import 'package:prayer_ml/prayers/groups/related_contact_view.dart';
@@ -24,6 +25,34 @@ class ContactView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groupAsync = ref.watch(fetchGroupWithMembersProvider(groupId));
+
+    Widget? floatingActionBtn(GroupWithMembers groupWithMembers) {
+      final bool canEdit =
+          hasPermission(groupWithMembers.group, Permission.editGroup);
+
+      if (!canEdit) {
+        return null;
+      }
+
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ContactPageSettings(
+                contact: contact,
+                group: groupWithMembers.group,
+              ),
+            ),
+          );
+        },
+        backgroundColor: Colors.green[700],
+        foregroundColor: Colors.white,
+        tooltip: 'Edit Contact',
+        child: const Icon(Icons.edit),
+      );
+    }
+
+    ;
 
     return groupAsync.when(
       data: (groupWithMembers) => Scaffold(
@@ -104,6 +133,8 @@ class ContactView extends ConsumerWidget {
                       groupId: groupId,
                       contactId: contact.id,
                       maxHeight: 500,
+                      showHeader: false,
+                      permissions: groupWithMembers.group.permissions,
                     ),
                     const SizedBox(height: 12),
 
@@ -118,22 +149,7 @@ class ContactView extends ConsumerWidget {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ContactPageSettings(
-                  contact: contact,
-                  group: groupWithMembers.group,
-                ),
-              ),
-            );
-          },
-          backgroundColor: Colors.green[700],
-          foregroundColor: Colors.white,
-          tooltip: 'Edit Contact',
-          child: const Icon(Icons.edit),
-        ),
+        floatingActionButton: floatingActionBtn(groupWithMembers),
       ),
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
