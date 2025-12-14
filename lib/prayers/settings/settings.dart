@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/account_model.dart';
 import 'package:prayer_ml/shared/config.dart';
 import 'package:prayer_ml/prayers/usage/usage_dashboard.dart';
 import 'package:prayer_ml/prayers/settings/notification_settings_page.dart';
 import 'package:prayer_ml/prayers/groups/group_access/pending_invites_page.dart';
+import 'package:prayer_ml/prayers/groups/repos/pending_invites_repo.dart';
 
-class AccountSettingsPage extends StatefulWidget {
+class AccountSettingsPage extends ConsumerStatefulWidget {
   const AccountSettingsPage({super.key});
 
   @override
-  State<AccountSettingsPage> createState() => _AccountSettingsPageState();
+  ConsumerState<AccountSettingsPage> createState() =>
+      _AccountSettingsPageState();
 }
 
-class _AccountSettingsPageState extends State<AccountSettingsPage> {
+class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -529,76 +532,117 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             Divider(height: 1, color: Colors.grey[200]),
 
                             // Group Invites Section
-                            Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                            Builder(
+                              builder: (context) {
+                                final hasPendingInvites =
+                                    ref.watch(hasPendingInvitesProvider);
+
+                                return Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: theme.colorScheme.primary
-                                              .withValues(alpha: 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Icon(
-                                          Icons.group_add,
-                                          color: theme.colorScheme.primary,
-                                          size: 20,
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: theme.colorScheme.primary
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Icon(
+                                              Icons.group_add,
+                                              color: theme.colorScheme.primary,
+                                              size: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            'Group Invites',
+                                            style: theme.textTheme.titleSmall
+                                                ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'View and manage your pending group invitations',
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          color: Colors.grey[600],
                                         ),
                                       ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        'Group Invites',
-                                        style: theme.textTheme.titleSmall
-                                            ?.copyWith(
-                                          fontWeight: FontWeight.bold,
+                                      const SizedBox(height: 16),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const PendingInvitesPage(),
+                                              ),
+                                            );
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            foregroundColor:
+                                                theme.colorScheme.primary,
+                                            side: BorderSide(
+                                                color: theme.colorScheme.primary
+                                                    .withValues(alpha: 0.5)),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.inbox),
+                                              const SizedBox(width: 8),
+                                              const Text(
+                                                  'View Pending Invites'),
+                                              hasPendingInvites.when(
+                                                data: (hasInvites) {
+                                                  if (!hasInvites)
+                                                    return const SizedBox
+                                                        .shrink();
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8),
+                                                    child: Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color: Colors.red,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                loading: () =>
+                                                    const SizedBox.shrink(),
+                                                error: (_, __) =>
+                                                    const SizedBox.shrink(),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'View and manage your pending group invitations',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: OutlinedButton.icon(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PendingInvitesPage(),
-                                          ),
-                                        );
-                                      },
-                                      icon: const Icon(Icons.inbox),
-                                      label: const Text('View Pending Invites'),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor:
-                                            theme.colorScheme.primary,
-                                        side: BorderSide(
-                                            color: theme.colorScheme.primary
-                                                .withValues(alpha: 0.5)),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
 
                             // Divider

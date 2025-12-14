@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:prayer_ml/prayers/home/home.dart';
 import 'package:prayer_ml/prayers/home/new_home.dart';
 import 'package:prayer_ml/prayers/web/web_view.dart';
-import 'package:prayer_ml/prayers/chat/chat.dart';
+// import 'package:prayer_ml/prayers/chat/chat.dart';
 import 'package:prayer_ml/prayers/groups/notebook_groups/notebook_groups.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
 
@@ -104,11 +103,11 @@ class _PrayersPageState extends State<PrayersPage> {
               selectedIcon: Icon(Icons.web),
               label: 'Studies',
             ),
-            NavigationDestination(
-              icon: Icon(Icons.chat_outlined),
-              selectedIcon: Icon(Icons.chat),
-              label: 'AI Chat',
-            ),
+            // NavigationDestination(
+            //   icon: Icon(Icons.chat_outlined),
+            //   selectedIcon: Icon(Icons.chat),
+            //   label: 'AI Chat',
+            // ),
           ],
           selectedIndex: pageIndex,
           onDestinationSelected: (value) {
@@ -146,12 +145,12 @@ class _PrayersPageState extends State<PrayersPage> {
                 builder: (context) => const WebViewPage(),
               ),
             ),
-            Navigator(
-              key: _navigatorKeys[3],
-              onGenerateRoute: (settings) => MaterialPageRoute(
-                builder: (context) => const ChatPage(),
-              ),
-            ),
+            // Navigator(
+            //   key: _navigatorKeys[3],
+            //   onGenerateRoute: (settings) => MaterialPageRoute(
+            //     builder: (context) => const ChatPage(),
+            //   ),
+            // ),
           ],
         ),
       ),

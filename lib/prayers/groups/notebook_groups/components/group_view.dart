@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
+import 'package:prayer_ml/prayers/groups/repos/pending_invites_repo.dart';
+import 'package:prayer_ml/prayers/groups/group_access/pending_invites_page.dart';
 import '../models/search_state.dart';
 import 'search_bar_widget.dart';
 import 'group_notebook.dart';
@@ -20,6 +22,7 @@ class GroupView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var searchState = ref.watch(searchStateProvider(groupContacts));
+    final hasPendingInvites = ref.watch(hasPendingInvitesProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -41,6 +44,59 @@ class GroupView extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.grey.shade800,
                       ),
+                    ),
+                    const Spacer(),
+                    // Pending invites notification badge
+                    hasPendingInvites.when(
+                      data: (hasInvites) {
+                        if (!hasInvites) return const SizedBox.shrink();
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PendingInvitesPage(),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.orange.shade300,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.notifications_active,
+                                  color: Colors.orange.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Invites',
+                                  style: TextStyle(
+                                    color: Colors.orange.shade700,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
                     ),
                   ],
                 ),

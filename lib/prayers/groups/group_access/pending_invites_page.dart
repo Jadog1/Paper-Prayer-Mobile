@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/account_permissions_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/pending_invites_repo.dart';
-import 'package:prayer_ml/shared/config.dart';
 import 'package:riverpod_paging_utils/riverpod_paging_utils.dart';
 import 'package:intl/intl.dart';
 
@@ -70,9 +69,8 @@ class PendingInvitesPage extends ConsumerWidget {
                   invite: invite,
                   onAccept: () async {
                     try {
-                      final api = Config().accountApiClient;
-                      await api.acceptInvite(groupId: invite.groupId);
-                      ref.invalidate(provider);
+                      await ref
+                          .read(acceptInviteProvider(invite.groupId).future);
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -94,9 +92,8 @@ class PendingInvitesPage extends ConsumerWidget {
                   },
                   onReject: () async {
                     try {
-                      final api = Config().accountApiClient;
-                      await api.rejectInvite(groupId: invite.groupId);
-                      ref.invalidate(provider);
+                      await ref
+                          .read(rejectInviteProvider(invite.groupId).future);
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

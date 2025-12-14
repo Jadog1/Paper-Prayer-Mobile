@@ -6,6 +6,7 @@ import 'package:prayer_ml/prayers/home/views/historical_recommendations_view.dar
 import 'package:prayer_ml/prayers/home/views/unresolved_followups_view.dart';
 import 'package:prayer_ml/prayers/home/widgets/upcoming_events_preview.dart';
 import 'package:prayer_ml/prayers/settings/settings.dart';
+import 'package:prayer_ml/prayers/groups/repos/pending_invites_repo.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 class NewHomePage extends ConsumerWidget {
@@ -28,6 +29,7 @@ class NewHomePageConsumer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var viewModel = ref.watch(recommendationRepoProvider);
+    final hasPendingInvites = ref.watch(hasPendingInvitesProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -40,18 +42,47 @@ class NewHomePageConsumer extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const AccountSettingsPage(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.manage_accounts),
-                    iconSize: 28,
-                    color: Colors.blueAccent,
-                    tooltip: 'Account Settings',
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const AccountSettingsPage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.manage_accounts),
+                        iconSize: 28,
+                        color: Colors.blueAccent,
+                        tooltip: 'Account Settings',
+                      ),
+                      // Notification badge
+                      hasPendingInvites.when(
+                        data: (hasInvites) {
+                          if (!hasInvites) return const SizedBox.shrink();
+                          return Positioned(
+                            right: 6,
+                            top: 6,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                      ),
+                    ],
                   ),
                 ],
               ),
