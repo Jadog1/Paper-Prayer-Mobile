@@ -894,7 +894,8 @@ class PaperModePermissions extends StatelessWidget {
     }
     if (!hasPermission(groupContacts.group, Permission.editPrayers)) {
       return PaperMode(
-          config: PaperModeConfig.readOnly(groupContacts: groupContacts));
+          config: PaperModeConfig.readOnly(
+              groupContacts: groupContacts, showHeader: true));
     }
     return PaperMode(
         config: PaperModeConfig.editable(groupContacts: groupContacts));
