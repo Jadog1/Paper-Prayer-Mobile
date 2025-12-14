@@ -137,7 +137,7 @@ class _PrayersPageState extends State<PrayersPage> {
             Navigator(
               key: _navigatorKeys[1],
               onGenerateRoute: (settings) => MaterialPageRoute(
-                builder: (context) => const Groups(),
+                builder: (context) => const NotebookGroups(),
               ),
             ),
             Navigator(

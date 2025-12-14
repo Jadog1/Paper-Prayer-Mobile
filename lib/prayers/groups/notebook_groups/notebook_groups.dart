@@ -19,7 +19,7 @@
 ///
 /// ## Public API
 ///
-/// The only exported widget is `Groups`, which serves as the entry point.
+/// The only exported widget is `NotebookGroups`, which serves as the entry point.
 /// All internal components are kept private to maintain encapsulation.
 ///
 /// ## Structure
@@ -42,10 +42,10 @@ import 'components/group_consumer.dart';
 ///
 /// Usage:
 /// ```dart
-/// Groups()
+/// NotebookGroups()
 /// ```
-class Groups extends ConsumerWidget {
-  const Groups({super.key});
+class NotebookGroups extends ConsumerWidget {
+  const NotebookGroups({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
