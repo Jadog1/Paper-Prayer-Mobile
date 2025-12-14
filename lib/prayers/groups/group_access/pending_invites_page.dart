@@ -173,7 +173,7 @@ class PendingInviteCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: const Color(0xFF8B7355).withOpacity(0.2),
+          color: const Color(0xFF8B7355).withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -187,7 +187,7 @@ class PendingInviteCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B7355).withOpacity(0.1),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -219,7 +219,8 @@ class PendingInviteCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8B7355).withOpacity(0.2),
+                              color: const Color(0xFF8B7355)
+                                  .withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(

@@ -118,7 +118,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
   Widget _buildEventCard(Collection collection) {
     return Card(
       elevation: 3,
-      shadowColor: Colors.blue.withOpacity(0.2),
+      shadowColor: Colors.blue.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -130,7 +130,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
             end: Alignment.bottomRight,
             colors: [
               Colors.white,
-              Colors.blue[50]!.withOpacity(0.3),
+              Colors.blue[50]!.withValues(alpha: 0.3),
             ],
           ),
         ),
@@ -150,7 +150,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.3),
+                          color: Colors.blueAccent.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -268,7 +268,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
   Widget _buildPrayerRequestsCard(Collection collection) {
     return Card(
       elevation: 3,
-      shadowColor: Colors.blue.withOpacity(0.2),
+      shadowColor: Colors.blue.withValues(alpha: 0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -300,7 +300,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -354,10 +354,10 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
   Widget _buildModernFilterToggle() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -406,7 +406,7 @@ class _EventDetailsWidgetState extends ConsumerState<EventDetailsWidget> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(12),
                     bottomRight: Radius.circular(12),

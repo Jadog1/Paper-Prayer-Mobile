@@ -12,7 +12,7 @@ class PrayerNotesWidget extends StatelessWidget {
     this.showHeader = true,
     this.title = "Prayer Notes",
   }) : assert(collectionId != null || contactId != null,
-              'Either collectionId or contactId must be provided');
+            'Either collectionId or contactId must be provided');
 
   final int groupId;
   final int? collectionId;
@@ -29,7 +29,7 @@ class PrayerNotesWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

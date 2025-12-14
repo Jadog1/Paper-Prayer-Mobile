@@ -25,11 +25,17 @@ class GroupWithPermissions with _$GroupWithPermissions {
     @Default(0) int id,
     required String name,
     @Default("") String? description,
+    // The permissions that the current user has for this group
     @Default([]) List<String> permissions,
   }) = _GroupWithPermissions;
 
   factory GroupWithPermissions.fromJson(Map<String, dynamic> json) =>
       _$GroupWithPermissionsFromJson(json);
+}
+
+// Create a function that takes a GroupWithPermissions and a Permission and returns true if the group has the permission
+bool hasPermission(GroupWithPermissions group, Permission permission) {
+  return group.permissions.contains(permission.value);
 }
 
 class ContactAndGroupPair {

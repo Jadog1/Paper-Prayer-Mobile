@@ -152,7 +152,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       gradient: LinearGradient(
                         colors: [
                           theme.colorScheme.primary,
-                          theme.colorScheme.primary.withOpacity(0.8),
+                          theme.colorScheme.primary.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -169,7 +169,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withValues(alpha: 0.3),
                                     width: 3),
                               ),
                               child: CircleAvatar(
@@ -204,7 +204,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                 user!.email!,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                 ),
                               ),
                             ],
@@ -224,7 +224,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black.withValues(alpha: 0.08),
                             blurRadius: 20,
                             offset: const Offset(0, 4),
                           ),
@@ -247,7 +247,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: theme.colorScheme.primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           borderRadius:
                                               BorderRadius.circular(8),
                                         ),
@@ -387,7 +387,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: theme.colorScheme.primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           borderRadius:
                                               BorderRadius.circular(8),
                                         ),
@@ -434,7 +434,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                             theme.colorScheme.primary,
                                         side: BorderSide(
                                             color: theme.colorScheme.primary
-                                                .withOpacity(0.5)),
+                                                .withValues(alpha: 0.5)),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12),
                                         shape: RoundedRectangleBorder(
@@ -463,7 +463,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: theme.colorScheme.primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           borderRadius:
                                               BorderRadius.circular(8),
                                         ),
@@ -511,7 +511,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                             theme.colorScheme.primary,
                                         side: BorderSide(
                                             color: theme.colorScheme.primary
-                                                .withOpacity(0.5)),
+                                                .withValues(alpha: 0.5)),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12),
                                         shape: RoundedRectangleBorder(
@@ -540,7 +540,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           color: theme.colorScheme.primary
-                                              .withOpacity(0.1),
+                                              .withValues(alpha: 0.1),
                                           borderRadius:
                                               BorderRadius.circular(8),
                                         ),
@@ -587,7 +587,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                             theme.colorScheme.primary,
                                         side: BorderSide(
                                             color: theme.colorScheme.primary
-                                                .withOpacity(0.5)),
+                                                .withValues(alpha: 0.5)),
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 12),
                                         shape: RoundedRectangleBorder(
@@ -617,9 +617,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             color: user.emailVerified
-                                                ? Colors.green.withOpacity(0.1)
+                                                ? Colors.green
+                                                    .withValues(alpha: 0.1)
                                                 : Colors.orange
-                                                    .withOpacity(0.1),
+                                                    .withValues(alpha: 0.1),
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
@@ -667,9 +668,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: user.emailVerified
-                                                ? Colors.green.withOpacity(0.15)
+                                                ? Colors.green
+                                                    .withValues(alpha: 0.15)
                                                 : Colors.orange
-                                                    .withOpacity(0.15),
+                                                    .withValues(alpha: 0.15),
                                             borderRadius:
                                                 BorderRadius.circular(20),
                                           ),

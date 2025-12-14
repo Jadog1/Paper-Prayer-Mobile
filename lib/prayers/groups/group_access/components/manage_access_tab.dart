@@ -13,6 +13,7 @@ class ManageAccessTab extends ConsumerWidget {
     required this.onAssignRoleByEmail,
     required this.onRemove,
     this.onRevoke,
+    this.onUpdateRole,
   });
 
   final int groupId;
@@ -20,6 +21,7 @@ class ManageAccessTab extends ConsumerWidget {
   final Future<void> Function(String email, int role) onAssignRoleByEmail;
   final Future<void> Function(String userCode) onRemove;
   final Future<void> Function(String userCode)? onRevoke;
+  final Future<void> Function(String userCode, int role)? onUpdateRole;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,6 +83,7 @@ class ManageAccessTab extends ConsumerWidget {
                   roles: roles,
                   onRemove: onRemove,
                   onRevoke: onRevoke,
+                  onUpdateRole: onUpdateRole,
                 );
               },
             );

@@ -1,25 +1,25 @@
 /// Batch Paper Mode - A batch insertion interface for prayer requests
-/// 
+///
 /// This library provides a wizard-based interface for bulk importing
 /// prayer requests with automatic contact detection and parsing.
-/// 
+///
 /// ## Usage
-/// 
+///
 /// ```dart
 /// import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
-/// 
+///
 /// // With group already selected
 /// BatchPaperMode(
 ///   config: BatchPaperModeConfig.withGroup(
 ///     groupContacts: groupContacts,
 ///   ),
 /// )
-/// 
+///
 /// // Requires group selection
 /// BatchPaperMode(
 ///   config: BatchPaperModeConfig.requiresGroupSelection(),
 /// )
-/// 
+///
 /// // With prefilled content
 /// BatchPaperMode(
 ///   config: BatchPaperModeConfig.withGroup(
@@ -50,7 +50,7 @@ export 'models/batch_content_item.dart';
 export 'providers/batch_paper_mode_provider.dart';
 
 /// Main BatchPaperMode widget
-/// 
+///
 /// Provides a wizard interface for batch importing prayer requests
 class BatchPaperMode extends ConsumerWidget {
   const BatchPaperMode({
@@ -94,12 +94,16 @@ class BatchPaperMode extends ConsumerWidget {
                 padding: EdgeInsets.only(
                   left: 16.0,
                   right: 16.0,
-                  top: state.currentStep == BatchPaperModeStep.contentEditing 
-                      ? (state.selectedGroup != null ? 92.0 : 56.0) // Space for toolbar (taller if group is shown)
+                  top: state.currentStep == BatchPaperModeStep.contentEditing
+                      ? (state.selectedGroup != null
+                          ? 92.0
+                          : 56.0) // Space for toolbar (taller if group is shown)
                       : 16.0,
-                  bottom: state.currentStep == BatchPaperModeStep.contentEditing && !state.isEditMode
-                      ? 80.0  // Space for bottom buttons in read mode
-                      : 16.0, // Normal spacing in edit mode
+                  bottom:
+                      state.currentStep == BatchPaperModeStep.contentEditing &&
+                              !state.isEditMode
+                          ? 80.0 // Space for bottom buttons in read mode
+                          : 16.0, // Normal spacing in edit mode
                 ),
                 child: Column(
                   children: [
@@ -114,7 +118,8 @@ class BatchPaperMode extends ConsumerWidget {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.error_outline, color: Colors.red.shade700),
+                            Icon(Icons.error_outline,
+                                color: Colors.red.shade700),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -155,7 +160,8 @@ class BatchPaperMode extends ConsumerWidget {
                 ),
 
               // Bottom action buttons - fixed position (only in read mode)
-              if (state.currentStep == BatchPaperModeStep.contentEditing && !state.isEditMode)
+              if (state.currentStep == BatchPaperModeStep.contentEditing &&
+                  !state.isEditMode)
                 Positioned(
                   left: 0,
                   right: 0,
@@ -166,7 +172,7 @@ class BatchPaperMode extends ConsumerWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, -2),
                         ),
@@ -188,7 +194,8 @@ class BatchPaperMode extends ConsumerWidget {
   }
 
   /// Handle back press with confirmation if needed
-  Future<bool> _handleBackPress(BuildContext context, BatchPaperModeState state) async {
+  Future<bool> _handleBackPress(
+      BuildContext context, BatchPaperModeState state) async {
     if (!_hasContent(state)) {
       return true; // Allow exit without confirmation
     }
@@ -242,7 +249,7 @@ class BatchPaperMode extends ConsumerWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -287,9 +294,11 @@ class BatchPaperMode extends ConsumerWidget {
                       OutlinedButton.icon(
                         onPressed: () => notifier.goBackToGroupSelection(),
                         icon: const Icon(Icons.swap_horiz, size: 16),
-                        label: const Text('Change Group', style: TextStyle(fontSize: 12)),
+                        label: const Text('Change Group',
+                            style: TextStyle(fontSize: 12)),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -297,13 +306,16 @@ class BatchPaperMode extends ConsumerWidget {
                     // Edit/Preview button
                     OutlinedButton.icon(
                       onPressed: () => notifier.toggleMode(),
-                      icon: Icon(state.isEditMode ? Icons.visibility : Icons.edit, size: 16),
+                      icon: Icon(
+                          state.isEditMode ? Icons.visibility : Icons.edit,
+                          size: 16),
                       label: Text(
                         state.isEditMode ? 'Preview' : 'Edit',
                         style: const TextStyle(fontSize: 12),
                       ),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -311,15 +323,19 @@ class BatchPaperMode extends ConsumerWidget {
                     if (state.isEditMode) ...[
                       OutlinedButton.icon(
                         onPressed: () async {
-                          final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                          if (clipboardData != null && clipboardData.text != null) {
+                          final clipboardData =
+                              await Clipboard.getData(Clipboard.kTextPlain);
+                          if (clipboardData != null &&
+                              clipboardData.text != null) {
                             notifier.handlePaste(clipboardData.text!);
                           }
                         },
                         icon: const Icon(Icons.paste, size: 16),
-                        label: const Text('Paste', style: TextStyle(fontSize: 12)),
+                        label:
+                            const Text('Paste', style: TextStyle(fontSize: 12)),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -330,7 +346,8 @@ class BatchPaperMode extends ConsumerWidget {
                       icon: const Icon(Icons.help_outline, size: 16),
                       label: const Text('Help', style: TextStyle(fontSize: 12)),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                     ),
                   ],
@@ -347,8 +364,8 @@ class BatchPaperMode extends ConsumerWidget {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          Colors.white.withOpacity(0.0),
-                          Colors.white.withOpacity(0.9),
+                          Colors.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.9),
                         ],
                       ),
                     ),
@@ -369,7 +386,7 @@ class BatchPaperMode extends ConsumerWidget {
 
   void _showHelpDialog(BuildContext context, BatchPaperModeState state) {
     final isEditMode = state.isEditMode;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -387,7 +404,8 @@ class BatchPaperMode extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: isEditMode ? _buildEditModeHelp() : _buildReadModeHelp(state),
+            children:
+                isEditMode ? _buildEditModeHelp() : _buildReadModeHelp(state),
           ),
         ),
         actions: [
@@ -477,7 +495,8 @@ class BatchPaperMode extends ConsumerWidget {
     ];
   }
 
-  Widget _buildHelpItem(IconData icon, String title, String description, {Color? color}) {
+  Widget _buildHelpItem(IconData icon, String title, String description,
+      {Color? color}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -551,18 +570,20 @@ class BatchPaperMode extends ConsumerWidget {
             onPressed: state.canSubmit && !state.isSubmitting
                 ? () async {
                     await notifier.submitAll();
-                    
+
                     // If submission was successful (no error), navigate back
                     if (context.mounted) {
-                      final currentState = ref.read(batchPaperModeNotifierProvider(config));
+                      final currentState =
+                          ref.read(batchPaperModeNotifierProvider(config));
                       if (currentState.errorMessage == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Prayer requests submitted successfully!'),
+                            content:
+                                Text('Prayer requests submitted successfully!'),
                             backgroundColor: Colors.green,
                           ),
                         );
-                        
+
                         if (config.returnWidget != null) {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(

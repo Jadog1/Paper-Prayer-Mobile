@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/batch_paper_mode/batch_paper_mode.dart';
 import 'package:prayer_ml/prayers/groups/contact_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/contact_view.dart';
+import 'package:prayer_ml/prayers/groups/models/contact_model.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/repo.dart';
@@ -148,7 +149,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           boxShadow: _isFocused
               ? [
                   BoxShadow(
-                    color: const Color(0xFF8B7355).withOpacity(0.3),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   )
@@ -193,7 +194,7 @@ class GroupNotebook extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.3),
+      shadowColor: Colors.black.withValues(alpha: 0.3),
       color: const Color(0xFFFFF9E6), // Warm paper color
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -234,7 +235,7 @@ class GroupNotebook extends ConsumerWidget {
                         color: Colors.grey.shade600,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 2,
                             offset: const Offset(1, 1),
                           ),
@@ -279,9 +280,8 @@ class GroupNotebook extends ConsumerWidget {
                     child: GestureDetector(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => PaperMode(
-                                config: PaperModeConfig.editable(
-                                    groupContacts: groupContacts))),
+                            builder: (context) => PaperModePermissions(
+                                groupContacts: groupContacts)),
                       ),
                       child: Container(
                         color: Colors.transparent,
@@ -296,7 +296,7 @@ class GroupNotebook extends ConsumerWidget {
                                 color: Colors.grey.shade900,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     offset: const Offset(0.5, 0.5),
                                   ),
                                 ],
@@ -322,13 +322,14 @@ class GroupNotebook extends ConsumerWidget {
                     ),
                   ),
 
-                  // Bottom Action Bar - Single Menu Button
+                  // Bottom Action Bar - Permission Badge + Menu Button
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      _buildPermissionBadge(context, groupContacts.group),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: PopupMenuButton<String>(
@@ -380,6 +381,8 @@ class GroupNotebook extends ConsumerWidget {
                               <PopupMenuEntry<String>>[
                             PopupMenuItem<String>(
                               value: 'batch_insert',
+                              enabled: hasPermission(
+                                  groupContacts.group, Permission.editPrayers),
                               child: Row(
                                 children: [
                                   Icon(Icons.playlist_add,
@@ -391,6 +394,8 @@ class GroupNotebook extends ConsumerWidget {
                             ),
                             PopupMenuItem<String>(
                               value: 'access',
+                              enabled: hasPermission(
+                                  groupContacts.group, Permission.editGroup),
                               child: Row(
                                 children: [
                                   Icon(Icons.person_add_alt_1,
@@ -413,6 +418,8 @@ class GroupNotebook extends ConsumerWidget {
                             ),
                             PopupMenuItem<String>(
                               value: 'settings',
+                              enabled: hasPermission(
+                                  groupContacts.group, Permission.editGroup),
                               child: Row(
                                 children: [
                                   Icon(Icons.settings,
@@ -436,7 +443,270 @@ class GroupNotebook extends ConsumerWidget {
     );
   }
 
+  Widget _buildPermissionBadge(
+      BuildContext context, GroupWithPermissions group) {
+    final bool canEdit = hasPermission(group, Permission.editPrayers);
+    final bool canManage = hasPermission(group, Permission.editGroup);
+
+    final Color color;
+    final IconData icon;
+
+    if (canManage) {
+      color = const Color(0xFF8B7355);
+      icon = Icons.admin_panel_settings;
+    } else if (canEdit) {
+      color = Colors.blue.shade700;
+      icon = Icons.edit;
+    } else {
+      color = Colors.grey.shade600;
+      icon = Icons.visibility;
+    }
+
+    return GestureDetector(
+      onTap: () => _showPermissionsDialog(context, groupContacts),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: 14, color: Colors.white),
+      ),
+    );
+  }
+
+  void _showPermissionsDialog(
+      BuildContext context, GroupWithMembers groupContacts) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B7355).withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.security,
+                color: Color(0xFF8B7355),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Your Permissions',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Access rights for this notebook',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF9E6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.book,
+                      color: Color(0xFF8B7355),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        groupContacts.group.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'What you can do:',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _permissionItem(
+                'View content',
+                'See prayers and requests in this notebook',
+                hasPermission(groupContacts.group, Permission.view),
+              ),
+              _permissionItem(
+                'Edit prayers',
+                'Add, edit, and modify prayer requests',
+                hasPermission(groupContacts.group, Permission.editPrayers),
+              ),
+              _permissionItem(
+                'Manage notebook',
+                'Edit notebook settings and members',
+                hasPermission(groupContacts.group, Permission.editGroup),
+              ),
+              _permissionItem(
+                'Delete notebook',
+                'Permanently delete this notebook',
+                hasPermission(groupContacts.group, Permission.deleteGroup),
+              ),
+              const Divider(height: 24),
+              const Text(
+                'Document permissions:',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _permissionItem(
+                'View documents',
+                'Access attached documents',
+                hasPermission(groupContacts.group, Permission.viewDocument),
+              ),
+              _permissionItem(
+                'Edit documents',
+                'Upload and modify documents',
+                hasPermission(groupContacts.group, Permission.editDocument),
+              ),
+              _permissionItem(
+                'Delete documents',
+                'Remove documents from notebook',
+                hasPermission(groupContacts.group, Permission.deleteDocument),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Close',
+              style: TextStyle(color: Color(0xFF8B7355)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _permissionItem(String label, String description, bool granted) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 2),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: granted
+                  ? Colors.green.withValues(alpha: 0.1)
+                  : Colors.red.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              granted ? Icons.check : Icons.close,
+              color: granted ? Colors.green : Colors.red,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: granted ? Colors.grey[800] : Colors.grey[500],
+                  ),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: granted ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showMembersModal(BuildContext context, GroupWithMembers groupContacts) {
+    Widget? trailingIcon(Contact member) {
+      final bool canEdit =
+          hasPermission(groupContacts.group, Permission.editGroup);
+
+      if (!canEdit) {
+        return null;
+      }
+      return IconButton(
+        icon: Icon(Icons.edit_outlined, color: Colors.grey[600]),
+        onPressed: () {
+          Navigator.of(context).pop(); // Close modal
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ContactPageSettings(
+                contact: member,
+                group: groupContacts.group,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -472,7 +742,8 @@ class GroupNotebook extends ConsumerWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF8B7355).withOpacity(0.15),
+                            color:
+                                const Color(0xFF8B7355).withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -581,21 +852,7 @@ class GroupNotebook extends ConsumerWidget {
                                     ),
                                   )
                                 : null,
-                            trailing: IconButton(
-                              icon: Icon(Icons.edit_outlined,
-                                  color: Colors.grey[600]),
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close modal
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ContactPageSettings(
-                                      contact: member,
-                                      group: groupContacts.group,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                            trailing: trailingIcon(member),
                           ),
                         );
                       },
@@ -611,12 +868,45 @@ class GroupNotebook extends ConsumerWidget {
   }
 }
 
+class PaperModePermissions extends StatelessWidget {
+  const PaperModePermissions({
+    super.key,
+    required this.groupContacts,
+  });
+
+  final GroupWithMembers groupContacts;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!hasPermission(groupContacts.group, Permission.view)) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Access Denied"),
+          backgroundColor: const Color(0xFF8B7355),
+        ),
+        body: const Center(
+          child: Text(
+            "You do not have permission to view this notebook.",
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+    }
+    if (!hasPermission(groupContacts.group, Permission.editPrayers)) {
+      return PaperMode(
+          config: PaperModeConfig.readOnly(groupContacts: groupContacts));
+    }
+    return PaperMode(
+        config: PaperModeConfig.editable(groupContacts: groupContacts));
+  }
+}
+
 // Custom painter for notebook lines
 class NotebookLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFE8DCC8).withOpacity(0.4)
+      ..color = const Color(0xFFE8DCC8).withValues(alpha: 0.4)
       ..strokeWidth = 1.0;
 
     const lineSpacing = 20.0;
@@ -821,7 +1111,7 @@ class _NotebookSkeletonState extends State<NotebookSkeleton>
   Widget build(BuildContext context) {
     return Card(
       elevation: 8,
-      shadowColor: Colors.black.withOpacity(0.3),
+      shadowColor: Colors.black.withValues(alpha: 0.3),
       color: const Color(0xFFFFF9E6),
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -913,7 +1203,7 @@ class _NotebookSkeletonState extends State<NotebookSkeleton>
                               gradient: LinearGradient(
                                 colors: [
                                   Colors.transparent,
-                                  Colors.white.withOpacity(0.3),
+                                  Colors.white.withValues(alpha: 0.3),
                                   Colors.transparent,
                                 ],
                                 stops: const [0.0, 0.5, 1.0],

@@ -10,6 +10,7 @@ class MemberListItem extends StatelessWidget {
     required this.roles,
     required this.onRemove,
     this.onRevoke,
+    this.onUpdateRole,
   });
 
   final GroupRoleMember member;
@@ -18,6 +19,7 @@ class MemberListItem extends StatelessWidget {
   final List<AssignableRole> roles;
   final Future<void> Function(String userCode) onRemove;
   final Future<void> Function(String userCode)? onRevoke;
+  final Future<void> Function(String userCode, int role)? onUpdateRole;
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +41,12 @@ class MemberListItem extends StatelessWidget {
         border: Border.all(
           color: member.status == 'active'
               ? Colors.grey[300]!
-              : statusColor.withOpacity(0.3),
+              : statusColor.withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -59,7 +61,8 @@ class MemberListItem extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: const Color(0xFF8B7355).withOpacity(0.2),
+                  backgroundColor:
+                      const Color(0xFF8B7355).withValues(alpha: 0.2),
                   child: Text(
                     member.accountName.isNotEmpty
                         ? member.accountName[0].toUpperCase()
@@ -111,7 +114,7 @@ class MemberListItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
+                  color: statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -128,7 +131,7 @@ class MemberListItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B7355).withOpacity(0.1),
+                color: const Color(0xFF8B7355).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -171,10 +174,8 @@ class MemberListItem extends StatelessWidget {
                       tooltip: 'Change role',
                       onSelected: (newRole) async {
                         if (newRole == member.role) return;
-                        try {
-                          // For active members, use email to update
-                          // Note: Backend may need user's email, which we don't have in the model
-                          // This is a limitation - we might need to store email in GroupRoleMember
+
+                        if (onUpdateRole == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -182,13 +183,29 @@ class MemberListItem extends StatelessWidget {
                               backgroundColor: Colors.orange,
                             ),
                           );
+                          return;
+                        }
+
+                        try {
+                          await onUpdateRole!(member.userCode, newRole);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    '✓ Updated role for ${member.accountName.isNotEmpty ? member.accountName : member.userCode}'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Failed to update role: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to update role: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         }
                       },
                       itemBuilder: (context) => roles

@@ -413,7 +413,7 @@ class _RecommendationGroupSkeletonItemState
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            Colors.white.withOpacity(0.4),
+                            Colors.white.withValues(alpha: 0.4),
                             Colors.transparent,
                           ],
                           stops: const [0.0, 0.5, 1.0],

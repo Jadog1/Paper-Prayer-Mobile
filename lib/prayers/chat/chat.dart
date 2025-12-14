@@ -34,7 +34,8 @@ class _ChatPageState extends State<ChatPage> {
       if (mounted) {
         setState(() {
           _messages.add(ChatMessage(
-            text: "This feature is currently under development. AI chat functionality will be available soon!",
+            text:
+                "This feature is currently under development. AI chat functionality will be available soon!",
             isUser: false,
             timestamp: DateTime.now(),
           ));
@@ -75,7 +76,7 @@ class _ChatPageState extends State<ChatPage> {
               ],
             ),
           ),
-          
+
           // Chat messages
           Expanded(
             child: _messages.isEmpty
@@ -117,7 +118,7 @@ class _ChatPageState extends State<ChatPage> {
                     },
                   ),
           ),
-          
+
           // Input area
           Container(
             padding: const EdgeInsets.all(16),
@@ -125,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),
@@ -200,7 +201,8 @@ class _ChatBubble extends StatelessWidget {
           if (!message.isUser) ...[
             CircleAvatar(
               backgroundColor: Colors.deepPurple[100],
-              child: const Icon(Icons.smart_toy, color: Colors.deepPurple, size: 20),
+              child: const Icon(Icons.smart_toy,
+                  color: Colors.deepPurple, size: 20),
             ),
             const SizedBox(width: 8),
           ],
@@ -210,8 +212,12 @@ class _ChatBubble extends StatelessWidget {
               decoration: BoxDecoration(
                 color: message.isUser ? Colors.deepPurple : Colors.grey[200],
                 borderRadius: BorderRadius.circular(20).copyWith(
-                  topLeft: message.isUser ? const Radius.circular(20) : const Radius.circular(4),
-                  topRight: message.isUser ? const Radius.circular(4) : const Radius.circular(20),
+                  topLeft: message.isUser
+                      ? const Radius.circular(20)
+                      : const Radius.circular(4),
+                  topRight: message.isUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(20),
                 ),
               ),
               child: Column(
@@ -229,7 +235,7 @@ class _ChatBubble extends StatelessWidget {
                     _formatTime(message.timestamp),
                     style: TextStyle(
                       color: message.isUser
-                          ? Colors.white.withOpacity(0.7)
+                          ? Colors.white.withValues(alpha: 0.7)
                           : Colors.grey[600],
                       fontSize: 11,
                     ),

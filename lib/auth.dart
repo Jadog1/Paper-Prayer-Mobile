@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as developer;
 
@@ -58,6 +59,7 @@ class _SignInPageState extends State<SignInPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        TextInput.finishAutofillContext();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case 'weak-password':
@@ -82,6 +84,7 @@ class _SignInPageState extends State<SignInPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        TextInput.finishAutofillContext();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case 'user-not-found':
@@ -170,7 +173,7 @@ class _SignInPageState extends State<SignInPage> {
               right: -40,
               child: _AccentCircle(
                 diameter: 180,
-                color: Colors.white.withOpacity(0.35),
+                color: Colors.white.withValues(alpha: 0.35),
               ),
             ),
             Positioned(
@@ -178,7 +181,7 @@ class _SignInPageState extends State<SignInPage> {
               left: -20,
               child: _AccentCircle(
                 diameter: 140,
-                color: _kParchmentDeep.withOpacity(0.5),
+                color: _kParchmentDeep.withValues(alpha: 0.5),
               ),
             ),
             SafeArea(
@@ -214,21 +217,22 @@ class _SignInPageState extends State<SignInPage> {
     InputDecoration decoration(String label, IconData icon) {
       return InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: _kInk.withOpacity(0.6)),
+        prefixIcon: Icon(icon, color: _kInk.withValues(alpha: 0.6)),
         filled: true,
         fillColor: Colors.white,
-        hintStyle: TextStyle(color: _kInk.withOpacity(0.4)),
+        hintStyle: TextStyle(color: _kInk.withValues(alpha: 0.4)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: _kParchmentDeep.withOpacity(0.5)),
+          borderSide: BorderSide(color: _kParchmentDeep.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: _kInk.withOpacity(0.7), width: 1.6),
+          borderSide:
+              BorderSide(color: _kInk.withValues(alpha: 0.7), width: 1.6),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: _kParchmentDeep.withOpacity(0.6)),
+          borderSide: BorderSide(color: _kParchmentDeep.withValues(alpha: 0.6)),
         ),
       );
     }
@@ -265,7 +269,7 @@ class _SignInPageState extends State<SignInPage> {
               Text(
                 'Paper Prayer watches your requests, finds the patterns, and surfaces what needs prayer next.',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: _kInk.withOpacity(0.7),
+                  color: _kInk.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 24),
@@ -321,11 +325,11 @@ class _SignInPageState extends State<SignInPage> {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(54),
                   foregroundColor: _kInk,
-                  side: BorderSide(color: _kInk.withOpacity(0.25)),
+                  side: BorderSide(color: _kInk.withValues(alpha: 0.25)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  backgroundColor: Colors.white.withOpacity(0.9),
+                  backgroundColor: Colors.white.withValues(alpha: 0.9),
                 ),
                 child: _buildButtonChild(
                   'Create a new journal',
@@ -334,11 +338,11 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              Wrap(
+              const Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 10,
                 runSpacing: 8,
-                children: const [
+                children: [
                   _TagChip(
                       icon: Icons.dashboard_customize_outlined,
                       label: 'Home dashboard'),
@@ -375,7 +379,7 @@ class _SignInPageState extends State<SignInPage> {
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
-              backgroundColor: resolvedColor.withOpacity(0.2),
+              backgroundColor: resolvedColor.withValues(alpha: 0.2),
             ),
           ),
           const SizedBox(width: 12),
@@ -418,7 +422,7 @@ class _PaperHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const accent = Color(0xFF4B3B2B);
-    final muted = accent.withOpacity(0.72);
+    final muted = accent.withValues(alpha: 0.72);
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 900),
@@ -478,7 +482,7 @@ class _FeatureHighlightsSection extends StatelessWidget {
         Text(
           'A few of the assistive superpowers waiting once you sign in.',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: _kInk.withOpacity(0.7),
+            color: _kInk.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 24),
@@ -521,9 +525,9 @@ class _FeatureHighlightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _kParchmentDeep.withOpacity(0.8)),
+        border: Border.all(color: _kParchmentDeep.withValues(alpha: 0.8)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x15000000),
@@ -538,7 +542,7 @@ class _FeatureHighlightCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _kParchmentDeep.withOpacity(0.6),
+              color: _kParchmentDeep.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(info.icon, color: _kInk, size: 24),
@@ -555,7 +559,7 @@ class _FeatureHighlightCard extends StatelessWidget {
           Text(
             info.description,
             style: textTheme.bodyMedium?.copyWith(
-              color: _kInk.withOpacity(0.75),
+              color: _kInk.withValues(alpha: 0.75),
               height: 1.35,
             ),
           ),
@@ -615,9 +619,9 @@ class _PaperStackVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return const Stack(
       alignment: Alignment.center,
-      children: const [
+      children: [
         _PaperSheet(
           angle: -0.18,
           offset: Offset(-30, 28),
@@ -665,8 +669,8 @@ class _PaperSheet extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(24),
-            border:
-                Border.all(color: Colors.white.withOpacity(0.7), width: 1.2),
+            border: Border.all(
+                color: Colors.white.withValues(alpha: 0.7), width: 1.2),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x1F000000),
@@ -770,19 +774,19 @@ class _TagChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.85),
+        color: Colors.white.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: const Color(0xFFE0D1BC)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: color.withOpacity(0.7)),
+          Icon(icon, size: 16, color: color.withValues(alpha: 0.7)),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -22,7 +22,8 @@ GroupWithPermissions _$GroupWithPermissionsFromJson(Map<String, dynamic> json) {
 mixin _$GroupWithPermissions {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+  String? get description =>
+      throw _privateConstructorUsedError; // The permissions that the current user has for this group
   List<String> get permissions => throw _privateConstructorUsedError;
 
   /// Serializes this GroupWithPermissions to a JSON map.
@@ -161,7 +162,9 @@ class _$GroupWithPermissionsImpl
   @override
   @JsonKey()
   final String? description;
+// The permissions that the current user has for this group
   final List<String> _permissions;
+// The permissions that the current user has for this group
   @override
   @JsonKey()
   List<String> get permissions {
@@ -237,7 +240,8 @@ abstract class _GroupWithPermissions implements GroupWithPermissions {
   @override
   String get name;
   @override
-  String? get description;
+  String?
+      get description; // The permissions that the current user has for this group
   @override
   List<String> get permissions;
 

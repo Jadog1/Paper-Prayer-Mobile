@@ -26,15 +26,15 @@ class SearchUserSection extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF8B7355).withOpacity(0.1),
-            const Color(0xFF8B7355).withOpacity(0.05),
+            const Color(0xFF8B7355).withValues(alpha: 0.1),
+            const Color(0xFF8B7355).withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF8B7355).withOpacity(0.3),
+          color: const Color(0xFF8B7355).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -46,7 +46,7 @@ class SearchUserSection extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B7355).withOpacity(0.2),
+                  color: const Color(0xFF8B7355).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(

@@ -19,7 +19,7 @@ class QuickInfoBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var format = DateFormat('MMM d');
-    
+
     return Container(
       margin: const EdgeInsets.all(12),
       padding: const EdgeInsets.all(16),
@@ -28,7 +28,7 @@ class QuickInfoBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

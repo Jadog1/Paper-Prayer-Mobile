@@ -16,8 +16,8 @@ class UpcomingEventsWidget extends ConsumerWidget {
     this.onViewAll,
     this.limit = 5,
     this.maxDays = 30,
-  }) : assert(contactId != null || collectionId != null, 
-              'Either contactId or collectionId must be provided');
+  }) : assert(contactId != null || collectionId != null,
+            'Either contactId or collectionId must be provided');
 
   final int? contactId;
   final int? collectionId;
@@ -44,7 +44,7 @@ class UpcomingEventsWidget extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -76,7 +76,8 @@ class UpcomingEventsWidget extends ConsumerWidget {
                         icon: const Icon(Icons.calendar_month, size: 16),
                         label: const Text("View All"),
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
                       ),
                   ],
@@ -102,7 +103,8 @@ class UpcomingEventsWidget extends ConsumerWidget {
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.event_available, size: 48, color: Colors.grey[300]),
+                        Icon(Icons.event_available,
+                            size: 48, color: Colors.grey[300]),
                         const SizedBox(height: 8),
                         Text(
                           "No upcoming events",
@@ -115,7 +117,9 @@ class UpcomingEventsWidget extends ConsumerWidget {
               }
 
               return Column(
-                children: events.map((event) => _EventListItem(event: event)).toList(),
+                children: events
+                    .map((event) => _EventListItem(event: event))
+                    .toList(),
               );
             },
             loading: () => const Padding(

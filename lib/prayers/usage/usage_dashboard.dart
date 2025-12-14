@@ -119,7 +119,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                             }
                           },
                           selectedColor: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.25),
+                          backgroundColor: Colors.white.withValues(alpha: 0.25),
                           labelStyle: TextStyle(
                             color: isSelected
                                 ? theme.colorScheme.primary
@@ -129,7 +129,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                           side: BorderSide(
                             color: isSelected
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.3),
+                                : Colors.white.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -247,7 +247,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -362,7 +362,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -403,7 +403,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -467,7 +467,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -521,7 +521,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -535,7 +535,7 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),

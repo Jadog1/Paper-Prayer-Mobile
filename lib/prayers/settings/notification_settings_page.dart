@@ -160,7 +160,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                           gradient: LinearGradient(
                             colors: [
                               theme.colorScheme.primary,
-                              theme.colorScheme.primary.withOpacity(0.8),
+                              theme.colorScheme.primary.withValues(alpha: 0.8),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -176,7 +176,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                   ),
                                   child: const Icon(
                                     Icons.notifications_active,
@@ -198,7 +198,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                   'Control what notifications you receive',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -220,7 +220,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 10,
                                     offset: const Offset(0, 2),
                                   ),
@@ -257,7 +257,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: theme.colorScheme.primary
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Icon(

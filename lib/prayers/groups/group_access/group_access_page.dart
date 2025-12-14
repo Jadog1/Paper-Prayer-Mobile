@@ -114,6 +114,13 @@ class _GroupAccessPageState extends ConsumerState<GroupAccessPage> {
                       targetUserCode: userCode,
                     );
               },
+              onUpdateRole: (userCode, role) async {
+                await ref.read(groupAccessActionsProvider).assignRoleByUserCode(
+                      groupId: widget.groupId,
+                      targetUserCode: userCode,
+                      role: role,
+                    );
+              },
             ),
           ],
         ),

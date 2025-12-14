@@ -165,7 +165,7 @@ class _GroupSettingsState extends ConsumerState<GroupSettings> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFF8B7355).withOpacity(0.15),
+            color: const Color(0xFF8B7355).withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -346,7 +346,7 @@ class EditUserForGroup extends ConsumerWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B7355).withOpacity(0.15),
+                  color: const Color(0xFF8B7355).withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
