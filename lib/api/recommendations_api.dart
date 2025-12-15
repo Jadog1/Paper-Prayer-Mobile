@@ -61,7 +61,7 @@ class RecommendationApiClient {
     }
 
     final response = await authClient.post(
-      config.uri("/recommendations/action"),
+      config.uri("/recommendation_groups/recommendations/action"),
       body: jsonEncode(body),
       headers: {"Content-Type": "application/json"},
     );
