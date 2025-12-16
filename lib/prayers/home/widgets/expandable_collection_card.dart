@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/collection_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
@@ -63,10 +64,12 @@ class ExpandableCollectionCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ExpandableCollectionCard> createState() => _ExpandableCollectionCardState();
+  ConsumerState<ExpandableCollectionCard> createState() =>
+      _ExpandableCollectionCardState();
 }
 
-class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionCard> {
+class _ExpandableCollectionCardState
+    extends ConsumerState<ExpandableCollectionCard> {
   late bool _isExpanded;
 
   @override
@@ -77,35 +80,18 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
 
   Future<void> _handleAction(String action) async {
     final collection = widget.collection;
-    
+
     try {
       switch (action) {
-        case 'prayed':
-          // Mark as prayed without snooze
-          await ref.read(recommendationRepoProvider.notifier).updateAction(
-            collection.id,
-            CollectionRecommendationAction.prayed,
-          );
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Marked as prayed'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-          break;
-          
         case 'snooze':
           // Show snooze date picker
           final snoozeUntil = await showSnoozeDialog(context);
           if (snoozeUntil != null && mounted) {
             await ref.read(recommendationRepoProvider.notifier).updateAction(
-              collection.id,
-              CollectionRecommendationAction.prayed,
-              snoozeUntil: snoozeUntil,
-            );
+                  collection.id,
+                  CollectionRecommendationAction.prayed,
+                  snoozeUntil: snoozeUntil,
+                );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -117,7 +103,7 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
             }
           }
           break;
-          
+
         case 'resolved':
           // Show confirmation and mark as resolved
           final confirmed = await showResolvedConfirmation(
@@ -126,9 +112,9 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
           );
           if (confirmed && mounted) {
             await ref.read(recommendationRepoProvider.notifier).updateAction(
-              collection.id,
-              CollectionRecommendationAction.resolved,
-            );
+                  collection.id,
+                  CollectionRecommendationAction.resolved,
+                );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -140,15 +126,15 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
             }
           }
           break;
-          
+
         case 'not_relevant':
           // Show confirmation and mark as not relevant
           final confirmed = await showNotRelevantConfirmation(context);
           if (confirmed && mounted) {
             await ref.read(recommendationRepoProvider.notifier).updateAction(
-              collection.id,
-              CollectionRecommendationAction.notRelevant,
-            );
+                  collection.id,
+                  CollectionRecommendationAction.notRelevant,
+                );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -178,8 +164,20 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
   String _formatDate(String isoDate) {
     try {
       final date = DateTime.parse(isoDate);
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
       return '${months[date.month - 1]} ${date.day}';
     } catch (e) {
       return isoDate;
@@ -214,7 +212,10 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                           width: 3,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [widget.style.primaryColor, widget.style.secondaryColor],
+                              colors: [
+                                widget.style.primaryColor,
+                                widget.style.secondaryColor
+                              ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
@@ -225,7 +226,7 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                     ],
                   ),
                   const SizedBox(width: 12),
-                  
+
                   // Content
                   Expanded(
                     child: Column(
@@ -253,7 +254,8 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                         ),
                         const SizedBox(height: 6),
                         // Collection summary
-                        if (collection.description != null && collection.description!.isNotEmpty)
+                        if (collection.description != null &&
+                            collection.description!.isNotEmpty)
                           Text(
                             collection.description!,
                             style: TextStyle(
@@ -262,12 +264,14 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               height: 1.4,
                             ),
                             maxLines: _isExpanded ? null : 3,
-                            overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                            overflow: _isExpanded
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
                           ),
                       ],
                     ),
                   ),
-                  
+
                   // Action menu and expand/collapse icon
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -286,7 +290,8 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               value: 'prayed',
                               child: Row(
                                 children: [
-                                  Icon(Icons.check_circle_outline, size: 18, color: Colors.green),
+                                  Icon(Icons.check_circle_outline,
+                                      size: 18, color: Colors.green),
                                   SizedBox(width: 8),
                                   Text('Mark as prayed'),
                                 ],
@@ -296,7 +301,8 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               value: 'snooze',
                               child: Row(
                                 children: [
-                                  Icon(Icons.schedule, size: 18, color: Colors.blue),
+                                  Icon(Icons.schedule,
+                                      size: 18, color: Colors.blue),
                                   SizedBox(width: 8),
                                   Text('Snooze'),
                                 ],
@@ -306,7 +312,8 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               value: 'resolved',
                               child: Row(
                                 children: [
-                                  Icon(Icons.done_all, size: 18, color: Colors.green),
+                                  Icon(Icons.done_all,
+                                      size: 18, color: Colors.green),
                                   SizedBox(width: 8),
                                   Text('Mark resolved'),
                                 ],
@@ -316,7 +323,8 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                               value: 'not_relevant',
                               child: Row(
                                 children: [
-                                  Icon(Icons.visibility_off, size: 18, color: Colors.orange),
+                                  Icon(Icons.visibility_off,
+                                      size: 18, color: Colors.orange),
                                   SizedBox(width: 8),
                                   Text('Not relevant'),
                                 ],
@@ -339,14 +347,14 @@ class _ExpandableCollectionCardState extends ConsumerState<ExpandableCollectionC
                 ],
               ),
             ),
-            
+
             // Expanded section with action buttons
             if (_isExpanded)
               Padding(
                 padding: const EdgeInsets.only(left: 15, top: 8),
                 child: _ActionButtons(collection: collection),
               ),
-            
+
             // Subtle divider between collections
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
@@ -376,9 +384,8 @@ class _PrayingForText extends StatelessWidget {
   Widget build(BuildContext context) {
     String prayingFor = collection.user.name;
     if (collection.relatedContacts.isNotEmpty) {
-      final relatedNames = collection.relatedContacts
-          .map((contact) => contact.name)
-          .join(", ");
+      final relatedNames =
+          collection.relatedContacts.map((contact) => contact.name).join(", ");
       prayingFor += " · $relatedNames";
     }
 
@@ -470,7 +477,8 @@ class _ActionButtons extends StatelessWidget {
           user: collection.user,
           group: collection.group,
           createdAt: DateTime.now().toIso8601String(),
-          relatedContactIds: collection.relatedContacts.map((c) => c.id).toList(),
+          relatedContactIds:
+              collection.relatedContacts.map((c) => c.id).toList(),
         );
 
         // Save the request with the enforced collection ID
@@ -480,7 +488,8 @@ class _ActionButtons extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Update saved! The collection will be updated shortly.'),
+              content: const Text(
+                  'Update saved! The collection will be updated shortly.'),
               backgroundColor: Colors.green[700],
               duration: const Duration(seconds: 3),
               behavior: SnackBarBehavior.floating,
@@ -503,5 +512,142 @@ class _ActionButtons extends StatelessWidget {
         }
       }
     }
+  }
+}
+
+/// A unified date badge widget for displaying dates with customizable colors
+/// Used across recommendations views to show when collections were updated
+class CollectionDateBadge extends StatelessWidget {
+  final DateTime dateTime;
+  final String? labelPrefix;
+  final Color? primaryColor;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? iconColor;
+  final Color? textColor;
+
+  const CollectionDateBadge({
+    super.key,
+    required this.dateTime,
+    this.labelPrefix,
+    this.primaryColor,
+    this.backgroundColor,
+    this.borderColor,
+    this.iconColor,
+    this.textColor,
+  });
+
+  /// Factory for creating a date badge with blue theme (for current recommendations)
+  factory CollectionDateBadge.blue({
+    required DateTime dateTime,
+    String? labelPrefix,
+  }) {
+    return CollectionDateBadge(
+      dateTime: dateTime,
+      labelPrefix: labelPrefix,
+      primaryColor: const Color(0xFF1976D2),
+      backgroundColor: const Color(0xFF90CAF9),
+      borderColor: const Color(0xFF42A5F5),
+      iconColor: const Color(0xFF1976D2),
+      textColor: const Color(0xFF1565C0),
+    );
+  }
+
+  /// Factory for creating a date badge with purple theme (for historical recommendations)
+  factory CollectionDateBadge.purple({
+    required DateTime dateTime,
+    String? labelPrefix,
+  }) {
+    return CollectionDateBadge(
+      dateTime: dateTime,
+      labelPrefix: labelPrefix,
+      primaryColor: const Color(0xFF7B1FA2),
+      backgroundColor: const Color(0xFFCE93D8),
+      borderColor: const Color(0xFFBA68C8),
+      iconColor: const Color(0xFF7B1FA2),
+      textColor: const Color(0xFF6A1B9A),
+    );
+  }
+
+  /// Factory for creating a date badge with orange theme (for unresolved followups)
+  factory CollectionDateBadge.orange({
+    required DateTime dateTime,
+    String? labelPrefix,
+  }) {
+    return CollectionDateBadge(
+      dateTime: dateTime,
+      labelPrefix: labelPrefix,
+      primaryColor: const Color(0xFFF57C00),
+      backgroundColor: const Color(0xFFFFCC80),
+      borderColor: const Color(0xFFFFB74D),
+      iconColor: const Color(0xFFF57C00),
+      textColor: const Color(0xFFE65100),
+    );
+  }
+
+  String _formatDate() {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    // Format the date elegantly based on how recent it is
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else if (now.year == dateTime.year) {
+      return DateFormat('MMM d').format(dateTime);
+    } else {
+      return DateFormat('MMM d, yyyy').format(dateTime);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formattedDate = _formatDate();
+    final prefix = labelPrefix ?? 'Updated';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            (backgroundColor ?? Colors.blue.shade100).withValues(alpha: 0.3),
+            (backgroundColor ?? Colors.blue.shade50).withValues(alpha: 0.2),
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: (borderColor ?? Colors.blue.shade200).withValues(alpha: 0.4),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.access_time_rounded,
+            size: 14,
+            color: (iconColor ?? Colors.blue.shade700).withValues(alpha: 0.7),
+          ),
+          const SizedBox(width: 5),
+          Text(
+            '$prefix $formattedDate',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color:
+                  (textColor ?? Colors.blue.shade800).withValues(alpha: 0.75),
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -14,7 +14,8 @@ class UnresolvedFollowupsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = paginatedUnresolvedFollowupsNotifierProvider(10, lookbackDays: lookbackDays);
+    final provider = paginatedUnresolvedFollowupsNotifierProvider(10,
+        lookbackDays: lookbackDays);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,10 +35,13 @@ class UnresolvedFollowupsView extends ConsumerWidget {
               if (index == widgetCount - 1) {
                 return endItemView;
               }
-              final collection = data.items[index];
+              final followup = data.items[index];
               return ExpandableCollectionCard(
-                collection: collection,
+                collection: followup.collection,
                 style: CollectionCardStyle.orange,
+                headerWidget: CollectionDateBadge.orange(
+                  dateTime: followup.lastPrayerCreationDate,
+                ),
               );
             },
           ),

@@ -17,7 +17,8 @@ class RecommendationGroup with _$RecommendationGroup {
     @JsonKey(name: "counts") required List<DescriptiveCount> counts,
   }) = _RecommendationGroup;
 
-  factory RecommendationGroup.fromJson(Map<String, dynamic> json) => _$RecommendationGroupFromJson(json);
+  factory RecommendationGroup.fromJson(Map<String, dynamic> json) =>
+      _$RecommendationGroupFromJson(json);
 }
 
 @freezed
@@ -27,18 +28,22 @@ class DescriptiveCount with _$DescriptiveCount {
     required String description,
   }) = _DescriptiveCount;
 
-  factory DescriptiveCount.fromJson(Map<String, dynamic> json) => _$DescriptiveCountFromJson(json);
+  factory DescriptiveCount.fromJson(Map<String, dynamic> json) =>
+      _$DescriptiveCountFromJson(json);
 }
 
 @freezed
-class PaginatedCollectionRecommendation with _$PaginatedCollectionRecommendation {
+class PaginatedCollectionRecommendation
+    with _$PaginatedCollectionRecommendation {
   const factory PaginatedCollectionRecommendation({
     required List<CollectionRecommendation> collections,
     required CursorPagination pagination,
     @Default(false) bool hasNext,
   }) = _PaginatedCollectionRecommendation;
 
-  factory PaginatedCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$PaginatedCollectionRecommendationFromJson(json);
+  factory PaginatedCollectionRecommendation.fromJson(
+          Map<String, dynamic> json) =>
+      _$PaginatedCollectionRecommendationFromJson(json);
 }
 
 @freezed
@@ -46,31 +51,42 @@ class CollectionRecommendation with _$CollectionRecommendation {
   const factory CollectionRecommendation({
     required Collection collection,
     @JsonKey(name: "recommendation_type") required String recommendationType,
+    @JsonKey(name: "last_prayer_creation_date")
+    required DateTime lastPrayerCreationDate,
   }) = _CollectionRecommendation;
 
-  factory CollectionRecommendation.fromJson(Map<String, dynamic> json) => _$CollectionRecommendationFromJson(json);
+  factory CollectionRecommendation.fromJson(Map<String, dynamic> json) =>
+      _$CollectionRecommendationFromJson(json);
 }
 
 @freezed
-class HistoricalCollectionRecommendation with _$HistoricalCollectionRecommendation {
+class HistoricalCollectionRecommendation
+    with _$HistoricalCollectionRecommendation {
   const factory HistoricalCollectionRecommendation({
     required Collection collection,
-    @JsonKey(name: "recommendation_type") required String recommendationType,
-    @JsonKey(name: "for_date") required String forDate,
+    @JsonKey(name: "recommendation_type") String? recommendationType,
+    @JsonKey(name: "for_date") String? forDate,
+    @JsonKey(name: "last_prayer_creation_date")
+    required DateTime lastPrayerCreationDate,
   }) = _HistoricalCollectionRecommendation;
 
-  factory HistoricalCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$HistoricalCollectionRecommendationFromJson(json);
+  factory HistoricalCollectionRecommendation.fromJson(
+          Map<String, dynamic> json) =>
+      _$HistoricalCollectionRecommendationFromJson(json);
 }
 
 @freezed
-class PaginatedHistoricalCollectionRecommendation with _$PaginatedHistoricalCollectionRecommendation {
+class PaginatedHistoricalCollectionRecommendation
+    with _$PaginatedHistoricalCollectionRecommendation {
   const factory PaginatedHistoricalCollectionRecommendation({
     required List<HistoricalCollectionRecommendation> collections,
     required CursorPagination pagination,
     @JsonKey(name: "has_next") @Default(false) bool hasNext,
   }) = _PaginatedHistoricalCollectionRecommendation;
 
-  factory PaginatedHistoricalCollectionRecommendation.fromJson(Map<String, dynamic> json) => _$PaginatedHistoricalCollectionRecommendationFromJson(json);
+  factory PaginatedHistoricalCollectionRecommendation.fromJson(
+          Map<String, dynamic> json) =>
+      _$PaginatedHistoricalCollectionRecommendationFromJson(json);
 }
 
 @freezed
@@ -81,5 +97,6 @@ class PaginatedUnresolvedFollowups with _$PaginatedUnresolvedFollowups {
     @JsonKey(name: "has_next") @Default(false) bool hasNext,
   }) = _PaginatedUnresolvedFollowups;
 
-  factory PaginatedUnresolvedFollowups.fromJson(Map<String, dynamic> json) => _$PaginatedUnresolvedFollowupsFromJson(json);
+  factory PaginatedUnresolvedFollowups.fromJson(Map<String, dynamic> json) =>
+      _$PaginatedUnresolvedFollowupsFromJson(json);
 }

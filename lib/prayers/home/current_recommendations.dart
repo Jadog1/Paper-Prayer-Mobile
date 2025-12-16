@@ -15,7 +15,8 @@ class CurrentRecommendationsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = paginatedCollectionRecommendationNotifierProvider(10, recommendationGroup);
+    final provider = paginatedCollectionRecommendationNotifierProvider(
+        10, recommendationGroup);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,6 +61,9 @@ class CollectionRecommendationCard extends ConsumerWidget {
     return ExpandableCollectionCard(
       collection: recommendation.collection,
       style: CollectionCardStyle.blue,
+      headerWidget: CollectionDateBadge.blue(
+        dateTime: recommendation.lastPrayerCreationDate,
+      ),
     );
   }
 }

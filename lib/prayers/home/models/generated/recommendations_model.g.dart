@@ -71,6 +71,8 @@ _$CollectionRecommendationImpl _$$CollectionRecommendationImplFromJson(
       collection:
           Collection.fromJson(json['collection'] as Map<String, dynamic>),
       recommendationType: json['recommendation_type'] as String,
+      lastPrayerCreationDate:
+          DateTime.parse(json['last_prayer_creation_date'] as String),
     );
 
 Map<String, dynamic> _$$CollectionRecommendationImplToJson(
@@ -78,6 +80,8 @@ Map<String, dynamic> _$$CollectionRecommendationImplToJson(
     <String, dynamic>{
       'collection': instance.collection,
       'recommendation_type': instance.recommendationType,
+      'last_prayer_creation_date':
+          instance.lastPrayerCreationDate.toIso8601String(),
     };
 
 _$HistoricalCollectionRecommendationImpl
@@ -86,8 +90,10 @@ _$HistoricalCollectionRecommendationImpl
         _$HistoricalCollectionRecommendationImpl(
           collection:
               Collection.fromJson(json['collection'] as Map<String, dynamic>),
-          recommendationType: json['recommendation_type'] as String,
-          forDate: json['for_date'] as String,
+          recommendationType: json['recommendation_type'] as String?,
+          forDate: json['for_date'] as String?,
+          lastPrayerCreationDate:
+              DateTime.parse(json['last_prayer_creation_date'] as String),
         );
 
 Map<String, dynamic> _$$HistoricalCollectionRecommendationImplToJson(
@@ -96,6 +102,8 @@ Map<String, dynamic> _$$HistoricalCollectionRecommendationImplToJson(
       'collection': instance.collection,
       'recommendation_type': instance.recommendationType,
       'for_date': instance.forDate,
+      'last_prayer_creation_date':
+          instance.lastPrayerCreationDate.toIso8601String(),
     };
 
 _$PaginatedHistoricalCollectionRecommendationImpl

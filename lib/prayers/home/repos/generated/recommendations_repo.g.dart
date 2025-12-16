@@ -548,14 +548,15 @@ class _PaginatedHistoricalRecommendationNotifierProviderElement
 }
 
 String _$paginatedUnresolvedFollowupsNotifierHash() =>
-    r'995a50ba230eefd6ef3e7d45d7670c36964ef02d';
+    r'ab4748655076b8228e70464d031961ec645632ac';
 
 abstract class _$PaginatedUnresolvedFollowupsNotifier
-    extends BuildlessAutoDisposeAsyncNotifier<CursorPagingData<Collection>> {
+    extends BuildlessAutoDisposeAsyncNotifier<
+        CursorPagingData<CollectionRecommendation>> {
   late final int limit;
   late final int lookbackDays;
 
-  FutureOr<CursorPagingData<Collection>> build(
+  FutureOr<CursorPagingData<CollectionRecommendation>> build(
     int limit, {
     int lookbackDays = 30,
   });
@@ -568,7 +569,7 @@ const paginatedUnresolvedFollowupsNotifierProvider =
 
 /// See also [PaginatedUnresolvedFollowupsNotifier].
 class PaginatedUnresolvedFollowupsNotifierFamily
-    extends Family<AsyncValue<CursorPagingData<Collection>>> {
+    extends Family<AsyncValue<CursorPagingData<CollectionRecommendation>>> {
   /// See also [PaginatedUnresolvedFollowupsNotifier].
   const PaginatedUnresolvedFollowupsNotifierFamily();
 
@@ -611,7 +612,8 @@ class PaginatedUnresolvedFollowupsNotifierFamily
 /// See also [PaginatedUnresolvedFollowupsNotifier].
 class PaginatedUnresolvedFollowupsNotifierProvider
     extends AutoDisposeAsyncNotifierProviderImpl<
-        PaginatedUnresolvedFollowupsNotifier, CursorPagingData<Collection>> {
+        PaginatedUnresolvedFollowupsNotifier,
+        CursorPagingData<CollectionRecommendation>> {
   /// See also [PaginatedUnresolvedFollowupsNotifier].
   PaginatedUnresolvedFollowupsNotifierProvider(
     int limit, {
@@ -649,7 +651,7 @@ class PaginatedUnresolvedFollowupsNotifierProvider
   final int lookbackDays;
 
   @override
-  FutureOr<CursorPagingData<Collection>> runNotifierBuild(
+  FutureOr<CursorPagingData<CollectionRecommendation>> runNotifierBuild(
     covariant PaginatedUnresolvedFollowupsNotifier notifier,
   ) {
     return notifier.build(
@@ -680,7 +682,7 @@ class PaginatedUnresolvedFollowupsNotifierProvider
 
   @override
   AutoDisposeAsyncNotifierProviderElement<PaginatedUnresolvedFollowupsNotifier,
-      CursorPagingData<Collection>> createElement() {
+      CursorPagingData<CollectionRecommendation>> createElement() {
     return _PaginatedUnresolvedFollowupsNotifierProviderElement(this);
   }
 
@@ -704,7 +706,8 @@ class PaginatedUnresolvedFollowupsNotifierProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin PaginatedUnresolvedFollowupsNotifierRef
-    on AutoDisposeAsyncNotifierProviderRef<CursorPagingData<Collection>> {
+    on AutoDisposeAsyncNotifierProviderRef<
+        CursorPagingData<CollectionRecommendation>> {
   /// The parameter `limit` of this provider.
   int get limit;
 
@@ -714,7 +717,8 @@ mixin PaginatedUnresolvedFollowupsNotifierRef
 
 class _PaginatedUnresolvedFollowupsNotifierProviderElement
     extends AutoDisposeAsyncNotifierProviderElement<
-        PaginatedUnresolvedFollowupsNotifier, CursorPagingData<Collection>>
+        PaginatedUnresolvedFollowupsNotifier,
+        CursorPagingData<CollectionRecommendation>>
     with PaginatedUnresolvedFollowupsNotifierRef {
   _PaginatedUnresolvedFollowupsNotifierProviderElement(super.provider);
 

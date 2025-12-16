@@ -739,6 +739,8 @@ mixin _$CollectionRecommendation {
   Collection get collection => throw _privateConstructorUsedError;
   @JsonKey(name: "recommendation_type")
   String get recommendationType => throw _privateConstructorUsedError;
+  @JsonKey(name: "last_prayer_creation_date")
+  DateTime get lastPrayerCreationDate => throw _privateConstructorUsedError;
 
   /// Serializes this CollectionRecommendation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -758,7 +760,9 @@ abstract class $CollectionRecommendationCopyWith<$Res> {
   @useResult
   $Res call(
       {Collection collection,
-      @JsonKey(name: "recommendation_type") String recommendationType});
+      @JsonKey(name: "recommendation_type") String recommendationType,
+      @JsonKey(name: "last_prayer_creation_date")
+      DateTime lastPrayerCreationDate});
 
   $CollectionCopyWith<$Res> get collection;
 }
@@ -781,6 +785,7 @@ class _$CollectionRecommendationCopyWithImpl<$Res,
   $Res call({
     Object? collection = null,
     Object? recommendationType = null,
+    Object? lastPrayerCreationDate = null,
   }) {
     return _then(_value.copyWith(
       collection: null == collection
@@ -791,6 +796,10 @@ class _$CollectionRecommendationCopyWithImpl<$Res,
           ? _value.recommendationType
           : recommendationType // ignore: cast_nullable_to_non_nullable
               as String,
+      lastPrayerCreationDate: null == lastPrayerCreationDate
+          ? _value.lastPrayerCreationDate
+          : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ) as $Val);
   }
 
@@ -816,7 +825,9 @@ abstract class _$$CollectionRecommendationImplCopyWith<$Res>
   @useResult
   $Res call(
       {Collection collection,
-      @JsonKey(name: "recommendation_type") String recommendationType});
+      @JsonKey(name: "recommendation_type") String recommendationType,
+      @JsonKey(name: "last_prayer_creation_date")
+      DateTime lastPrayerCreationDate});
 
   @override
   $CollectionCopyWith<$Res> get collection;
@@ -839,6 +850,7 @@ class __$$CollectionRecommendationImplCopyWithImpl<$Res>
   $Res call({
     Object? collection = null,
     Object? recommendationType = null,
+    Object? lastPrayerCreationDate = null,
   }) {
     return _then(_$CollectionRecommendationImpl(
       collection: null == collection
@@ -849,6 +861,10 @@ class __$$CollectionRecommendationImplCopyWithImpl<$Res>
           ? _value.recommendationType
           : recommendationType // ignore: cast_nullable_to_non_nullable
               as String,
+      lastPrayerCreationDate: null == lastPrayerCreationDate
+          ? _value.lastPrayerCreationDate
+          : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -860,7 +876,9 @@ class _$CollectionRecommendationImpl
     implements _CollectionRecommendation {
   const _$CollectionRecommendationImpl(
       {required this.collection,
-      @JsonKey(name: "recommendation_type") required this.recommendationType});
+      @JsonKey(name: "recommendation_type") required this.recommendationType,
+      @JsonKey(name: "last_prayer_creation_date")
+      required this.lastPrayerCreationDate});
 
   factory _$CollectionRecommendationImpl.fromJson(Map<String, dynamic> json) =>
       _$$CollectionRecommendationImplFromJson(json);
@@ -870,10 +888,13 @@ class _$CollectionRecommendationImpl
   @override
   @JsonKey(name: "recommendation_type")
   final String recommendationType;
+  @override
+  @JsonKey(name: "last_prayer_creation_date")
+  final DateTime lastPrayerCreationDate;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'CollectionRecommendation(collection: $collection, recommendationType: $recommendationType)';
+    return 'CollectionRecommendation(collection: $collection, recommendationType: $recommendationType, lastPrayerCreationDate: $lastPrayerCreationDate)';
   }
 
   @override
@@ -882,7 +903,9 @@ class _$CollectionRecommendationImpl
     properties
       ..add(DiagnosticsProperty('type', 'CollectionRecommendation'))
       ..add(DiagnosticsProperty('collection', collection))
-      ..add(DiagnosticsProperty('recommendationType', recommendationType));
+      ..add(DiagnosticsProperty('recommendationType', recommendationType))
+      ..add(DiagnosticsProperty(
+          'lastPrayerCreationDate', lastPrayerCreationDate));
   }
 
   @override
@@ -893,12 +916,15 @@ class _$CollectionRecommendationImpl
             (identical(other.collection, collection) ||
                 other.collection == collection) &&
             (identical(other.recommendationType, recommendationType) ||
-                other.recommendationType == recommendationType));
+                other.recommendationType == recommendationType) &&
+            (identical(other.lastPrayerCreationDate, lastPrayerCreationDate) ||
+                other.lastPrayerCreationDate == lastPrayerCreationDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, collection, recommendationType);
+  int get hashCode => Object.hash(
+      runtimeType, collection, recommendationType, lastPrayerCreationDate);
 
   /// Create a copy of CollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
@@ -921,7 +947,9 @@ abstract class _CollectionRecommendation implements CollectionRecommendation {
   const factory _CollectionRecommendation(
           {required final Collection collection,
           @JsonKey(name: "recommendation_type")
-          required final String recommendationType}) =
+          required final String recommendationType,
+          @JsonKey(name: "last_prayer_creation_date")
+          required final DateTime lastPrayerCreationDate}) =
       _$CollectionRecommendationImpl;
 
   factory _CollectionRecommendation.fromJson(Map<String, dynamic> json) =
@@ -932,6 +960,9 @@ abstract class _CollectionRecommendation implements CollectionRecommendation {
   @override
   @JsonKey(name: "recommendation_type")
   String get recommendationType;
+  @override
+  @JsonKey(name: "last_prayer_creation_date")
+  DateTime get lastPrayerCreationDate;
 
   /// Create a copy of CollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
@@ -950,9 +981,11 @@ HistoricalCollectionRecommendation _$HistoricalCollectionRecommendationFromJson(
 mixin _$HistoricalCollectionRecommendation {
   Collection get collection => throw _privateConstructorUsedError;
   @JsonKey(name: "recommendation_type")
-  String get recommendationType => throw _privateConstructorUsedError;
+  String? get recommendationType => throw _privateConstructorUsedError;
   @JsonKey(name: "for_date")
-  String get forDate => throw _privateConstructorUsedError;
+  String? get forDate => throw _privateConstructorUsedError;
+  @JsonKey(name: "last_prayer_creation_date")
+  DateTime get lastPrayerCreationDate => throw _privateConstructorUsedError;
 
   /// Serializes this HistoricalCollectionRecommendation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -975,8 +1008,10 @@ abstract class $HistoricalCollectionRecommendationCopyWith<$Res> {
   @useResult
   $Res call(
       {Collection collection,
-      @JsonKey(name: "recommendation_type") String recommendationType,
-      @JsonKey(name: "for_date") String forDate});
+      @JsonKey(name: "recommendation_type") String? recommendationType,
+      @JsonKey(name: "for_date") String? forDate,
+      @JsonKey(name: "last_prayer_creation_date")
+      DateTime lastPrayerCreationDate});
 
   $CollectionCopyWith<$Res> get collection;
 }
@@ -998,22 +1033,27 @@ class _$HistoricalCollectionRecommendationCopyWithImpl<$Res,
   @override
   $Res call({
     Object? collection = null,
-    Object? recommendationType = null,
-    Object? forDate = null,
+    Object? recommendationType = freezed,
+    Object? forDate = freezed,
+    Object? lastPrayerCreationDate = null,
   }) {
     return _then(_value.copyWith(
       collection: null == collection
           ? _value.collection
           : collection // ignore: cast_nullable_to_non_nullable
               as Collection,
-      recommendationType: null == recommendationType
+      recommendationType: freezed == recommendationType
           ? _value.recommendationType
           : recommendationType // ignore: cast_nullable_to_non_nullable
-              as String,
-      forDate: null == forDate
+              as String?,
+      forDate: freezed == forDate
           ? _value.forDate
           : forDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      lastPrayerCreationDate: null == lastPrayerCreationDate
+          ? _value.lastPrayerCreationDate
+          : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ) as $Val);
   }
 
@@ -1039,8 +1079,10 @@ abstract class _$$HistoricalCollectionRecommendationImplCopyWith<$Res>
   @useResult
   $Res call(
       {Collection collection,
-      @JsonKey(name: "recommendation_type") String recommendationType,
-      @JsonKey(name: "for_date") String forDate});
+      @JsonKey(name: "recommendation_type") String? recommendationType,
+      @JsonKey(name: "for_date") String? forDate,
+      @JsonKey(name: "last_prayer_creation_date")
+      DateTime lastPrayerCreationDate});
 
   @override
   $CollectionCopyWith<$Res> get collection;
@@ -1062,22 +1104,27 @@ class __$$HistoricalCollectionRecommendationImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? collection = null,
-    Object? recommendationType = null,
-    Object? forDate = null,
+    Object? recommendationType = freezed,
+    Object? forDate = freezed,
+    Object? lastPrayerCreationDate = null,
   }) {
     return _then(_$HistoricalCollectionRecommendationImpl(
       collection: null == collection
           ? _value.collection
           : collection // ignore: cast_nullable_to_non_nullable
               as Collection,
-      recommendationType: null == recommendationType
+      recommendationType: freezed == recommendationType
           ? _value.recommendationType
           : recommendationType // ignore: cast_nullable_to_non_nullable
-              as String,
-      forDate: null == forDate
+              as String?,
+      forDate: freezed == forDate
           ? _value.forDate
           : forDate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      lastPrayerCreationDate: null == lastPrayerCreationDate
+          ? _value.lastPrayerCreationDate
+          : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -1089,8 +1136,10 @@ class _$HistoricalCollectionRecommendationImpl
     implements _HistoricalCollectionRecommendation {
   const _$HistoricalCollectionRecommendationImpl(
       {required this.collection,
-      @JsonKey(name: "recommendation_type") required this.recommendationType,
-      @JsonKey(name: "for_date") required this.forDate});
+      @JsonKey(name: "recommendation_type") this.recommendationType,
+      @JsonKey(name: "for_date") this.forDate,
+      @JsonKey(name: "last_prayer_creation_date")
+      required this.lastPrayerCreationDate});
 
   factory _$HistoricalCollectionRecommendationImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -1100,14 +1149,17 @@ class _$HistoricalCollectionRecommendationImpl
   final Collection collection;
   @override
   @JsonKey(name: "recommendation_type")
-  final String recommendationType;
+  final String? recommendationType;
   @override
   @JsonKey(name: "for_date")
-  final String forDate;
+  final String? forDate;
+  @override
+  @JsonKey(name: "last_prayer_creation_date")
+  final DateTime lastPrayerCreationDate;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HistoricalCollectionRecommendation(collection: $collection, recommendationType: $recommendationType, forDate: $forDate)';
+    return 'HistoricalCollectionRecommendation(collection: $collection, recommendationType: $recommendationType, forDate: $forDate, lastPrayerCreationDate: $lastPrayerCreationDate)';
   }
 
   @override
@@ -1117,7 +1169,9 @@ class _$HistoricalCollectionRecommendationImpl
       ..add(DiagnosticsProperty('type', 'HistoricalCollectionRecommendation'))
       ..add(DiagnosticsProperty('collection', collection))
       ..add(DiagnosticsProperty('recommendationType', recommendationType))
-      ..add(DiagnosticsProperty('forDate', forDate));
+      ..add(DiagnosticsProperty('forDate', forDate))
+      ..add(DiagnosticsProperty(
+          'lastPrayerCreationDate', lastPrayerCreationDate));
   }
 
   @override
@@ -1129,13 +1183,15 @@ class _$HistoricalCollectionRecommendationImpl
                 other.collection == collection) &&
             (identical(other.recommendationType, recommendationType) ||
                 other.recommendationType == recommendationType) &&
-            (identical(other.forDate, forDate) || other.forDate == forDate));
+            (identical(other.forDate, forDate) || other.forDate == forDate) &&
+            (identical(other.lastPrayerCreationDate, lastPrayerCreationDate) ||
+                other.lastPrayerCreationDate == lastPrayerCreationDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, collection, recommendationType, forDate);
+  int get hashCode => Object.hash(runtimeType, collection, recommendationType,
+      forDate, lastPrayerCreationDate);
 
   /// Create a copy of HistoricalCollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
@@ -1158,11 +1214,12 @@ class _$HistoricalCollectionRecommendationImpl
 abstract class _HistoricalCollectionRecommendation
     implements HistoricalCollectionRecommendation {
   const factory _HistoricalCollectionRecommendation(
-          {required final Collection collection,
-          @JsonKey(name: "recommendation_type")
-          required final String recommendationType,
-          @JsonKey(name: "for_date") required final String forDate}) =
-      _$HistoricalCollectionRecommendationImpl;
+      {required final Collection collection,
+      @JsonKey(name: "recommendation_type") final String? recommendationType,
+      @JsonKey(name: "for_date") final String? forDate,
+      @JsonKey(name: "last_prayer_creation_date")
+      required final DateTime
+          lastPrayerCreationDate}) = _$HistoricalCollectionRecommendationImpl;
 
   factory _HistoricalCollectionRecommendation.fromJson(
           Map<String, dynamic> json) =
@@ -1172,10 +1229,13 @@ abstract class _HistoricalCollectionRecommendation
   Collection get collection;
   @override
   @JsonKey(name: "recommendation_type")
-  String get recommendationType;
+  String? get recommendationType;
   @override
   @JsonKey(name: "for_date")
-  String get forDate;
+  String? get forDate;
+  @override
+  @JsonKey(name: "last_prayer_creation_date")
+  DateTime get lastPrayerCreationDate;
 
   /// Create a copy of HistoricalCollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
