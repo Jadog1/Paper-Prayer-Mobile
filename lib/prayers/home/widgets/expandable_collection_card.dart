@@ -51,6 +51,7 @@ class ExpandableCollectionCard extends ConsumerStatefulWidget {
   final Collection collection;
   final CollectionCardStyle style;
   final Widget? headerWidget;
+  final Widget Function(BuildContext context, bool isExpanded)? metaBuilder;
   final bool initiallyExpanded;
   final bool showActions;
 
@@ -59,6 +60,7 @@ class ExpandableCollectionCard extends ConsumerStatefulWidget {
     required this.collection,
     required this.style,
     this.headerWidget,
+    this.metaBuilder,
     this.initiallyExpanded = false,
     this.showActions = true,
   });
@@ -252,6 +254,10 @@ class _ExpandableCollectionCardState
                           collection: collection,
                           accentColor: widget.style.accentColor,
                         ),
+                        if (widget.metaBuilder != null) ...[
+                          const SizedBox(height: 6),
+                          widget.metaBuilder!(context, _isExpanded),
+                        ],
                         const SizedBox(height: 6),
                         // Collection summary
                         if (collection.description != null &&

@@ -53,6 +53,10 @@ class CollectionRecommendation with _$CollectionRecommendation {
     @JsonKey(name: "recommendation_type") required String recommendationType,
     @JsonKey(name: "last_prayer_creation_date")
     required DateTime lastPrayerCreationDate,
+    @JsonKey(name: "closest_prayer_event_date")
+    DateTime? closestPrayerEventDate,
+    @JsonKey(name: "closest_prayer_event_reason")
+    String? closestPrayerEventReason,
   }) = _CollectionRecommendation;
 
   factory CollectionRecommendation.fromJson(Map<String, dynamic> json) =>

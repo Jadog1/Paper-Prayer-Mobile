@@ -73,6 +73,10 @@ _$CollectionRecommendationImpl _$$CollectionRecommendationImplFromJson(
       recommendationType: json['recommendation_type'] as String,
       lastPrayerCreationDate:
           DateTime.parse(json['last_prayer_creation_date'] as String),
+      closestPrayerEventDate: json['closest_prayer_event_date'] == null
+          ? null
+          : DateTime.parse(json['closest_prayer_event_date'] as String),
+      closestPrayerEventReason: json['closest_prayer_event_reason'] as String?,
     );
 
 Map<String, dynamic> _$$CollectionRecommendationImplToJson(
@@ -82,6 +86,9 @@ Map<String, dynamic> _$$CollectionRecommendationImplToJson(
       'recommendation_type': instance.recommendationType,
       'last_prayer_creation_date':
           instance.lastPrayerCreationDate.toIso8601String(),
+      'closest_prayer_event_date':
+          instance.closestPrayerEventDate?.toIso8601String(),
+      'closest_prayer_event_reason': instance.closestPrayerEventReason,
     };
 
 _$HistoricalCollectionRecommendationImpl

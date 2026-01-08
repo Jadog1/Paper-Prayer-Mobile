@@ -741,6 +741,10 @@ mixin _$CollectionRecommendation {
   String get recommendationType => throw _privateConstructorUsedError;
   @JsonKey(name: "last_prayer_creation_date")
   DateTime get lastPrayerCreationDate => throw _privateConstructorUsedError;
+  @JsonKey(name: "closest_prayer_event_date")
+  DateTime? get closestPrayerEventDate => throw _privateConstructorUsedError;
+  @JsonKey(name: "closest_prayer_event_reason")
+  String? get closestPrayerEventReason => throw _privateConstructorUsedError;
 
   /// Serializes this CollectionRecommendation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -762,7 +766,11 @@ abstract class $CollectionRecommendationCopyWith<$Res> {
       {Collection collection,
       @JsonKey(name: "recommendation_type") String recommendationType,
       @JsonKey(name: "last_prayer_creation_date")
-      DateTime lastPrayerCreationDate});
+      DateTime lastPrayerCreationDate,
+      @JsonKey(name: "closest_prayer_event_date")
+      DateTime? closestPrayerEventDate,
+      @JsonKey(name: "closest_prayer_event_reason")
+      String? closestPrayerEventReason});
 
   $CollectionCopyWith<$Res> get collection;
 }
@@ -786,6 +794,8 @@ class _$CollectionRecommendationCopyWithImpl<$Res,
     Object? collection = null,
     Object? recommendationType = null,
     Object? lastPrayerCreationDate = null,
+    Object? closestPrayerEventDate = freezed,
+    Object? closestPrayerEventReason = freezed,
   }) {
     return _then(_value.copyWith(
       collection: null == collection
@@ -800,6 +810,14 @@ class _$CollectionRecommendationCopyWithImpl<$Res,
           ? _value.lastPrayerCreationDate
           : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      closestPrayerEventDate: freezed == closestPrayerEventDate
+          ? _value.closestPrayerEventDate
+          : closestPrayerEventDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      closestPrayerEventReason: freezed == closestPrayerEventReason
+          ? _value.closestPrayerEventReason
+          : closestPrayerEventReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -827,7 +845,11 @@ abstract class _$$CollectionRecommendationImplCopyWith<$Res>
       {Collection collection,
       @JsonKey(name: "recommendation_type") String recommendationType,
       @JsonKey(name: "last_prayer_creation_date")
-      DateTime lastPrayerCreationDate});
+      DateTime lastPrayerCreationDate,
+      @JsonKey(name: "closest_prayer_event_date")
+      DateTime? closestPrayerEventDate,
+      @JsonKey(name: "closest_prayer_event_reason")
+      String? closestPrayerEventReason});
 
   @override
   $CollectionCopyWith<$Res> get collection;
@@ -851,6 +873,8 @@ class __$$CollectionRecommendationImplCopyWithImpl<$Res>
     Object? collection = null,
     Object? recommendationType = null,
     Object? lastPrayerCreationDate = null,
+    Object? closestPrayerEventDate = freezed,
+    Object? closestPrayerEventReason = freezed,
   }) {
     return _then(_$CollectionRecommendationImpl(
       collection: null == collection
@@ -865,6 +889,14 @@ class __$$CollectionRecommendationImplCopyWithImpl<$Res>
           ? _value.lastPrayerCreationDate
           : lastPrayerCreationDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      closestPrayerEventDate: freezed == closestPrayerEventDate
+          ? _value.closestPrayerEventDate
+          : closestPrayerEventDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      closestPrayerEventReason: freezed == closestPrayerEventReason
+          ? _value.closestPrayerEventReason
+          : closestPrayerEventReason // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -878,7 +910,10 @@ class _$CollectionRecommendationImpl
       {required this.collection,
       @JsonKey(name: "recommendation_type") required this.recommendationType,
       @JsonKey(name: "last_prayer_creation_date")
-      required this.lastPrayerCreationDate});
+      required this.lastPrayerCreationDate,
+      @JsonKey(name: "closest_prayer_event_date") this.closestPrayerEventDate,
+      @JsonKey(name: "closest_prayer_event_reason")
+      this.closestPrayerEventReason});
 
   factory _$CollectionRecommendationImpl.fromJson(Map<String, dynamic> json) =>
       _$$CollectionRecommendationImplFromJson(json);
@@ -891,10 +926,16 @@ class _$CollectionRecommendationImpl
   @override
   @JsonKey(name: "last_prayer_creation_date")
   final DateTime lastPrayerCreationDate;
+  @override
+  @JsonKey(name: "closest_prayer_event_date")
+  final DateTime? closestPrayerEventDate;
+  @override
+  @JsonKey(name: "closest_prayer_event_reason")
+  final String? closestPrayerEventReason;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'CollectionRecommendation(collection: $collection, recommendationType: $recommendationType, lastPrayerCreationDate: $lastPrayerCreationDate)';
+    return 'CollectionRecommendation(collection: $collection, recommendationType: $recommendationType, lastPrayerCreationDate: $lastPrayerCreationDate, closestPrayerEventDate: $closestPrayerEventDate, closestPrayerEventReason: $closestPrayerEventReason)';
   }
 
   @override
@@ -904,8 +945,12 @@ class _$CollectionRecommendationImpl
       ..add(DiagnosticsProperty('type', 'CollectionRecommendation'))
       ..add(DiagnosticsProperty('collection', collection))
       ..add(DiagnosticsProperty('recommendationType', recommendationType))
+      ..add(
+          DiagnosticsProperty('lastPrayerCreationDate', lastPrayerCreationDate))
+      ..add(
+          DiagnosticsProperty('closestPrayerEventDate', closestPrayerEventDate))
       ..add(DiagnosticsProperty(
-          'lastPrayerCreationDate', lastPrayerCreationDate));
+          'closestPrayerEventReason', closestPrayerEventReason));
   }
 
   @override
@@ -918,13 +963,18 @@ class _$CollectionRecommendationImpl
             (identical(other.recommendationType, recommendationType) ||
                 other.recommendationType == recommendationType) &&
             (identical(other.lastPrayerCreationDate, lastPrayerCreationDate) ||
-                other.lastPrayerCreationDate == lastPrayerCreationDate));
+                other.lastPrayerCreationDate == lastPrayerCreationDate) &&
+            (identical(other.closestPrayerEventDate, closestPrayerEventDate) ||
+                other.closestPrayerEventDate == closestPrayerEventDate) &&
+            (identical(
+                    other.closestPrayerEventReason, closestPrayerEventReason) ||
+                other.closestPrayerEventReason == closestPrayerEventReason));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, collection, recommendationType, lastPrayerCreationDate);
+  int get hashCode => Object.hash(runtimeType, collection, recommendationType,
+      lastPrayerCreationDate, closestPrayerEventDate, closestPrayerEventReason);
 
   /// Create a copy of CollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
@@ -945,12 +995,15 @@ class _$CollectionRecommendationImpl
 
 abstract class _CollectionRecommendation implements CollectionRecommendation {
   const factory _CollectionRecommendation(
-          {required final Collection collection,
-          @JsonKey(name: "recommendation_type")
-          required final String recommendationType,
-          @JsonKey(name: "last_prayer_creation_date")
-          required final DateTime lastPrayerCreationDate}) =
-      _$CollectionRecommendationImpl;
+      {required final Collection collection,
+      @JsonKey(name: "recommendation_type")
+      required final String recommendationType,
+      @JsonKey(name: "last_prayer_creation_date")
+      required final DateTime lastPrayerCreationDate,
+      @JsonKey(name: "closest_prayer_event_date")
+      final DateTime? closestPrayerEventDate,
+      @JsonKey(name: "closest_prayer_event_reason")
+      final String? closestPrayerEventReason}) = _$CollectionRecommendationImpl;
 
   factory _CollectionRecommendation.fromJson(Map<String, dynamic> json) =
       _$CollectionRecommendationImpl.fromJson;
@@ -963,6 +1016,12 @@ abstract class _CollectionRecommendation implements CollectionRecommendation {
   @override
   @JsonKey(name: "last_prayer_creation_date")
   DateTime get lastPrayerCreationDate;
+  @override
+  @JsonKey(name: "closest_prayer_event_date")
+  DateTime? get closestPrayerEventDate;
+  @override
+  @JsonKey(name: "closest_prayer_event_reason")
+  String? get closestPrayerEventReason;
 
   /// Create a copy of CollectionRecommendation
   /// with the given fields replaced by the non-null parameter values.
