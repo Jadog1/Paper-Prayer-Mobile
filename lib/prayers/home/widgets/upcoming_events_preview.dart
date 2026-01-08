@@ -114,6 +114,7 @@ class _UpcomingEventsPreviewState extends ConsumerState<UpcomingEventsPreview> {
             children: [
               // Events list
               futureEventsAsync.when(
+                skipLoadingOnRefresh: false,
                 data: (events) {
                   _checkIfScrollable();
 

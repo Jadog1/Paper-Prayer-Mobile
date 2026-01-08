@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/home/current_recommendations.dart';
+import 'package:prayer_ml/prayers/home/repos/events_repo.dart';
 import 'package:prayer_ml/prayers/home/repos/recommendations_repo.dart';
 import 'package:prayer_ml/prayers/home/views/historical_recommendations_view.dart';
 import 'package:prayer_ml/prayers/home/views/unresolved_followups_view.dart';
@@ -15,161 +16,218 @@ class NewHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return const NewHomePageConsumer();
-    // return Navigator(
-    //   onGenerateRoute: (settings) => MaterialPageRoute(
-    //     builder: (context) => const NewHomePageConsumer(),
-    //   ),
-    // );
   }
 }
 
 class NewHomePageConsumer extends ConsumerWidget {
   const NewHomePageConsumer({super.key});
 
+  Future<void> _refreshAll(WidgetRef ref) async {
+    // Invalidate first so any watchers rebuild.
+    ref.invalidate(recommendationRepoProvider);
+    ref.invalidate(hasPendingInvitesProvider);
+    ref.invalidate(fetchFutureEventsProvider(limit: 5, maxDays: 30));
+
+    // Then await the fetches so the RefreshIndicator behaves predictably.
+    await Future.wait([
+      ref.read(recommendationRepoProvider.future),
+      ref.read(hasPendingInvitesProvider.future),
+      ref.read(fetchFutureEventsProvider(limit: 5, maxDays: 30).future),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(recommendationRepoProvider);
+    final recommendationGroupsAsync = ref.watch(recommendationRepoProvider);
     final hasPendingInvites = ref.watch(hasPendingInvitesProvider);
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Account/Settings button at the top right
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const AccountSettingsPage(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.manage_accounts),
-                        iconSize: 28,
-                        color: Colors.blueAccent,
-                        tooltip: 'Account Settings',
-                      ),
-                      // Notification badge
-                      hasPendingInvites.when(
-                        data: (hasInvites) {
-                          if (!hasInvites) return const SizedBox.shrink();
-                          return Positioned(
-                            right: 6,
-                            top: 6,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return RefreshIndicator(
+              // Only allow refresh when the active scrollable is at its top.
+              // This works for the outer scroll view and the nested lists.
+              notificationPredicate: (notification) {
+                if (notification.metrics.axis != Axis.vertical) return false;
+                return notification.metrics.pixels <= 0.0;
+              },
+              onRefresh: () => _refreshAll(ref),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: constraints.maxHeight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Account/Settings button at the top right
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AccountSettingsPage(),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.manage_accounts),
+                                  iconSize: 28,
+                                  color: Colors.blueAccent,
+                                  tooltip: 'Account Settings',
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                        loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              // Title
-              const Text(
-                "Paper Prayer",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                  letterSpacing: 1.2,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Subtitle/Description
-              Text(
-                "Prayer requests to follow up on",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Divider to separate header from content
-              Divider(
-                height: 32,
-                thickness: 1.5,
-                color: Colors.blue[100],
-                indent: 40,
-                endIndent: 40,
-              ),
-
-              // Recommendations Section - Flexible with minimum height
-              Flexible(
-                flex: 1,
-                child: viewModel.when(
-                  data: (recommendationGroups) {
-                    return ListView.builder(
-                      itemCount: recommendationGroups.length,
-                      itemBuilder: (context, index) {
-                        final group = recommendationGroups[index];
-                        return _RecommendationGroupButton(
-                          group: group,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CurrentRecommendationsView(
-                                  recommendationGroup: group,
+                                // Notification badge
+                                hasPendingInvites.when(
+                                  skipLoadingOnRefresh: false,
+                                  data: (hasInvites) {
+                                    if (!hasInvites) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return Positioned(
+                                      right: 6,
+                                      top: 6,
+                                      child: Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  loading: () => const SizedBox.shrink(),
+                                  error: (_, __) => const SizedBox.shrink(),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                  loading: () => const _RecommendationGroupsSkeleton(),
-                  error: (error, stackTrace) => PrintError(
-                    caller: "NewHomePage",
-                    error: error,
-                    stackTrace: stackTrace,
-                    onRetry: () => ref.invalidate(recommendationRepoProvider),
-                    compact: true,
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        // Title
+                        const Text(
+                          "Paper Prayer",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Subtitle/Description
+                        Text(
+                          "Prayer requests to follow up on",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+
+                        // Divider to separate header from content
+                        Divider(
+                          height: 24,
+                          thickness: 1.5,
+                          color: Colors.blue[100],
+                          indent: 40,
+                          endIndent: 40,
+                        ),
+
+                        // Recommendations (scrollable)
+                        Expanded(
+                          flex: 4,
+                          child: recommendationGroupsAsync.when(
+                            skipLoadingOnRefresh: false,
+                            data: (recommendationGroups) {
+                              if (recommendationGroups.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    "No recommendations right now",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                itemCount: recommendationGroups.length,
+                                itemBuilder: (context, index) {
+                                  final group = recommendationGroups[index];
+                                  return _RecommendationGroupButton(
+                                    group: group,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CurrentRecommendationsView(
+                                            recommendationGroup: group,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                            loading: () {
+                              return ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                itemCount: 2,
+                                itemBuilder: (context, index) {
+                                  return const _RecommendationGroupSkeletonItem();
+                                },
+                              );
+                            },
+                            error: (error, stackTrace) => PrintError(
+                              caller: "NewHomePage",
+                              error: error,
+                              stackTrace: stackTrace,
+                              onRetry: () =>
+                                  ref.invalidate(recommendationRepoProvider),
+                              compact: true,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // Upcoming events (internally scrollable)
+                        const Expanded(
+                          flex: 5,
+                          child: UpcomingEventsPreview(),
+                        ),
+
+                        const SizedBox(height: 8),
+                        const _AdditionalViewButtons(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-
-              // Upcoming Events Preview Section - Limited height
-              const Flexible(
-                flex: 2,
-                child: UpcomingEventsPreview(),
-              ),
-
-              // Additional view buttons
-              const SizedBox(height: 8),
-              const _AdditionalViewButtons(),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -315,21 +373,6 @@ class _RecommendationGroupButton extends StatelessWidget {
       default:
         return Colors.grey;
     }
-  }
-}
-
-// Skeleton loading state for recommendation groups
-class _RecommendationGroupsSkeleton extends StatelessWidget {
-  const _RecommendationGroupsSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 4, // Show 4 skeleton items
-      itemBuilder: (context, index) {
-        return const _RecommendationGroupSkeletonItem();
-      },
-    );
   }
 }
 

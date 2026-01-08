@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
 import 'package:prayer_ml/prayers/home/new_home.dart';
 import 'package:prayer_ml/prayers/web/web_view.dart';
 // import 'package:prayer_ml/prayers/chat/chat.dart';
@@ -124,7 +125,7 @@ class _PrayersPageState extends State<PrayersPage> {
             }
           },
         ),
-        body: IndexedStack(
+        body: LazyLoadIndexedStack(
           index: pageIndex,
           children: [
             Navigator(
