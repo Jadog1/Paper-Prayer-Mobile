@@ -11,7 +11,7 @@ import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provide
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/export_provider.dart';
 
 /// A widget that represents a block of text in the paper mode view.
-/// 
+///
 /// This can be a ViewableRequest, EditableRequest, or UserSelection widget.
 /// It manages state between swapping modes and relies on PaperModeState
 /// for determining whether view/edit mode is active.
@@ -93,15 +93,23 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
     final state = stateNotifier.state;
     final exportNotifier = ref.watch(exportStateProvider);
     final exportState = exportNotifier.state;
-    
+
+    // New requests start in edit mode (id==0). Once saved (id!=0), we allow
+    // switching into ViewableRequest in AI mode even if features aren't ready yet.
+    final allowsAIModeForThisBlock = widget.allowsAIMode ||
+        (widget.newRequest && widget.prayerRequest.id != 0);
+
     final useViewableRequest = widget.config.readOnly ||
         (state.aiMode &&
-            widget.allowsAIMode &&
+            allowsAIModeForThisBlock &&
             !_editFocusNode.hasFocus &&
-            !state.prayerIdsInOverrideEditMode.contains(widget.prayerRequest.id));
-    
-    final requiresUserSelection =
-        !widget.config.readOnly && state.selectedUser == null && widget.newRequest && widget.currentGroup != null;
+            !state.prayerIdsInOverrideEditMode
+                .contains(widget.prayerRequest.id));
+
+    final requiresUserSelection = !widget.config.readOnly &&
+        state.selectedUser == null &&
+        widget.newRequest &&
+        widget.currentGroup != null;
 
     if (requiresUserSelection || _changingUser) {
       return UserSelection(
@@ -154,7 +162,10 @@ class _PaperBlockState extends ConsumerState<PaperBlock> {
           // padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3)
+                ? Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withValues(alpha: 0.3)
                 : null,
             border: isSelected
                 ? Border.all(

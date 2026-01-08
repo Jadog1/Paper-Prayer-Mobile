@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayer_ml/prayers/groups/models/pipeline_status_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/components/paper_margin_space.dart';
 import 'package:prayer_ml/prayers/groups/paper_mode/providers/paper_mode_provider.dart';
@@ -68,7 +69,9 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
           newRequest = await saveNewRequest(newRequest);
           widget.prayerRequest.id = newRequest.id;
           // After creating a new request, mark it as processing
-          setState(() => _saveState = SaveState.processing);
+          if (mounted) {
+            setState(() => _saveState = SaveState.processing);
+          }
           // Start tracking pipeline status
           ref
               .read(paperModeStateProvider)
@@ -157,8 +160,32 @@ class _EditableRequestState extends ConsumerState<EditableRequest> {
 
   @override
   Widget build(BuildContext context) {
+    final paperState = ref.watch(paperModeStateProvider);
+    final pipelineStatus = widget.prayerRequest.id == 0
+        ? null
+        : paperState.getPipelineStatusForRequest(widget.prayerRequest.id);
+    final pipelineRunning = pipelineStatus != null && pipelineStatus.isRunning;
+    final pipelineFailed = pipelineStatus != null && pipelineStatus.hasFailed;
+    final pipelineComplete =
+        pipelineStatus != null && pipelineStatus.isComplete;
+
+    // If we were showing processing locally, clear it once the backend is done.
+    if (_saveState == SaveState.processing &&
+        (pipelineComplete || pipelineFailed)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() {
+          _saveState = pipelineFailed ? SaveState.failed : SaveState.saved;
+        });
+      });
+    }
+
+    final effectiveSaveState = pipelineRunning
+        ? SaveState.processing
+        : (pipelineFailed ? SaveState.failed : _saveState);
+
     Icon? icon;
-    switch (_saveState) {
+    switch (effectiveSaveState) {
       case SaveState.saving:
         icon = const Icon(Icons.sync, size: 16);
         break;

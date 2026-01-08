@@ -97,7 +97,6 @@ final notifier = ref.watch(paperModeStateWithConfigProvider(config));
 ### PaperModeConfig
 
 | Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
 | `readOnly` | `bool` | `false` | Disable editing features |
 | `showHeader` | `bool` | `true` | Show navigation and AI toggle |
 | `contactId` | `int?` | `null` | Filter requests by contact |

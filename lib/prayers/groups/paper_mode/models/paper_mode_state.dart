@@ -124,7 +124,8 @@ class PaperModeStateNotifier extends ChangeNotifier {
           Map<int, PipelineRunDTO>.from(_state.pipelineStatuses);
       final completedIds = <int>[];
 
-      for (final requestId in _requestIdsToTrack) {
+      // Iterate over a snapshot to avoid concurrent modification while awaiting.
+      for (final requestId in List<int>.from(_requestIdsToTrack)) {
         try {
           final pipelineStatus = await getPipelineStatus(requestId);
 
