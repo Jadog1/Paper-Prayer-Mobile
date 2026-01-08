@@ -16,16 +16,20 @@ class GroupConsumer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var viewModel = ref.watch(groupContactsRepoProvider);
+    final viewModel = ref.watch(groupContactsRepoProvider);
 
-    return switch (viewModel) {
-      AsyncData(:final value) => GroupView(groupContacts: value),
-      AsyncError(:final error, :final stackTrace) => PrintError(
-          caller: "GroupConsumer",
-          error: error,
-          stackTrace: stackTrace,
-          onRetry: () => ref.invalidate(groupContactsRepoProvider)),
-      _ => const GroupViewSkeleton(),
-    };
+    return viewModel.when(
+      skipLoadingOnRefresh: false,
+      data: (value) => GroupView(groupContacts: value),
+      loading: () {
+        return const GroupViewSkeleton();
+      },
+      error: (error, stackTrace) => PrintError(
+        caller: "GroupConsumer",
+        error: error,
+        stackTrace: stackTrace,
+        onRetry: () => ref.invalidate(groupContactsRepoProvider),
+      ),
+    );
   }
 }

@@ -63,7 +63,7 @@ Navigator(
 
 ### Component Hierarchy
 
-```
+```text
 Groups (Public API)
 └── GroupConsumer (Async Handler)
     ├── GroupView (Main UI)
@@ -87,6 +87,7 @@ Groups (Public API)
 ### Public API
 
 #### `Groups`
+
 The only exported widget. Entry point for the notebook grid feature.
 
 ```dart
@@ -98,26 +99,34 @@ const Groups({super.key})
 These are implementation details and not exported:
 
 #### `GroupConsumer`
+
 Handles async data loading from repository.
+
 - Shows `GroupView` on success
 - Shows error screen with retry on failure
 - Shows `GroupViewSkeleton` while loading
 
 #### `GroupView`
+
 Main scaffold displaying the grid of notebooks.
+
 - Header with "Prayer Notebooks" title
 - Search bar for filtering
 - 2-column grid of notebook cards
 - "Create New Notebook" button
 
 #### `SearchBarWidget`
+
 Animated search input with focus effects.
+
 - Filters notebooks in real-time
 - Focus-based shadow animation
 - Themed colors matching notebook aesthetic
 
 #### `GroupNotebook`
+
 Individual notebook card with rich interactions.
+
 - Spiral binding design on left
 - Paper texture lines
 - Corner fold effect
@@ -130,14 +139,18 @@ Individual notebook card with rich interactions.
 - Integrates with `PermissionsDialog` and `MembersModal`
 
 #### `PermissionsDialog`
+
 Dialog showing detailed user permissions.
+
 - Visual breakdown of all notebook permissions
 - Document permissions section
 - Check/cross indicators for granted/denied access
 - Notebook name display with themed styling
 
 #### `MembersModal`
+
 Bottom sheet displaying notebook members.
+
 - Scrollable list of all members
 - Member count in header
 - Edit button per member (if user has permission)
@@ -145,15 +158,19 @@ Bottom sheet displaying notebook members.
 - Tap to view member details
 
 #### `PaperModePermissions`
+
 Permission wrapper for navigating to PaperMode.
+
 - Access denied screen if no view permission
 - Read-only mode if view-only
 - Editable mode if edit permission granted
 
 #### `NotebookLinesPainter` & `CornerFoldPainter`
+
 Custom painters for notebook visual effects.
 
 #### `GroupViewSkeleton` & `NotebookSkeleton`
+
 Loading state components with shimmer animation.
 
 ## Models
@@ -168,11 +185,13 @@ class SearchState extends ChangeNotifier {
 ```
 
 Manages local search state:
+
 - Tracks original and filtered notebook lists
 - Filters by notebook name (case-insensitive)
 - Notifies listeners on changes
 
 Provider:
+
 ```dart
 final searchStateProvider = ChangeNotifierProvider.autoDispose
     .family<SearchState, List<GroupWithMembers>>
@@ -192,7 +211,6 @@ final searchStateProvider = ChangeNotifierProvider.autoDispose
 ### Color Palette
 
 | Element | Color | Usage |
-|---------|-------|-------|
 | Primary | `#8B7355` | Buttons, focus states, admin badge |
 | Paper | `#FFF9E6` | Notebook card background |
 | Lines | `#E8DCC8` | Notebook ruled lines |
@@ -211,7 +229,6 @@ final searchStateProvider = ChangeNotifierProvider.autoDispose
 Permissions are checked via `hasPermission(group, Permission.*)`:
 
 | Permission | Description | UI Impact |
-|------------|-------------|-----------|
 | `view` | View notebook content | Access to PaperMode |
 | `editPrayers` | Edit prayers | Editable mode, batch insert |
 | `editGroup` | Manage notebook | Settings, access management |
@@ -222,7 +239,7 @@ Permissions are checked via `hasPermission(group, Permission.*)`:
 
 ## Navigation Flow
 
-```
+```text
 Groups
   ├─ Tap Notebook Card → PaperModePermissions → PaperMode
   ├─ Context Menu > Batch Insert → BatchPaperMode
@@ -237,10 +254,12 @@ Groups
 ## Dependencies
 
 ### External
+
 - `flutter_riverpod`: State management
 - `flutter/material.dart`: UI framework
 
 ### Internal
+
 - `prayer_ml/prayers/groups/models/`: Group and contact models
 - `prayer_ml/prayers/groups/repos/repo.dart`: Data repository
 - `prayer_ml/prayers/groups/paper_mode/paper_mode.dart`: Prayer view/edit
@@ -289,28 +308,6 @@ void main() {
   });
 }
 ```
-
-## Migration from Old Structure
-
-The old `groups.dart` was a single 1200+ line file. It has been refactored into:
-
-1. **Public API** (`notebook_groups.dart`): Single entry point
-2. **Models** (`models/search_state.dart`): Search state management
-3. **Components** (`components/*.dart`): 7 modular UI files
-
-### Breaking Changes
-
-**Before:**
-```dart
-import 'package:prayer_ml/prayers/groups/groups.dart';
-```
-
-**After:**
-```dart
-import 'package:prayer_ml/prayers/groups/notebook_groups/notebook_groups.dart';
-```
-
-The `Groups` widget API remains unchanged.
 
 ## Contributing
 

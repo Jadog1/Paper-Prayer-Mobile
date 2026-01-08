@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/group_model.dart';
 import 'package:prayer_ml/prayers/groups/group_page_settings.dart';
 import 'package:prayer_ml/prayers/groups/repos/pending_invites_repo.dart';
+import 'package:prayer_ml/prayers/groups/repos/repo.dart';
 import 'package:prayer_ml/prayers/groups/group_access/pending_invites_page.dart';
 import '../models/search_state.dart';
 import 'search_bar_widget.dart';
@@ -18,6 +19,16 @@ import 'group_notebook.dart';
 class GroupView extends ConsumerWidget {
   const GroupView({super.key, required this.groupContacts});
   final List<GroupWithMembers> groupContacts;
+
+  Future<void> _refreshAll(WidgetRef ref) async {
+    ref.invalidate(groupContactsRepoProvider);
+    ref.invalidate(hasPendingInvitesProvider);
+
+    await Future.wait([
+      ref.read(groupContactsRepoProvider.future),
+      ref.read(hasPendingInvitesProvider.future),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,18 +115,31 @@ class GroupView extends ConsumerWidget {
               SearchBarWidget(searchState: searchState),
               const SizedBox(height: 16),
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.85, // Slightly taller for notebook look
-                  ),
-                  itemCount: searchState.groupContacts.length,
-                  itemBuilder: (context, index) {
-                    return GroupNotebook(
-                        groupContacts: searchState.groupContacts[index]);
+                child: RefreshIndicator(
+                  notificationPredicate: (notification) {
+                    if (notification.metrics.axis != Axis.vertical) {
+                      return false;
+                    }
+                    return notification.metrics.pixels <= 0.0;
                   },
+                  onRefresh: () => _refreshAll(ref),
+                  child: GridView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio:
+                          0.85, // Slightly taller for notebook look
+                    ),
+                    itemCount: searchState.groupContacts.length,
+                    itemBuilder: (context, index) {
+                      return GroupNotebook(
+                        groupContacts: searchState.groupContacts[index],
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
