@@ -30,14 +30,17 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
         isLoading = true;
         errorMessage = null;
       });
-      
+
       // Step 1 & 2: Get Firebase ID token and exchange for session ID using Riverpod
-      final sessionAsyncValue = await ref.read(exchangeFirebaseTokenProvider.future);
-      
+      final sessionAsyncValue =
+          await ref.read(exchangeFirebaseTokenProvider.future);
+
       // Step 3: Build URL with session_id and platform
-      final platform = Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
-      final webViewUrl = Uri.parse('$BASE_URL/?mobile_session_id=${sessionAsyncValue.sessionId}&platform=$platform');
-      
+      final platform =
+          Theme.of(context).platform == TargetPlatform.iOS ? 'ios' : 'android';
+      final webViewUrl = Uri.parse(
+          '$BASE_URL/?mobile_session_id=${sessionAsyncValue.sessionId}&platform=$platform');
+
       // Step 4: Initialize WebView controller
       final newController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -59,6 +62,28 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
               }
             },
             onWebResourceError: (WebResourceError error) {
+              // Android WebView reports errors for subresources and iframes too.
+              // Treat only main-frame errors as fatal; otherwise embedded iframes
+              // (e.g., third-party sites inside a modal) can flip the whole UI into
+              // an error state.
+              // If the platform can't tell us whether the error is for the main
+              // frame, assume it's NOT (safer: don't take down the whole UI).
+              final isMainFrame = error.isForMainFrame ?? false;
+
+              assert(() {
+                debugPrint(
+                  'WebView resource error (mainFrame=$isMainFrame): '
+                  'code=${error.errorCode} '
+                  'type=${error.errorType} '
+                  'desc=${error.description}',
+                );
+                return true;
+              }());
+
+              if (!isMainFrame) {
+                return;
+              }
+
               if (mounted) {
                 setState(() {
                   errorMessage = 'Failed to load page: ${error.description}';
@@ -75,7 +100,6 @@ class _WebViewPageState extends ConsumerState<WebViewPage> {
           controller = newController;
         });
       }
-      
     } catch (e) {
       if (mounted) {
         setState(() {
