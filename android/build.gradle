@@ -5,6 +5,26 @@ allprojects {
     }
 }
 
+// Ensure all Android subprojects (including Flutter plugin modules) compile against a
+// sufficiently new Android API level to satisfy AAR metadata requirements.
+subprojects { subproject ->
+    afterEvaluate {
+        def androidExtension = subproject.extensions.findByName("android")
+        if (androidExtension != null) {
+            // Prefer the legacy method when available; fall back to the newer property.
+            try {
+                androidExtension.compileSdkVersion(34)
+            } catch (Throwable ignored) {
+                try {
+                    androidExtension.compileSdk = 34
+                } catch (Throwable ignored2) {
+                    // Ignore if this isn't an Android project or the DSL differs.
+                }
+            }
+        }
+    }
+}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
