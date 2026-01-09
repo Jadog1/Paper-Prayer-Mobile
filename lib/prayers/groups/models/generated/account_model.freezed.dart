@@ -28,6 +28,18 @@ mixin _$Account {
   String? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'monthly_spend_limit')
   double? get monthlySpendLimit => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_code')
+  String? get userCode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'firebase_id')
+  String? get firebaseId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_active')
+  bool? get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_superuser')
+  bool? get isSuperuser => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_verified')
+  bool? get isVerified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'beta_user')
+  bool? get betaUser => throw _privateConstructorUsedError;
 
   /// Serializes this Account to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,7 +60,13 @@ abstract class $AccountCopyWith<$Res> {
       String? name,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit});
+      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit,
+      @JsonKey(name: 'user_code') String? userCode,
+      @JsonKey(name: 'firebase_id') String? firebaseId,
+      @JsonKey(name: 'is_active') bool? isActive,
+      @JsonKey(name: 'is_superuser') bool? isSuperuser,
+      @JsonKey(name: 'is_verified') bool? isVerified,
+      @JsonKey(name: 'beta_user') bool? betaUser});
 }
 
 /// @nodoc
@@ -71,6 +89,12 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? monthlySpendLimit = freezed,
+    Object? userCode = freezed,
+    Object? firebaseId = freezed,
+    Object? isActive = freezed,
+    Object? isSuperuser = freezed,
+    Object? isVerified = freezed,
+    Object? betaUser = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -93,6 +117,30 @@ class _$AccountCopyWithImpl<$Res, $Val extends Account>
           ? _value.monthlySpendLimit
           : monthlySpendLimit // ignore: cast_nullable_to_non_nullable
               as double?,
+      userCode: freezed == userCode
+          ? _value.userCode
+          : userCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      firebaseId: freezed == firebaseId
+          ? _value.firebaseId
+          : firebaseId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: freezed == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isSuperuser: freezed == isSuperuser
+          ? _value.isSuperuser
+          : isSuperuser // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isVerified: freezed == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      betaUser: freezed == betaUser
+          ? _value.betaUser
+          : betaUser // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -109,7 +157,13 @@ abstract class _$$AccountImplCopyWith<$Res> implements $AccountCopyWith<$Res> {
       String? name,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit});
+      @JsonKey(name: 'monthly_spend_limit') double? monthlySpendLimit,
+      @JsonKey(name: 'user_code') String? userCode,
+      @JsonKey(name: 'firebase_id') String? firebaseId,
+      @JsonKey(name: 'is_active') bool? isActive,
+      @JsonKey(name: 'is_superuser') bool? isSuperuser,
+      @JsonKey(name: 'is_verified') bool? isVerified,
+      @JsonKey(name: 'beta_user') bool? betaUser});
 }
 
 /// @nodoc
@@ -130,6 +184,12 @@ class __$$AccountImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? monthlySpendLimit = freezed,
+    Object? userCode = freezed,
+    Object? firebaseId = freezed,
+    Object? isActive = freezed,
+    Object? isSuperuser = freezed,
+    Object? isVerified = freezed,
+    Object? betaUser = freezed,
   }) {
     return _then(_$AccountImpl(
       id: null == id
@@ -152,6 +212,30 @@ class __$$AccountImplCopyWithImpl<$Res>
           ? _value.monthlySpendLimit
           : monthlySpendLimit // ignore: cast_nullable_to_non_nullable
               as double?,
+      userCode: freezed == userCode
+          ? _value.userCode
+          : userCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      firebaseId: freezed == firebaseId
+          ? _value.firebaseId
+          : firebaseId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: freezed == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isSuperuser: freezed == isSuperuser
+          ? _value.isSuperuser
+          : isSuperuser // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      isVerified: freezed == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      betaUser: freezed == betaUser
+          ? _value.betaUser
+          : betaUser // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -164,7 +248,13 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
       this.name,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'monthly_spend_limit') this.monthlySpendLimit});
+      @JsonKey(name: 'monthly_spend_limit') this.monthlySpendLimit,
+      @JsonKey(name: 'user_code') this.userCode,
+      @JsonKey(name: 'firebase_id') this.firebaseId,
+      @JsonKey(name: 'is_active') this.isActive,
+      @JsonKey(name: 'is_superuser') this.isSuperuser,
+      @JsonKey(name: 'is_verified') this.isVerified,
+      @JsonKey(name: 'beta_user') this.betaUser});
 
   factory _$AccountImpl.fromJson(Map<String, dynamic> json) =>
       _$$AccountImplFromJson(json);
@@ -182,10 +272,28 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
   @override
   @JsonKey(name: 'monthly_spend_limit')
   final double? monthlySpendLimit;
+  @override
+  @JsonKey(name: 'user_code')
+  final String? userCode;
+  @override
+  @JsonKey(name: 'firebase_id')
+  final String? firebaseId;
+  @override
+  @JsonKey(name: 'is_active')
+  final bool? isActive;
+  @override
+  @JsonKey(name: 'is_superuser')
+  final bool? isSuperuser;
+  @override
+  @JsonKey(name: 'is_verified')
+  final bool? isVerified;
+  @override
+  @JsonKey(name: 'beta_user')
+  final bool? betaUser;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Account(id: $id, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, monthlySpendLimit: $monthlySpendLimit)';
+    return 'Account(id: $id, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, monthlySpendLimit: $monthlySpendLimit, userCode: $userCode, firebaseId: $firebaseId, isActive: $isActive, isSuperuser: $isSuperuser, isVerified: $isVerified, betaUser: $betaUser)';
   }
 
   @override
@@ -197,7 +305,13 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('monthlySpendLimit', monthlySpendLimit));
+      ..add(DiagnosticsProperty('monthlySpendLimit', monthlySpendLimit))
+      ..add(DiagnosticsProperty('userCode', userCode))
+      ..add(DiagnosticsProperty('firebaseId', firebaseId))
+      ..add(DiagnosticsProperty('isActive', isActive))
+      ..add(DiagnosticsProperty('isSuperuser', isSuperuser))
+      ..add(DiagnosticsProperty('isVerified', isVerified))
+      ..add(DiagnosticsProperty('betaUser', betaUser));
   }
 
   @override
@@ -212,13 +326,36 @@ class _$AccountImpl with DiagnosticableTreeMixin implements _Account {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.monthlySpendLimit, monthlySpendLimit) ||
-                other.monthlySpendLimit == monthlySpendLimit));
+                other.monthlySpendLimit == monthlySpendLimit) &&
+            (identical(other.userCode, userCode) ||
+                other.userCode == userCode) &&
+            (identical(other.firebaseId, firebaseId) ||
+                other.firebaseId == firebaseId) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive) &&
+            (identical(other.isSuperuser, isSuperuser) ||
+                other.isSuperuser == isSuperuser) &&
+            (identical(other.isVerified, isVerified) ||
+                other.isVerified == isVerified) &&
+            (identical(other.betaUser, betaUser) ||
+                other.betaUser == betaUser));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, name, createdAt, updatedAt, monthlySpendLimit);
+      runtimeType,
+      id,
+      name,
+      createdAt,
+      updatedAt,
+      monthlySpendLimit,
+      userCode,
+      firebaseId,
+      isActive,
+      isSuperuser,
+      isVerified,
+      betaUser);
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.
@@ -242,8 +379,13 @@ abstract class _Account implements Account {
       final String? name,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      @JsonKey(name: 'monthly_spend_limit')
-      final double? monthlySpendLimit}) = _$AccountImpl;
+      @JsonKey(name: 'monthly_spend_limit') final double? monthlySpendLimit,
+      @JsonKey(name: 'user_code') final String? userCode,
+      @JsonKey(name: 'firebase_id') final String? firebaseId,
+      @JsonKey(name: 'is_active') final bool? isActive,
+      @JsonKey(name: 'is_superuser') final bool? isSuperuser,
+      @JsonKey(name: 'is_verified') final bool? isVerified,
+      @JsonKey(name: 'beta_user') final bool? betaUser}) = _$AccountImpl;
 
   factory _Account.fromJson(Map<String, dynamic> json) = _$AccountImpl.fromJson;
 
@@ -260,6 +402,24 @@ abstract class _Account implements Account {
   @override
   @JsonKey(name: 'monthly_spend_limit')
   double? get monthlySpendLimit;
+  @override
+  @JsonKey(name: 'user_code')
+  String? get userCode;
+  @override
+  @JsonKey(name: 'firebase_id')
+  String? get firebaseId;
+  @override
+  @JsonKey(name: 'is_active')
+  bool? get isActive;
+  @override
+  @JsonKey(name: 'is_superuser')
+  bool? get isSuperuser;
+  @override
+  @JsonKey(name: 'is_verified')
+  bool? get isVerified;
+  @override
+  @JsonKey(name: 'beta_user')
+  bool? get betaUser;
 
   /// Create a copy of Account
   /// with the given fields replaced by the non-null parameter values.

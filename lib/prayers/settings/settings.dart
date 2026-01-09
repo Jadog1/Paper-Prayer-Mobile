@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayer_ml/prayers/groups/models/account_model.dart';
 import 'package:prayer_ml/shared/config.dart';
@@ -134,6 +135,8 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
+    final userCode = _account?.userCode;
+    final isSuperuser = _account?.isSuperuser ?? false;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -191,15 +194,31 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Text(
-                              _nameController.text.isNotEmpty
-                                  ? _nameController.text
-                                  : 'User',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    _nameController.text.isNotEmpty
+                                        ? _nameController.text
+                                        : 'User',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                if (isSuperuser) ...[
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    color: Colors.white.withValues(alpha: 0.95),
+                                    size: 20,
+                                  ),
+                                ],
+                              ],
                             ),
                             if (user?.email != null) ...[
                               const SizedBox(height: 4),
@@ -211,6 +230,67 @@ class _AccountSettingsPageState extends ConsumerState<AccountSettingsPage> {
                                 ),
                               ),
                             ],
+                            if (userCode != null && userCode.trim().isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Clipboard.setData(
+                                      ClipboardData(text: userCode.trim()),
+                                    );
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                        const SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          content: Text('Copied user code.'),
+                                        ),
+                                      );
+                                  },
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.16),
+                                      borderRadius: BorderRadius.circular(999),
+                                      border: Border.all(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.28),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.tag,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Code: ${userCode.trim()}',
+                                          style: TextStyle(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.95),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Icon(
+                                          Icons.copy,
+                                          color: Colors.white
+                                              .withValues(alpha: 0.85),
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),

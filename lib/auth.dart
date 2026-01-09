@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prayer_ml/prayers/groups/models/account_model.dart';
+import 'package:prayer_ml/shared/config.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:developer' as developer;
 
 const Color _kParchmentLight = Color(0xFFFFFAF1);
@@ -14,17 +17,229 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _AccountAuthGate(child: child);
+  }
+}
+
+class _AccountAuthGate extends StatefulWidget {
+  final Widget child;
+
+  const _AccountAuthGate({required this.child});
+
+  @override
+  State<_AccountAuthGate> createState() => _AccountAuthGateState();
+}
+
+class _AccountAuthGateState extends State<_AccountAuthGate> {
+  String? _lastUid;
+  Future<Account>? _accountFuture;
+  Stream<User?>? _authChanges;
+  bool _firebaseAvailable = true;
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      _authChanges = FirebaseAuth.instance.authStateChanges();
+      _firebaseAvailable = true;
+    } catch (_) {
+      _firebaseAvailable = false;
+      _authChanges = null;
+    }
+  }
+
+  Future<Account> _loadAccount() async {
+    final config = Config();
+    return config.accountApiClient.getAccount();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_firebaseAvailable || _authChanges == null) {
+      return const _FirebaseNotInitializedPage();
+    }
+
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+      stream: _authChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (!snapshot.hasData) {
-          return const SignInPage();
-        } else {
-          return child;
         }
+
+        final user = snapshot.data;
+        if (user == null) {
+          _lastUid = null;
+          _accountFuture = null;
+          return const SignInPage();
+        }
+
+        if (_lastUid != user.uid || _accountFuture == null) {
+          _lastUid = user.uid;
+          _accountFuture = _loadAccount();
+        }
+
+        return FutureBuilder<Account>(
+          future: _accountFuture,
+          builder: (context, accountSnapshot) {
+            if (accountSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (accountSnapshot.hasError || !accountSnapshot.hasData) {
+              return NoAccessPage(
+                reasonText:
+                    'We could not verify your account access right now. Please try again, or request access.',
+                onRetry: () {
+                  setState(() {
+                    _accountFuture = _loadAccount();
+                  });
+                },
+              );
+            }
+
+            final account = accountSnapshot.data!;
+            final hasAccess =
+                (account.betaUser ?? false) || (account.isSuperuser ?? false);
+
+            if (!hasAccess) {
+              return const NoAccessPage();
+            }
+
+            return widget.child;
+          },
+        );
       },
+    );
+  }
+}
+
+class _FirebaseNotInitializedPage extends StatelessWidget {
+  const _FirebaseNotInitializedPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            'Firebase is not initialized.',
+            style: theme.textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NoAccessPage extends StatelessWidget {
+  final String? reasonText;
+  final VoidCallback? onRetry;
+
+  const NoAccessPage({super.key, this.reasonText, this.onRetry});
+
+  static const String _supportEmail = 'support@paper-prayer.com';
+
+  Future<void> _emailSupport(BuildContext context) async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: _supportEmail,
+      queryParameters: {
+        'subject': 'Paper Prayer beta access request',
+      },
+    );
+
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+                'Could not open your email app. Please email support@paper-prayer.com.'),
+          ),
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('Access Required'),
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'You don\'t have access yet',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  reasonText ??
+                      'Paper Prayer is currently in beta. To request access, email support@paper-prayer.com and we\'ll get you set up.',
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: () => _emailSupport(context),
+                  child: const Text('Request access via email'),
+                ),
+                const SizedBox(height: 12),
+                if (onRetry != null) ...[
+                  OutlinedButton(
+                    onPressed: onRetry,
+                    child: const Text('Retry'),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Sign out'),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () async {
+                    await Clipboard.setData(
+                        const ClipboardData(text: _supportEmail));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            content: Text('Copied support email to clipboard.'),
+                          ),
+                        );
+                    }
+                  },
+                  child: const Text('Copy support email'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

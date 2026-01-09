@@ -13,6 +13,12 @@ _$AccountImpl _$$AccountImplFromJson(Map<String, dynamic> json) =>
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
       monthlySpendLimit: (json['monthly_spend_limit'] as num?)?.toDouble(),
+      userCode: json['user_code'] as String?,
+      firebaseId: json['firebase_id'] as String?,
+      isActive: json['is_active'] as bool?,
+      isSuperuser: json['is_superuser'] as bool?,
+      isVerified: json['is_verified'] as bool?,
+      betaUser: json['beta_user'] as bool?,
     );
 
 Map<String, dynamic> _$$AccountImplToJson(_$AccountImpl instance) =>
@@ -22,6 +28,12 @@ Map<String, dynamic> _$$AccountImplToJson(_$AccountImpl instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'monthly_spend_limit': instance.monthlySpendLimit,
+      'user_code': instance.userCode,
+      'firebase_id': instance.firebaseId,
+      'is_active': instance.isActive,
+      'is_superuser': instance.isSuperuser,
+      'is_verified': instance.isVerified,
+      'beta_user': instance.betaUser,
     };
 
 _$AccountUpdateRequestImpl _$$AccountUpdateRequestImplFromJson(
