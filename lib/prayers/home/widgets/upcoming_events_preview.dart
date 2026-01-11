@@ -329,17 +329,38 @@ class _UpcomingEventCard extends StatelessWidget {
     try {
       final startDate = DateTime.parse(event.eventStart);
       final now = DateTime.now();
-      final difference = startDate.difference(now).inDays;
+      final endDate = (event.eventEnd != null && event.eventEnd!.isNotEmpty)
+          ? DateTime.tryParse(event.eventEnd!)
+          : null;
+
+      final isOngoing =
+          endDate != null && !now.isBefore(startDate) && now.isBefore(endDate);
+
+      final startDay = DateTime(startDate.year, startDate.month, startDate.day);
+      final today = DateTime(now.year, now.month, now.day);
+      final dayDelta = startDay.difference(today).inDays;
 
       String dateStr;
-      if (difference == 0) {
+      if (isOngoing) {
+        dateStr = "Happening now";
+      } else if (dayDelta == 0) {
         dateStr = "Today";
-      } else if (difference == 1) {
+      } else if (dayDelta == 1) {
         dateStr = "Tomorrow";
-      } else if (difference < 7) {
-        dateStr = "In $difference days";
-      } else {
+      } else if (dayDelta > 1 && dayDelta < 7) {
+        dateStr = "In $dayDelta days";
+      } else if (dayDelta >= 7) {
         dateStr = "${startDate.month}/${startDate.day}/${startDate.year}";
+      } else {
+        final daysAgo = -dayDelta;
+        if (daysAgo == 1) {
+          dateStr = "Started yesterday";
+        } else if (daysAgo < 7) {
+          dateStr = "Started $daysAgo days ago";
+        } else {
+          dateStr =
+              "Started ${startDate.month}/${startDate.day}/${startDate.year}";
+        }
       }
 
       if (event.eventEnd != null && event.eventEnd!.isNotEmpty) {

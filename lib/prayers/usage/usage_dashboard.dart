@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_ml/prayers/usage/models/usage_cost_model.dart';
 import 'package:prayer_ml/prayers/usage/repos/usage_repo.dart';
+import 'package:prayer_ml/prayers/usage/usage_history_view.dart';
 import 'package:prayer_ml/shared/widgets.dart';
 
 enum DateRangePreset {
@@ -82,6 +83,19 @@ class _UsageDashboardState extends ConsumerState<UsageDashboard> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            tooltip: 'Usage History',
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const UsageHistoryView(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

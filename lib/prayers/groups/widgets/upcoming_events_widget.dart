@@ -147,24 +147,52 @@ class _EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final startDate = DateTime.parse(event.eventStart);
+    final startDate = DateTime.tryParse(event.eventStart);
+    final endDate = (event.eventEnd != null && event.eventEnd!.isNotEmpty)
+        ? DateTime.tryParse(event.eventEnd!)
+        : null;
     final now = DateTime.now();
-    final daysUntil = startDate.difference(now).inDays;
 
     String dateLabel;
     Color dateColor;
-    if (daysUntil == 0) {
-      dateLabel = "Today";
-      dateColor = Colors.red;
-    } else if (daysUntil == 1) {
-      dateLabel = "Tomorrow";
-      dateColor = Colors.orange;
-    } else if (daysUntil < 7) {
-      dateLabel = "In $daysUntil days";
-      dateColor = Colors.blue;
-    } else {
-      dateLabel = DateFormat('MMM d').format(startDate);
+
+    if (startDate == null) {
+      dateLabel = event.eventStart;
       dateColor = Colors.grey;
+    } else {
+      final isOngoing =
+          endDate != null && !now.isBefore(startDate) && now.isBefore(endDate);
+
+      final startDay = DateTime(startDate.year, startDate.month, startDate.day);
+      final today = DateTime(now.year, now.month, now.day);
+      final dayDelta = startDay.difference(today).inDays;
+
+      if (isOngoing) {
+        dateLabel = "Happening now";
+        dateColor = Colors.red;
+      } else if (dayDelta == 0) {
+        dateLabel = "Today";
+        dateColor = Colors.red;
+      } else if (dayDelta == 1) {
+        dateLabel = "Tomorrow";
+        dateColor = Colors.orange;
+      } else if (dayDelta > 1 && dayDelta < 7) {
+        dateLabel = "In $dayDelta days";
+        dateColor = Colors.blue;
+      } else if (dayDelta >= 7) {
+        dateLabel = DateFormat('MMM d').format(startDate);
+        dateColor = Colors.grey;
+      } else {
+        final daysAgo = -dayDelta;
+        if (daysAgo == 1) {
+          dateLabel = "Started yesterday";
+        } else if (daysAgo < 7) {
+          dateLabel = "Started $daysAgo days ago";
+        } else {
+          dateLabel = "Started ${DateFormat('MMM d').format(startDate)}";
+        }
+        dateColor = Colors.grey;
+      }
     }
 
     return InkWell(

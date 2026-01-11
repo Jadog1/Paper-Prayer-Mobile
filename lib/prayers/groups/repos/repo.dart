@@ -6,7 +6,6 @@ import 'package:prayer_ml/prayers/groups/models/pipeline_status_model.dart';
 import 'package:prayer_ml/prayers/groups/models/request_model.dart';
 import 'package:prayer_ml/prayers/groups/repos/collection_repo.dart';
 import 'package:prayer_ml/shared/config.dart';
-import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'generated/repo.g.dart';
@@ -28,6 +27,21 @@ Future<GroupWithMembers> fetchGroupWithMembers(Ref ref, int groupId) async {
     members: contacts,
     memberWithContactGroupPairs: memberWithContactGroupPairs,
   );
+}
+
+/// Fetch all groups for the current account.
+/// Useful for lightweight id -> name lookups without fetching per-item.
+@riverpod
+Future<List<GroupWithPermissions>> fetchGroups(Ref ref) async {
+  final api = Config().contactApiClient;
+  return await api.fetchGroups();
+}
+
+/// Convenience lookup map: groupId -> groupName.
+@riverpod
+Future<Map<int, String>> groupNameMap(Ref ref) async {
+  final groups = await ref.watch(fetchGroupsProvider.future);
+  return {for (final g in groups) g.id: g.name};
 }
 
 @riverpod

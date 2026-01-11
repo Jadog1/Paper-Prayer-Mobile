@@ -1,5 +1,6 @@
 import 'package:prayer_ml/api/firebase_auth_client.dart';
 import 'package:prayer_ml/prayers/usage/models/usage_cost_model.dart';
+import 'package:prayer_ml/prayers/usage/models/usage_history_model.dart';
 import 'dart:convert';
 
 import 'package:prayer_ml/shared/config.dart';
@@ -32,5 +33,31 @@ class UsageApiClient {
 
     final json = jsonDecode(utf8.decode(response.bodyBytes));
     return UsageCostSummary.fromJson(json);
+  }
+
+  /// Get paginated GenAI usage history.
+  /// Endpoint: GET /account/usage-history?limit=10&cursor=...
+  Future<PaginatedGenAIUsageHistory> getUsageHistory({
+    String? cursor,
+    required int limit,
+  }) async {
+    final queryParams = {
+      'limit': limit.toString(),
+    };
+    if (cursor != null && cursor.isNotEmpty) {
+      queryParams['cursor'] = cursor;
+    }
+
+    final response = await authClient.get(
+      config.uri("/account/usage-history", queryParams),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          "Error getting usage history: ${response.statusCode} - ${response.body}");
+    }
+
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
+    return PaginatedGenAIUsageHistory.fromJson(json);
   }
 }

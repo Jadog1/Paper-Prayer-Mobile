@@ -162,6 +162,46 @@ class _FetchGroupWithMembersProviderElement
   int get groupId => (origin as FetchGroupWithMembersProvider).groupId;
 }
 
+String _$fetchGroupsHash() => r'0f3f61ff62fa1b9e86411467d0cb461e5a6ca341';
+
+/// Fetch all groups for the current account.
+/// Useful for lightweight id -> name lookups without fetching per-item.
+///
+/// Copied from [fetchGroups].
+@ProviderFor(fetchGroups)
+final fetchGroupsProvider =
+    AutoDisposeFutureProvider<List<GroupWithPermissions>>.internal(
+  fetchGroups,
+  name: r'fetchGroupsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$fetchGroupsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FetchGroupsRef
+    = AutoDisposeFutureProviderRef<List<GroupWithPermissions>>;
+String _$groupNameMapHash() => r'9c05a4e44645865d251482cbc9d071162be9be4d';
+
+/// Convenience lookup map: groupId -> groupName.
+///
+/// Copied from [groupNameMap].
+@ProviderFor(groupNameMap)
+final groupNameMapProvider =
+    AutoDisposeFutureProvider<Map<int, String>>.internal(
+  groupNameMap,
+  name: r'groupNameMapProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$groupNameMapHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GroupNameMapRef = AutoDisposeFutureProviderRef<Map<int, String>>;
 String _$fetchContactGroupHash() => r'fe20ca5ac939236b67ddc28139eba5c3323ec748';
 
 /// See also [fetchContactGroup].
